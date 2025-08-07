@@ -1115,7 +1115,7 @@ function App() {
                             id="genetics-upload"
                             className="hidden"
                             accept=".vcf,.json,.csv,.txt"
-                            onChange={(e) => handleFileUpload(e, 'genetics')}
+                            onChange={(e) => handleFileUpload(e.target.files, 'genetics', selectedPatient?.patient_id)}
                           />
                           <Button 
                             variant="outline" 
