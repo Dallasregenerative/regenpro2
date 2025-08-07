@@ -1149,7 +1149,7 @@ function App() {
                             id="imaging-upload"
                             className="hidden"
                             accept=".dcm,.jpg,.jpeg,.png,.pdf,.txt"
-                            onChange={(e) => handleFileUpload(e, 'imaging')}
+                            onChange={(e) => handleFileUpload(e.target.files, 'imaging', selectedPatient?.patient_id)}
                           />
                           <Button 
                             variant="outline" 
