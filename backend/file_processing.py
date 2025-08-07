@@ -920,6 +920,83 @@ class MedicalFileProcessor:
         
         return parameters
 
+    async def _analyze_genetics_for_regenerative_medicine(self, genetic_data: Dict) -> Dict[str, Any]:
+        """Analyze genetic data for regenerative medicine applications"""
+        
+        regenerative_insights = {
+            "healing_factors": {},
+            "therapy_optimization": {},
+            "risk_assessment": {},
+            "personalized_recommendations": []
+        }
+        
+        # Analyze regenerative medicine markers if present
+        if "regenerative_medicine_markers" in genetic_data:
+            markers = genetic_data["regenerative_medicine_markers"]
+            
+            # Collagen synthesis assessment
+            if "collagen_synthesis_genes" in markers:
+                collagen_data = markers["collagen_synthesis_genes"]
+                regenerative_insights["healing_factors"]["collagen_capacity"] = collagen_data.get("overall_score", "Normal")
+            
+            # Growth factor response
+            if "growth_factor_response" in markers:
+                growth_factors = markers["growth_factor_response"]
+                regenerative_insights["healing_factors"]["growth_factor_response"] = growth_factors.get("overall_score", "Normal")
+            
+            # Inflammatory profile
+            if "inflammatory_profile" in markers:
+                inflammatory = markers["inflammatory_profile"]
+                regenerative_insights["risk_assessment"]["inflammatory_risk"] = inflammatory.get("overall_score", "Normal")
+            
+            # Overall healing capacity
+            if "healing_capacity" in markers:
+                healing = markers["healing_capacity"]
+                regenerative_insights["therapy_optimization"] = {
+                    "regenerative_score": healing.get("overall_regenerative_score", 0.7),
+                    "predicted_response_time": healing.get("predicted_response_time", "Standard (4-8 weeks)"),
+                    "optimal_therapies": healing.get("optimal_therapies", ["PRP"]),
+                    "dosage_modifications": healing.get("dosage_modifications", "Standard dosing")
+                }
+        
+        # Analyze individual variants
+        if "variants" in genetic_data:
+            variants = genetic_data["variants"]
+            
+            for variant in variants:
+                gene = variant.get("gene", "")
+                clinical_sig = variant.get("clinical_significance", "")
+                
+                if "collagen" in clinical_sig.lower() or gene in ["COL1A1", "COL3A1"]:
+                    if "enhanced" in clinical_sig.lower() or "favorable" in clinical_sig.lower():
+                        regenerative_insights["personalized_recommendations"].append({
+                            "category": "Enhanced Healing",
+                            "recommendation": f"Patient has favorable {gene} variant - expect superior tissue regeneration",
+                            "therapy_modification": "Consider accelerated treatment timeline"
+                        })
+                
+                if gene == "VEGFA" and "high" in clinical_sig.lower():
+                    regenerative_insights["personalized_recommendations"].append({
+                        "category": "Angiogenesis",
+                        "recommendation": "Enhanced VEGF response - excellent for vascular regeneration",
+                        "therapy_modification": "PRP and BMAC highly recommended"
+                    })
+                
+                if gene in ["IL1B", "TNF"] and "low" in clinical_sig.lower():
+                    regenerative_insights["personalized_recommendations"].append({
+                        "category": "Inflammation",
+                        "recommendation": "Low inflammatory risk profile - favorable for all regenerative therapies",
+                        "therapy_modification": "Standard protocols with potentially better outcomes"
+                    })
+        
+        # Clinical recommendations
+        if "clinical_recommendations" in genetic_data:
+            clinical_rec = genetic_data["clinical_recommendations"]
+            regenerative_insights["therapy_optimization"]["genetic_suitability"] = clinical_rec.get("regenerative_therapy_suitability", "Good candidate")
+            regenerative_insights["therapy_optimization"]["first_line_therapy"] = clinical_rec.get("recommended_first_line", "PRP therapy")
+        
+        return regenerative_insights
+
 # Helper functions for specific analysis types
     async def _analyze_xray_image(self, image_gray: np.ndarray, stats: Dict) -> Dict[str, Any]:
         """Analyze X-ray specific features"""
