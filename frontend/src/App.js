@@ -112,6 +112,10 @@ function App() {
   const [dashboardData, setDashboardData] = useState(null);
   const [therapiesData, setTherapiesData] = useState(null);
   const [selectedSchool, setSelectedSchool] = useState("ai_optimized");
+  const [advancedSystemStatus, setAdvancedSystemStatus] = useState(null);
+  const [literatureUpdates, setLiteratureUpdates] = useState(null);
+  const [outcomePredictiion, setOutcomePrediction] = useState(null);
+  const [federatedLearningStatus, setFederatedLearningStatus] = useState(null);
   
   // Patient form state
   const [patientForm, setPatientForm] = useState({
