@@ -888,28 +888,36 @@ def main():
         ("Get Patient Details", tester.test_get_patient),
         ("AI Patient Analysis", tester.test_analyze_patient),
         
-        # Phase 3: Protocol Generation
+        # Phase 3: File Upload and Processing System
+        ("File Upload - Patient Chart", tester.test_file_upload_patient_chart),
+        ("File Upload - Genetic Data", tester.test_file_upload_genetic_data),
+        ("File Upload - DICOM Imaging", tester.test_file_upload_dicom_imaging),
+        ("Get Patient Files", tester.test_get_patient_files),
+        ("Comprehensive File Analysis", tester.test_comprehensive_patient_analysis),
+        ("File-Based Protocol Generation", tester.test_file_based_protocol_generation),
+        
+        # Phase 4: Protocol Generation
         ("Generate Protocol - Traditional", tester.test_generate_protocol_traditional),
         ("Generate Protocol - Biologics", tester.test_generate_protocol_biologics),
         ("Generate Protocol - AI Optimized", tester.test_generate_protocol_ai_optimized),
         ("Get Protocol Details", tester.test_get_protocol),
         ("Approve Protocol", tester.test_approve_protocol),
         
-        # Phase 4: Advanced AI Features - Federated Learning
+        # Phase 5: Advanced AI Features - Federated Learning
         ("Federated Learning - Register Clinic", tester.test_federated_register_clinic),
         ("Federated Learning - Global Model Status", tester.test_federated_global_model_status),
         
-        # Phase 5: Literature Integration
+        # Phase 6: Literature Integration
         ("Literature - Latest Updates", tester.test_literature_latest_updates),
         ("Literature - Search Database", tester.test_literature_search),
         
-        # Phase 6: ML Prediction & DICOM Processing
+        # Phase 7: ML Prediction & DICOM Processing
         ("ML Model Performance", tester.test_prediction_model_performance),
         ("ML Treatment Outcome Prediction", tester.test_treatment_outcome_prediction),
         ("DICOM Analysis (AI-Powered)", tester.test_dicom_analysis_simulation),
         ("Imaging Analysis History", tester.test_imaging_analysis_history),
         
-        # Phase 7: Analytics & Outcomes
+        # Phase 8: Analytics & Outcomes
         ("Dashboard Analytics", tester.test_dashboard_analytics),
         ("Submit Outcome Data", tester.test_submit_outcome),
     ]
