@@ -581,6 +581,304 @@ async def get_current_practitioner(credentials: HTTPAuthorizationCredentials = D
         specialty="Regenerative Medicine"
     )
 
+# File Upload and Processing API Endpoints
+
+@api_router.post("/files/upload")
+async def upload_patient_file(
+    file: UploadFile = File(...),
+    patient_id: str = Form(...),
+    file_category: str = Form(...),  # 'chart', 'genetics', 'imaging', 'labs', 'other'
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Upload and process patient files (charts, genetics, imaging, labs)"""
+    
+    if not file_processor:
+        raise HTTPException(status_code=503, detail="File processing service unavailable")
+    
+    try:
+        # Read file data
+        file_data = await file.read()
+        
+        # Determine file type
+        file_extension = Path(file.filename).suffix.lower()
+        if file_extension in ['.dcm', '.dicom']:
+            file_type = 'dicom'
+        elif file_extension in ['.pdf']:
+            file_type = 'pdf'
+        elif file_extension in ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']:
+            file_type = 'image'
+        elif file_extension in ['.csv', '.xlsx']:
+            file_type = 'csv'
+        elif file_extension in ['.json']:
+            file_type = 'json'
+        elif file_extension in ['.xml', '.hl7']:
+            file_type = 'xml'
+        else:
+            file_type = 'document'
+        
+        # Create file upload record
+        file_upload = FileUpload(
+            patient_id=patient_id,
+            filename=file.filename,
+            file_type=file_type,
+            file_category=file_category,
+            file_size=len(file_data)
+        )
+        
+        # Store file record
+        await db.uploaded_files.insert_one(file_upload.dict())
+        
+        # Process file in background
+        processed_data = await file_processor.process_uploaded_file(file_data, file_upload)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "file_upload_processed",
+            "patient_id": patient_id,
+            "file_id": file_upload.file_id,
+            "file_category": file_category,
+            "file_type": file_type,
+            "processing_confidence": processed_data.confidence_score
+        })
+        
+        return {
+            "status": "processed",
+            "file_id": file_upload.file_id,
+            "processing_results": processed_data.extraction_results,
+            "confidence_score": processed_data.confidence_score,
+            "processing_time": processed_data.processing_time,
+            "medical_insights": processed_data.medical_insights
+        }
+        
+    except Exception as e:
+        logging.error(f"File upload processing error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"File processing failed: {str(e)}")
+
+@api_router.get("/files/patient/{patient_id}")
+async def get_patient_files(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get all uploaded files for a patient"""
+    
+    # Get uploaded files
+    uploaded_files = await db.uploaded_files.find(
+        {"patient_id": patient_id}
+    ).sort("upload_date", -1).to_list(50)
+    
+    # Get processed files
+    processed_files = await db.processed_files.find(
+        {"patient_id": patient_id}
+    ).sort("processing_time", -1).to_list(50)
+    
+    return {
+        "patient_id": patient_id,
+        "uploaded_files": uploaded_files,
+        "processed_files": processed_files,
+        "total_files": len(uploaded_files)
+    }
+
+@api_router.get("/files/comprehensive-analysis/{patient_id}")
+async def get_comprehensive_patient_analysis(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get comprehensive analysis combining all patient files"""
+    
+    if not file_processor:
+        raise HTTPException(status_code=503, detail="File processing service unavailable")
+    
+    try:
+        comprehensive_analysis = await file_processor.get_patient_file_summary(patient_id)
+        
+        return {
+            "patient_id": patient_id,
+            "comprehensive_analysis": comprehensive_analysis,
+            "analysis_timestamp": datetime.utcnow(),
+            "status": "complete"
+        }
+        
+    except Exception as e:
+        logging.error(f"Comprehensive analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+@api_router.post("/protocols/generate-from-files")
+async def generate_protocol_from_files(
+    patient_id: str,
+    school_of_thought: str = "ai_optimized",
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Generate protocol using comprehensive file analysis"""
+    
+    if not file_processor:
+        raise HTTPException(status_code=503, detail="File processing service unavailable")
+    
+    try:
+        # Get comprehensive file analysis
+        file_summary = await file_processor.get_patient_file_summary(patient_id)
+        
+        # Get patient basic data
+        patient_record = await db.patients.find_one({"patient_id": patient_id})
+        if not patient_record:
+            raise HTTPException(status_code=404, detail="Patient not found")
+        
+        patient_data = PatientData(**patient_record)
+        
+        # Enhance patient data with file insights
+        enhanced_patient_data = await _enhance_patient_data_with_files(patient_data, file_summary)
+        
+        # Generate enhanced diagnostic analysis
+        diagnostic_results = await regen_ai.analyze_patient_data(enhanced_patient_data)
+        
+        # Generate protocol with file-based insights
+        school = SchoolOfThought(school_of_thought)
+        protocol = await regen_ai.generate_regenerative_protocol(
+            enhanced_patient_data, diagnostic_results, school
+        )
+        
+        # Enhance protocol with file-specific recommendations
+        enhanced_protocol = await _enhance_protocol_with_file_insights(protocol, file_summary)
+        
+        # Store enhanced protocol
+        await db.protocols.insert_one(enhanced_protocol.dict())
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "file_based_protocol_generated",
+            "patient_id": patient_id,
+            "protocol_id": enhanced_protocol.protocol_id,
+            "files_analyzed": file_summary.get("total_files", 0),
+            "confidence_enhancement": "file_based_analysis"
+        })
+        
+        return {
+            "protocol": enhanced_protocol,
+            "file_insights_used": file_summary.get("total_files", 0),
+            "enhancement_confidence": file_summary.get("comprehensive_analysis", {}).get("confidence_level", 0),
+            "multi_modal_analysis": file_summary.get("comprehensive_analysis", {}).get("multi_modal_insights", {})
+        }
+        
+    except Exception as e:
+        logging.error(f"File-based protocol generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Protocol generation failed: {str(e)}")
+
+@api_router.delete("/files/{file_id}")
+async def delete_patient_file(
+    file_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Delete uploaded patient file"""
+    
+    # Delete from uploaded_files
+    upload_result = await db.uploaded_files.delete_one({"file_id": file_id})
+    
+    # Delete from processed_files
+    processed_result = await db.processed_files.delete_one({"file_id": file_id})
+    
+    if upload_result.deleted_count == 0 and processed_result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Audit log
+    await db.audit_log.insert_one({
+        "timestamp": datetime.utcnow(),
+        "practitioner_id": practitioner.id,
+        "action": "file_deleted",
+        "file_id": file_id
+    })
+    
+    return {"status": "deleted", "file_id": file_id}
+
+# Helper functions for file-based protocol enhancement
+async def _enhance_patient_data_with_files(patient_data: PatientData, file_summary: Dict) -> PatientData:
+    """Enhance patient data with insights from uploaded files"""
+    
+    comprehensive_analysis = file_summary.get("comprehensive_analysis", {})
+    files_by_category = file_summary.get("files_by_category", {})
+    
+    # Create enhanced patient data
+    enhanced_data = patient_data.dict()
+    
+    # Add genetic insights if available
+    if "genetic_data" in files_by_category:
+        genetic_files = files_by_category["genetic_data"]
+        if genetic_files:
+            genetic_insights = genetic_files[0].get("extraction_results", {}).get("regenerative_insights", {})
+            enhanced_data["genetic_data"] = genetic_insights
+    
+    # Add imaging insights
+    if "dicom" in files_by_category or "medical_image" in files_by_category:
+        imaging_files = files_by_category.get("dicom", []) + files_by_category.get("medical_image", [])
+        if imaging_files:
+            imaging_insights = imaging_files[0].get("extraction_results", {}).get("regenerative_assessment", {})
+            enhanced_data["imaging_data"] = [imaging_insights]
+    
+    # Add lab results
+    if "lab_results" in files_by_category:
+        lab_files = files_by_category["lab_results"]
+        if lab_files:
+            lab_insights = lab_files[0].get("extraction_results", {})
+            enhanced_data["lab_results"] = lab_insights.get("lab_values", {})
+    
+    # Add chart information
+    if "patient_chart" in files_by_category:
+        chart_files = files_by_category["patient_chart"]
+        if chart_files:
+            chart_data = chart_files[0].get("extraction_results", {})
+            
+            # Update medical history
+            if chart_data.get("medical_history"):
+                enhanced_data["past_medical_history"].extend(chart_data["medical_history"])
+            
+            # Update medications
+            if chart_data.get("current_medications"):
+                enhanced_data["medications"].extend(chart_data["current_medications"])
+            
+            # Update allergies
+            if chart_data.get("allergies"):
+                enhanced_data["allergies"].extend(chart_data["allergies"])
+            
+            # Update chief complaint if more detailed
+            if chart_data.get("chief_complaint") and len(chart_data["chief_complaint"]) > len(enhanced_data.get("chief_complaint", "")):
+                enhanced_data["chief_complaint"] = chart_data["chief_complaint"]
+    
+    return PatientData(**enhanced_data)
+
+async def _enhance_protocol_with_file_insights(protocol: RegenerativeProtocol, file_summary: Dict) -> RegenerativeProtocol:
+    """Enhance protocol with file-specific insights and recommendations"""
+    
+    comprehensive_analysis = file_summary.get("comprehensive_analysis", {})
+    enhanced_protocol = protocol.dict()
+    
+    # Add file-based evidence to supporting evidence
+    integrated_recommendations = comprehensive_analysis.get("integrated_recommendations", [])
+    if integrated_recommendations:
+        enhanced_protocol["supporting_evidence"].extend([
+            {
+                "source": "multi_modal_file_analysis",
+                "evidence_type": "integrated_patient_data",
+                "recommendations": integrated_recommendations,
+                "confidence": comprehensive_analysis.get("confidence_level", 0.8)
+            }
+        ])
+    
+    # Enhance AI reasoning with file insights
+    multi_modal_insights = comprehensive_analysis.get("multi_modal_insights", {})
+    if multi_modal_insights:
+        enhanced_protocol["ai_reasoning"] += f"\n\nFile-Based Analysis: {json.dumps(multi_modal_insights, indent=2)}"
+    
+    # Update confidence score based on file analysis
+    if comprehensive_analysis.get("confidence_level"):
+        file_confidence = comprehensive_analysis["confidence_level"]
+        original_confidence = enhanced_protocol["confidence_score"]
+        # Weighted average favoring file-based analysis
+        enhanced_protocol["confidence_score"] = (original_confidence * 0.4 + file_confidence * 0.6)
+    
+    return RegenerativeProtocol(**enhanced_protocol)
+
 # Advanced AI Features API Endpoints
 
 @api_router.post("/federated/register-clinic")
