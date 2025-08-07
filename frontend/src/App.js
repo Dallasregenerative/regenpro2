@@ -120,6 +120,13 @@ function App() {
   const [isUploading, setIsUploading] = useState(false);
   const [comprehensiveAnalysis, setComprehensiveAnalysis] = useState(null);
   
+  // File upload state
+  const [fileUpload, setFileUpload] = useState({
+    uploading: false,
+    fileName: '',
+    uploadedFiles: []
+  });
+  
   // Patient form state
   const [patientForm, setPatientForm] = useState({
     demographics: {
