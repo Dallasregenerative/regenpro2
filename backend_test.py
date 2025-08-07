@@ -961,6 +961,7 @@ def main():
         ("File Upload - Patient Chart", tester.test_file_upload_patient_chart),
         ("File Upload - Genetic Data", tester.test_file_upload_genetic_data),
         ("File Upload - DICOM Imaging", tester.test_file_upload_dicom_imaging),
+        ("File Upload - Lab Results", tester.test_file_upload_lab_results),
         ("Get Patient Files", tester.test_get_patient_files),
         ("Comprehensive File Analysis", tester.test_comprehensive_patient_analysis),
         ("File-Based Protocol Generation", tester.test_file_based_protocol_generation),
@@ -969,6 +970,7 @@ def main():
         ("Generate Protocol - Traditional", tester.test_generate_protocol_traditional),
         ("Generate Protocol - Biologics", tester.test_generate_protocol_biologics),
         ("Generate Protocol - AI Optimized", tester.test_generate_protocol_ai_optimized),
+        ("Generate Protocol - Experimental", tester.test_generate_protocol_experimental),
         ("Get Protocol Details", tester.test_get_protocol),
         ("Approve Protocol", tester.test_approve_protocol),
         
