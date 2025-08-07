@@ -1456,10 +1456,20 @@ async def get_dashboard_analytics(
         {"practitioner_id": practitioner.id}
     ).sort("created_at", -1).limit(10).to_list(10)
     
+    # Convert ObjectIds to strings for JSON serialization
+    for outcome in recent_outcomes:
+        if '_id' in outcome:
+            outcome['_id'] = str(outcome['_id'])
+    
     # Get audit trail
     recent_activities = await db.audit_log.find(
         {"practitioner_id": practitioner.id}
     ).sort("timestamp", -1).limit(20).to_list(20)
+    
+    # Convert ObjectIds to strings for JSON serialization
+    for activity in recent_activities:
+        if '_id' in activity:
+            activity['_id'] = str(activity['_id'])
     
     return {
         "summary_stats": {
