@@ -997,6 +997,291 @@ class MedicalFileProcessor:
         
         return regenerative_insights
 
+    async def _analyze_labs_for_regenerative_medicine(self, lab_data: Dict) -> Dict[str, Any]:
+        """Analyze laboratory results for regenerative medicine applications"""
+        
+        regenerative_insights = {
+            "healing_capacity_assessment": {},
+            "therapy_optimization": {},
+            "risk_factors": [],
+            "nutritional_status": {},
+            "recommendations": []
+        }
+        
+        # Analyze inflammatory markers
+        if "inflammatory_markers" in lab_data:
+            inflammatory = lab_data["inflammatory_markers"]
+            
+            # ESR analysis
+            if "esr" in inflammatory:
+                esr_val = inflammatory["esr"].get("value", 0)
+                if esr_val < 20:
+                    regenerative_insights["healing_capacity_assessment"]["inflammatory_status"] = "Low - Excellent for regenerative therapies"
+                elif esr_val < 40:
+                    regenerative_insights["healing_capacity_assessment"]["inflammatory_status"] = "Moderate - Good for regenerative therapies"
+                else:
+                    regenerative_insights["healing_capacity_assessment"]["inflammatory_status"] = "Elevated - May need anti-inflammatory preparation"
+                    regenerative_insights["risk_factors"].append("Elevated systemic inflammation")
+            
+            # CRP analysis
+            if "crp" in inflammatory:
+                crp_val = inflammatory["crp"].get("value", 0)
+                if crp_val < 3.0:
+                    regenerative_insights["recommendations"].append("Low CRP favors excellent regenerative outcomes")
+                else:
+                    regenerative_insights["risk_factors"].append("Elevated CRP may impair healing response")
+        
+        # Analyze regenerative markers if present
+        if "regenerative_markers" in lab_data:
+            regen_markers = lab_data["regenerative_markers"]
+            
+            # Platelet function assessment
+            if "platelet_function" in regen_markers:
+                platelet_func = regen_markers["platelet_function"]
+                regenerative_insights["therapy_optimization"]["prp_suitability"] = {
+                    "quality": platelet_func.get("platelet_rich_plasma_quality", "Unknown"),
+                    "growth_factor_potential": platelet_func.get("growth_factor_potential", "Unknown"),
+                    "recommendation": "PRP therapy highly recommended" if platelet_func.get("platelet_rich_plasma_quality") == "excellent" else "Standard PRP protocols"
+                }
+            
+            # Bone marrow markers
+            if "bone_marrow_markers" in regen_markers:
+                bm_markers = regen_markers["bone_marrow_markers"]
+                regenerative_insights["therapy_optimization"]["bmac_suitability"] = {
+                    "stem_cell_markers": bm_markers.get("mesenchymal_stem_cell_markers", "Unknown"),
+                    "cd34_status": bm_markers.get("cd34_positive_cells", {}).get("status", "Unknown"),
+                    "recommendation": "BMAC therapy recommended" if bm_markers.get("mesenchymal_stem_cell_markers") == "positive" else "Consider alternative stem cell sources"
+                }
+        
+        # Analyze growth factors
+        if "growth_factors" in lab_data:
+            growth_factors = lab_data["growth_factors"]
+            
+            growth_factor_summary = []
+            for factor, data in growth_factors.items():
+                status = data.get("status", "unknown")
+                if status == "normal":
+                    growth_factor_summary.append(f"{factor.upper()}: Normal levels support regenerative processes")
+                elif "high" in status.lower():
+                    growth_factor_summary.append(f"{factor.upper()}: Elevated levels may enhance healing")
+                else:
+                    growth_factor_summary.append(f"{factor.upper()}: May benefit from supplementation")
+            
+            regenerative_insights["healing_capacity_assessment"]["growth_factors"] = growth_factor_summary
+        
+        # Analyze nutritional status
+        if "nutritional_status" in lab_data:
+            nutrition = lab_data["nutritional_status"]
+            
+            nutritional_factors = {}
+            for nutrient, data in nutrition.items():
+                status = data.get("status", "unknown")
+                value = data.get("value", 0)
+                
+                if nutrient == "vitamin_d":
+                    if value >= 30:
+                        nutritional_factors["vitamin_d"] = "Optimal - Supports bone and tissue healing"
+                    elif value >= 20:
+                        nutritional_factors["vitamin_d"] = "Adequate - Consider supplementation for optimal healing"
+                    else:
+                        nutritional_factors["vitamin_d"] = "Deficient - Supplementation required before therapy"
+                        regenerative_insights["risk_factors"].append("Vitamin D deficiency may impair healing")
+                
+                elif nutrient == "vitamin_c":
+                    if status == "normal":
+                        nutritional_factors["vitamin_c"] = "Adequate for collagen synthesis"
+                    else:
+                        nutritional_factors["vitamin_c"] = "May need supplementation for optimal collagen formation"
+                
+                elif nutrient in ["zinc", "magnesium"]:
+                    if status == "normal":
+                        nutritional_factors[nutrient] = f"Adequate {nutrient} supports healing processes"
+                    else:
+                        nutritional_factors[nutrient] = f"Consider {nutrient} supplementation"
+            
+            regenerative_insights["nutritional_status"] = nutritional_factors
+        
+        # Analyze complete blood count for platelet adequacy
+        if "complete_blood_count" in lab_data:
+            cbc = lab_data["complete_blood_count"]
+            
+            if "platelets" in cbc:
+                platelet_count = cbc["platelets"].get("value", 0)
+                if platelet_count >= 150:
+                    regenerative_insights["therapy_optimization"]["platelet_count"] = f"Adequate platelet count ({platelet_count}K) for PRP therapy"
+                else:
+                    regenerative_insights["therapy_optimization"]["platelet_count"] = f"Low platelet count ({platelet_count}K) - may affect PRP quality"
+                    regenerative_insights["risk_factors"].append("Thrombocytopenia may reduce PRP efficacy")
+        
+        # Clinical interpretation integration
+        if "clinical_interpretation" in lab_data:
+            clinical = lab_data["clinical_interpretation"]
+            
+            regenerative_insights["overall_assessment"] = {
+                "regenerative_suitability": clinical.get("regenerative_medicine_assessment", "Assessment needed"),
+                "healing_potential": clinical.get("healing_potential", "Standard"),
+                "clinical_recommendations": clinical.get("recommendations", [])
+            }
+        
+        return regenerative_insights
+
+    async def _process_dicom_imaging(self, file_path: str, patient_id: str) -> Dict[str, Any]:
+        """Process DICOM imaging files for regenerative medicine analysis"""
+        
+        try:
+            import pydicom
+            import numpy as np
+            from PIL import Image
+            
+            # Read DICOM file
+            dicom_data = pydicom.dcmread(file_path)
+            
+            # Extract metadata
+            metadata = {
+                "study_date": str(getattr(dicom_data, 'StudyDate', 'Unknown')),
+                "modality": str(getattr(dicom_data, 'Modality', 'Unknown')),
+                "body_part": str(getattr(dicom_data, 'BodyPartExamined', 'Unknown')),
+                "study_description": str(getattr(dicom_data, 'StudyDescription', 'Unknown')),
+                "series_description": str(getattr(dicom_data, 'SeriesDescription', 'Unknown')),
+                "patient_position": str(getattr(dicom_data, 'PatientPosition', 'Unknown'))
+            }
+            
+            # Convert to image array for analysis
+            image_array = dicom_data.pixel_array
+            
+            # Basic image analysis
+            image_stats = {
+                "dimensions": image_array.shape,
+                "data_type": str(image_array.dtype),
+                "intensity_range": [int(image_array.min()), int(image_array.max())],
+                "mean_intensity": float(image_array.mean())
+            }
+            
+            # Regenerative medicine specific analysis
+            regenerative_analysis = await self._analyze_dicom_for_regenerative_targets(
+                metadata, image_array, image_stats
+            )
+            
+            return {
+                "dicom_metadata": metadata,
+                "image_statistics": image_stats,
+                "regenerative_analysis": regenerative_analysis,
+                "processing_status": "success",
+                "recommendations": self._generate_dicom_treatment_recommendations(metadata, regenerative_analysis)
+            }
+            
+        except Exception as e:
+            return {
+                "error": f"DICOM processing failed: {str(e)}",
+                "processing_status": "failed"
+            }
+
+    async def _analyze_dicom_for_regenerative_targets(self, metadata: Dict, image_array: np.ndarray, stats: Dict) -> Dict[str, Any]:
+        """Analyze DICOM images for regenerative medicine treatment targets"""
+        
+        modality = metadata.get("modality", "").upper()
+        body_part = metadata.get("body_part", "").lower()
+        
+        analysis = {
+            "treatment_targets": [],
+            "severity_assessment": "mild",
+            "injection_guidance": {},
+            "monitoring_parameters": []
+        }
+        
+        # Modality-specific analysis
+        if modality == "MR":  # MRI
+            analysis["treatment_targets"] = [
+                "Cartilage assessment for PRP/BMAC targeting",
+                "Synovial analysis for injection planning", 
+                "Bone marrow edema evaluation",
+                "Soft tissue inflammation mapping"
+            ]
+            
+            analysis["injection_guidance"] = {
+                "approach": "MRI-guided precision targeting",
+                "optimal_locations": "Areas of cartilage loss and bone marrow edema",
+                "volume_recommendations": "2-5ml based on joint size and pathology extent"
+            }
+            
+        elif modality == "CT":
+            analysis["treatment_targets"] = [
+                "Bone structure assessment",
+                "Joint space evaluation",
+                "Calcification identification",
+                "Subchondral bone analysis"
+            ]
+            
+        elif modality in ["CR", "DR", "DX"]:  # X-ray variants
+            analysis["treatment_targets"] = [
+                "Joint space narrowing assessment",
+                "Osteophyte identification",
+                "Alignment evaluation",
+                "Degenerative changes mapping"
+            ]
+            
+            # Simple intensity-based severity assessment for X-rays
+            mean_intensity = stats.get("mean_intensity", 0)
+            if mean_intensity > stats.get("intensity_range", [0, 1])[1] * 0.7:
+                analysis["severity_assessment"] = "mild to moderate"
+            elif mean_intensity > stats.get("intensity_range", [0, 1])[1] * 0.4:
+                analysis["severity_assessment"] = "moderate"
+            else:
+                analysis["severity_assessment"] = "moderate to severe"
+        
+        # Body part specific recommendations
+        if "knee" in body_part:
+            analysis["monitoring_parameters"] = [
+                "Cartilage thickness measurements",
+                "Joint space width",
+                "Bone marrow lesion size",
+                "Synovial volume"
+            ]
+        elif "shoulder" in body_part:
+            analysis["monitoring_parameters"] = [
+                "Rotator cuff thickness",
+                "Subacromial space",
+                "Bursal fluid volume",
+                "Tendon signal intensity"
+            ]
+        elif "hip" in body_part:
+            analysis["monitoring_parameters"] = [
+                "Acetabular cartilage integrity",
+                "Femoral head sphericity",
+                "Joint space measurements",
+                "Labral morphology"
+            ]
+        
+        return analysis
+
+    def _generate_dicom_treatment_recommendations(self, metadata: Dict, analysis: Dict) -> List[str]:
+        """Generate treatment recommendations based on DICOM analysis"""
+        
+        recommendations = []
+        modality = metadata.get("modality", "").upper()
+        severity = analysis.get("severity_assessment", "mild")
+        
+        # Base recommendations on modality and findings
+        if modality == "MR":
+            recommendations.extend([
+                "MRI-guided injection recommended for precision targeting",
+                "Consider multiplanar imaging for treatment planning",
+                f"Severity assessment: {severity} - adjust therapy accordingly"
+            ])
+            
+        elif modality in ["CR", "DR", "DX"]:
+            recommendations.extend([
+                "Fluoroscopic guidance recommended for injection accuracy",
+                f"Radiographic severity: {severity}",
+                "Consider follow-up imaging in 3-6 months"
+            ])
+        
+        # Add treatment targets as recommendations
+        for target in analysis.get("treatment_targets", []):
+            recommendations.append(f"Target identified: {target}")
+            
+        return recommendations
+
 # Helper functions for specific analysis types
     async def _analyze_xray_image(self, image_gray: np.ndarray, stats: Dict) -> Dict[str, Any]:
         """Analyze X-ray specific features"""
