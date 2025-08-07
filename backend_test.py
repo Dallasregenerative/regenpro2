@@ -939,6 +939,10 @@ def main():
     # Initialize tester
     tester = RegenMedAIProTester()
     
+    # Test with existing patient first
+    print("\n🔍 Testing with existing patient: c458d177-712c-4eb9-8fd3-5f5e41fe7b71 (Sarah Chen)")
+    tester.patient_id = "c458d177-712c-4eb9-8fd3-5f5e41fe7b71"
+    
     # Define comprehensive test suite with advanced features
     tests = [
         # Phase 1: System Health & Status
