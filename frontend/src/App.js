@@ -430,32 +430,6 @@ function App() {
     }
   };
 
-  // Generate file-based protocol
-  const generateFileBasedProtocol = async () => {
-    if (!selectedPatient || uploadedFiles.length === 0) {
-      alert('Please select a patient and upload files first');
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      const response = await axios.post(`${API}/protocols/generate-from-files?patient_id=${selectedPatient.patient_id}&school_of_thought=${selectedSchool}`, {}, {
-        headers: { Authorization: `Bearer demo-token` }
-      });
-      
-      if (response.data.protocol) {
-        setGeneratedProtocol(response.data);
-        setActiveTab('protocol-generation');
-        alert(`Enhanced file-based protocol generated successfully using ${response.data.file_insights_used} file insights!`);
-      }
-    } catch (error) {
-      console.error('File-based protocol generation error:', error);
-      alert('Protocol generation failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Advanced Header */}
