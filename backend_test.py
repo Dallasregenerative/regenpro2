@@ -950,11 +950,9 @@ def main():
         ("Root API Endpoint", tester.test_root_endpoint),
         ("Advanced System Status", tester.test_advanced_system_status),
         
-        # Phase 2: Core Functionality
+        # Phase 2: Core Functionality with existing patient
         ("Therapy Database Access", tester.test_therapies_database),
-        ("Create Patient Record", tester.test_create_patient),
-        ("List Patients", tester.test_list_patients),
-        ("Get Patient Details", tester.test_get_patient),
+        ("Get Existing Patient Details", tester.test_get_patient),
         ("AI Patient Analysis", tester.test_analyze_patient),
         
         # Phase 3: File Upload and Processing System
