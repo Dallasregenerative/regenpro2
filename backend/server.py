@@ -673,6 +673,15 @@ async def get_patient_files(
         {"patient_id": patient_id}
     ).sort("processing_time", -1).to_list(50)
     
+    # Convert ObjectIds to strings for JSON serialization
+    for file_doc in uploaded_files:
+        if '_id' in file_doc:
+            file_doc['_id'] = str(file_doc['_id'])
+    
+    for file_doc in processed_files:
+        if '_id' in file_doc:
+            file_doc['_id'] = str(file_doc['_id'])
+    
     return {
         "patient_id": patient_id,
         "uploaded_files": uploaded_files,
