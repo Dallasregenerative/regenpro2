@@ -156,6 +156,9 @@ function App() {
     loadPatients();
     loadDashboardData();
     loadTherapiesData();
+    loadAdvancedSystemStatus();
+    loadLiteratureUpdates();
+    loadFederatedLearningStatus();
   }, []);
 
   const loadPatients = async () => {
