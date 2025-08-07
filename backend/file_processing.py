@@ -769,6 +769,157 @@ class MedicalFileProcessor:
         
         return recommendations
 
+    def _generate_dosage_training_data(self) -> Dict:
+        """Generate synthetic dosage optimization training data"""
+        
+        n_samples = 800
+        
+        features = []
+        optimal_dosages = []
+        
+        for _ in range(n_samples):
+            age = np.random.normal(50, 20)
+            weight = np.random.normal(70, 15)  # kg
+            severity = np.random.uniform(1, 5)
+            therapy_type = np.random.choice([0, 1, 2])  # PRP, BMAC, Exosomes
+            previous_response = np.random.uniform(0, 1)  # 0=no response, 1=excellent
+            
+            feature_vector = [age, weight, severity, therapy_type, previous_response]
+            features.append(feature_vector)
+            
+            # Calculate optimal dosage based on features
+            base_dosage = 1.0
+            dosage_modifier = (
+                (weight / 70) * 0.3 +  # Weight adjustment
+                severity * 0.2 +  # Severity adjustment
+                (therapy_type + 1) * 0.1 +  # Therapy type adjustment
+                (1 - previous_response) * 0.2  # Previous response adjustment
+            )
+            
+            optimal_dosage = max(0.5, min(3.0, base_dosage + dosage_modifier))
+            optimal_dosages.append(optimal_dosage)
+        
+        return {
+            "features": np.array(features),
+            "optimal_dosages": np.array(optimal_dosages)
+        }
+
+    async def _assess_patient_for_regenerative_medicine(self, structured_data: Dict) -> Dict[str, Any]:
+        """Assess patient candidacy for regenerative medicine based on chart data"""
+        
+        # Extract key factors for regenerative medicine assessment
+        assessment = {
+            "regenerative_candidacy_score": 0.7,  # Base score
+            "favorable_factors": [],
+            "limiting_factors": [],
+            "recommended_therapies": [],
+            "contraindications": [],
+            "optimal_timing": "Early intervention recommended"
+        }
+        
+        # Analyze medical history
+        medical_history = structured_data.get('medical_history', [])
+        medications = structured_data.get('medications', [])
+        
+        # Age assessment
+        if "age" in str(structured_data).lower():
+            # Try to extract age from text
+            import re
+            age_match = re.search(r'(\d+)[-\s]year[-\s]old', str(structured_data).lower())
+            if age_match:
+                age = int(age_match.group(1))
+                if age < 40:
+                    assessment["regenerative_candidacy_score"] += 0.15
+                    assessment["favorable_factors"].append("Young age favorable for regenerative response")
+                elif age > 65:
+                    assessment["regenerative_candidacy_score"] -= 0.1
+                    assessment["limiting_factors"].append("Advanced age may slow regenerative response")
+        
+        # Analyze chief complaint for regenerative targets
+        chief_complaint = structured_data.get('chief_complaint', '').lower()
+        if any(term in chief_complaint for term in ['joint', 'cartilage', 'arthritis', 'pain']):
+            assessment["favorable_factors"].append("Condition amenable to regenerative therapy")
+            assessment["recommended_therapies"].append({
+                "therapy": "PRP",
+                "rationale": "Joint/cartilage condition responds well to growth factors",
+                "expected_improvement": "40-60% pain reduction"
+            })
+        
+        # Check for contraindications in medications
+        contraindication_meds = ['steroid', 'cortisone', 'chemotherapy', 'immunosuppressant']
+        for med in medications:
+            if any(contra in med.lower() for contra in contraindication_meds):
+                assessment["limiting_factors"].append(f"Medication {med} may interfere with regenerative response")
+        
+        # Check medical history for contraindications
+        contraindication_conditions = ['cancer', 'blood disorder', 'bleeding', 'infection']
+        for condition in medical_history:
+            if any(contra in condition.lower() for contra in contraindication_conditions):
+                assessment["contraindications"].append(f"History of {condition}")
+                assessment["regenerative_candidacy_score"] -= 0.2
+        
+        # Adjust final score
+        assessment["regenerative_candidacy_score"] = max(0.1, min(1.0, assessment["regenerative_candidacy_score"]))
+        
+        return assessment
+
+    def _identify_injection_targets(self, analysis: Dict, modality: str) -> List[str]:
+        """Identify optimal injection targets based on imaging analysis"""
+        
+        targets = []
+        
+        if modality == "MRI":
+            targets.extend([
+                "intra_articular_space",
+                "periarticular_soft_tissue",
+                "subchondral_bone_interface"
+            ])
+        elif modality == "XRAY":
+            targets.extend([
+                "intra_articular_space",
+                "periarticular_region"
+            ])
+        elif modality == "ULTRASOUND":
+            targets.extend([
+                "intra_articular_space",
+                "synovial_recess",
+                "periarticular_soft_tissue"
+            ])
+        else:
+            targets.append("intra_articular_space")  # Default
+        
+        return targets
+
+    def _define_monitoring_parameters(self, analysis: Dict, modality: str) -> List[str]:
+        """Define monitoring parameters based on imaging analysis"""
+        
+        parameters = [
+            "Pain visual analog scale (VAS)",
+            "Range of motion measurements",
+            "Functional outcome scores"
+        ]
+        
+        if modality == "MRI":
+            parameters.extend([
+                "Follow-up MRI at 3-6 months",
+                "Cartilage thickness measurements",
+                "Bone marrow edema assessment"
+            ])
+        elif modality == "XRAY":
+            parameters.extend([
+                "Follow-up X-rays at 6-12 months",
+                "Joint space width measurements",
+                "Osteophyte progression"
+            ])
+        elif modality == "ULTRASOUND":
+            parameters.extend([
+                "Follow-up ultrasound at 1-3 months",
+                "Synovial thickness measurements",
+                "Doppler flow assessment"
+            ])
+        
+        return parameters
+
 # Helper functions for specific analysis types
     async def _analyze_xray_image(self, image_gray: np.ndarray, stats: Dict) -> Dict[str, Any]:
         """Analyze X-ray specific features"""
