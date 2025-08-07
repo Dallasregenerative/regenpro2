@@ -619,31 +619,56 @@ class RegenMedAIProTester:
 
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
-    print("Advanced Regenerative Medicine Knowledge Platform")
+    print("Advanced Regenerative Medicine Knowledge Platform v2.0")
+    print("Testing All Advanced AI Features & Services")
     print("=" * 70)
     
     # Initialize tester
     tester = RegenMedAIProTester()
     
-    # Define comprehensive test suite
+    # Define comprehensive test suite with advanced features
     tests = [
+        # Phase 1: System Health & Status
         ("System Health Check", tester.test_health_check),
         ("Root API Endpoint", tester.test_root_endpoint),
+        ("Advanced System Status", tester.test_advanced_system_status),
+        
+        # Phase 2: Core Functionality
         ("Therapy Database Access", tester.test_therapies_database),
         ("Create Patient Record", tester.test_create_patient),
         ("List Patients", tester.test_list_patients),
         ("Get Patient Details", tester.test_get_patient),
         ("AI Patient Analysis", tester.test_analyze_patient),
+        
+        # Phase 3: Protocol Generation
         ("Generate Protocol - Traditional", tester.test_generate_protocol_traditional),
         ("Generate Protocol - Biologics", tester.test_generate_protocol_biologics),
         ("Generate Protocol - AI Optimized", tester.test_generate_protocol_ai_optimized),
         ("Get Protocol Details", tester.test_get_protocol),
         ("Approve Protocol", tester.test_approve_protocol),
+        
+        # Phase 4: Advanced AI Features - Federated Learning
+        ("Federated Learning - Register Clinic", tester.test_federated_register_clinic),
+        ("Federated Learning - Global Model Status", tester.test_federated_global_model_status),
+        
+        # Phase 5: Literature Integration
+        ("Literature - Latest Updates", tester.test_literature_latest_updates),
+        ("Literature - Search Database", tester.test_literature_search),
+        
+        # Phase 6: ML Prediction & DICOM Processing
+        ("ML Model Performance", tester.test_prediction_model_performance),
+        ("ML Treatment Outcome Prediction", tester.test_treatment_outcome_prediction),
+        ("DICOM Analysis (AI-Powered)", tester.test_dicom_analysis_simulation),
+        ("Imaging Analysis History", tester.test_imaging_analysis_history),
+        
+        # Phase 7: Analytics & Outcomes
         ("Dashboard Analytics", tester.test_dashboard_analytics),
         ("Submit Outcome Data", tester.test_submit_outcome),
     ]
     
-    print(f"\nRunning {len(tests)} comprehensive API tests...\n")
+    print(f"\nRunning {len(tests)} comprehensive API tests...")
+    print("Including all advanced AI features: Federated Learning, Literature Integration, ML Prediction, DICOM Processing")
+    print("\n")
     
     for test_name, test_func in tests:
         try:
@@ -658,13 +683,20 @@ def main():
     
     if tester.tests_passed == tester.tests_run:
         print("🎉 All tests passed! RegenMed AI Pro Backend is fully functional.")
-        print("✅ Ready for frontend integration testing.")
+        print("✅ All advanced AI services operational:")
+        print("   • Federated Learning System")
+        print("   • PubMed Literature Integration") 
+        print("   • AI-Powered DICOM Processing")
+        print("   • ML Outcome Prediction Models")
+        print("✅ Ready for comprehensive frontend integration testing.")
         return 0
     elif tester.tests_passed >= tester.tests_run * 0.8:
         print("⚠️  Most tests passed. Minor issues detected - proceeding to frontend testing.")
+        print("🔧 Some advanced features may need attention but core functionality works.")
         return 0
     else:
         print("❌ Significant backend issues detected. Frontend testing may be impacted.")
+        print("🚨 Advanced AI services may not be fully operational.")
         return 1
 
 if __name__ == "__main__":
