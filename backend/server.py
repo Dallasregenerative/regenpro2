@@ -575,6 +575,276 @@ async def get_current_practitioner(credentials: HTTPAuthorizationCredentials = D
         specialty="Regenerative Medicine"
     )
 
+# Advanced AI Features API Endpoints
+
+@api_router.post("/federated/register-clinic")
+async def register_clinic_for_federated_learning(
+    clinic_data: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Register clinic for federated learning participation"""
+    
+    clinic_id = f"clinic_{practitioner.id}"
+    
+    # Extract privacy-safe data summary
+    data_summary = {
+        "total_patients": clinic_data.get("total_patients", 0),
+        "avg_age": clinic_data.get("avg_age", 0),
+        "therapy_distribution": clinic_data.get("therapy_distribution", {}),
+        "outcomes": clinic_data.get("outcomes", [])
+    }
+    
+    if federated_service:
+        result = await federated_service.register_clinic_participation(clinic_id, data_summary)
+        return result
+    
+    return {"status": "service_unavailable"}
+
+@api_router.post("/federated/submit-updates")
+async def submit_federated_updates(
+    model_updates: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Submit privacy-preserved model updates for federated learning"""
+    
+    clinic_id = f"clinic_{practitioner.id}"
+    validation_metrics = model_updates.get("validation_metrics", {"accuracy": 0.85})
+    
+    if federated_service:
+        result = await federated_service.submit_local_updates(
+            clinic_id, 
+            model_updates.get("model_weights", {}), 
+            validation_metrics
+        )
+        return result
+    
+    return {"status": "service_unavailable"}
+
+@api_router.get("/federated/global-model-status")
+async def get_global_model_status():
+    """Get status of global federated learning models"""
+    
+    if federated_service:
+        # Get model status from database
+        model_status = await db.federated_models.find_one({"model_id": "global_outcome_predictor"})
+        if model_status:
+            return {
+                "model_version": model_status.get("version", 1),
+                "participants": model_status.get("participants", 0),
+                "last_updated": model_status.get("last_updated"),
+                "performance_improvement": model_status.get("performance_improvement", 0.05),
+                "status": model_status.get("status", "active")
+            }
+    
+    return {"status": "initializing", "message": "Federated learning system starting up"}
+
+@api_router.get("/literature/latest-updates")
+async def get_latest_literature_updates():
+    """Get latest regenerative medicine literature updates"""
+    
+    if pubmed_service:
+        # Process new literature
+        processing_result = await pubmed_service.process_new_literature()
+        
+        # Get recent papers
+        recent_papers = await db.literature_papers.find().sort("extracted_at", -1).limit(10).to_list(10)
+        
+        return {
+            "processing_result": processing_result,
+            "recent_papers": recent_papers,
+            "total_papers_in_database": await db.literature_papers.count_documents({}),
+            "last_update": datetime.utcnow()
+        }
+    
+    return {"status": "service_unavailable"}
+
+@api_router.get("/literature/search")
+async def search_literature_database(
+    query: str,
+    relevance_threshold: float = 0.7,
+    limit: int = 20
+):
+    """Search the integrated literature database"""
+    
+    # Search papers by keywords and relevance
+    search_filter = {
+        "$or": [
+            {"title": {"$regex": query, "$options": "i"}},
+            {"abstract": {"$regex": query, "$options": "i"}},
+            {"regenerative_keywords": {"$in": [query.lower()]}}
+        ],
+        "relevance_score": {"$gte": relevance_threshold}
+    }
+    
+    papers = await db.literature_papers.find(search_filter).sort("relevance_score", -1).limit(limit).to_list(limit)
+    
+    return {
+        "query": query,
+        "results_found": len(papers),
+        "papers": papers,
+        "search_timestamp": datetime.utcnow()
+    }
+
+@api_router.post("/imaging/analyze-dicom")
+async def analyze_dicom_image(
+    image_data: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Analyze DICOM medical images with AI"""
+    
+    patient_id = image_data.get("patient_id")
+    modality = image_data.get("modality", "MRI")
+    
+    # In a real implementation, this would handle actual DICOM files
+    # For demo purposes, we'll simulate DICOM processing
+    dicom_bytes = base64.b64decode(image_data.get("dicom_data", ""))
+    
+    if dicom_service:
+        analysis_result = await dicom_service.process_dicom_image(dicom_bytes, patient_id, modality)
+        
+        # Log analysis for audit
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "dicom_analysis",
+            "patient_id": patient_id,
+            "modality": modality,
+            "analysis_id": analysis_result.get("processing_id")
+        })
+        
+        return analysis_result
+    
+    return {"status": "service_unavailable"}
+
+@api_router.get("/imaging/analysis-history/{patient_id}")
+async def get_imaging_analysis_history(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get imaging analysis history for a patient"""
+    
+    analyses = await db.dicom_analyses.find({"patient_id": patient_id}).sort("processing_date", -1).to_list(20)
+    
+    return {
+        "patient_id": patient_id,
+        "total_analyses": len(analyses),
+        "analyses": analyses
+    }
+
+@api_router.post("/predictions/treatment-outcome")
+async def predict_treatment_outcome(
+    prediction_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Predict treatment outcome using ML models"""
+    
+    patient_id = prediction_request.get("patient_id")
+    therapy_plan = prediction_request.get("therapy_plan", {})
+    
+    # Get patient data
+    patient_record = await db.patients.find_one({"patient_id": patient_id})
+    if not patient_record:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    patient_data = PatientData(**patient_record)
+    
+    if prediction_service:
+        prediction_result = await prediction_service.predict_treatment_outcome(
+            patient_data.dict(), 
+            therapy_plan
+        )
+        
+        # Log prediction for audit
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "outcome_prediction",
+            "patient_id": patient_id,
+            "therapy": therapy_plan.get("therapy_name"),
+            "predicted_success": prediction_result.get("predictions", {}).get("success_probability")
+        })
+        
+        return prediction_result
+    
+    return {"status": "service_unavailable"}
+
+@api_router.get("/predictions/model-performance")
+async def get_prediction_model_performance():
+    """Get performance metrics for prediction models"""
+    
+    if prediction_service and prediction_service.models:
+        performance_metrics = {}
+        
+        for model_name, model_data in prediction_service.models.items():
+            performance_metrics[model_name] = {
+                "performance": model_data.get("performance", {}),
+                "features": model_data.get("features", []),
+                "model_type": type(model_data.get("model", None)).__name__
+            }
+        
+        return {
+            "models": performance_metrics,
+            "total_predictions": await db.outcome_predictions.count_documents({}),
+            "last_update": datetime.utcnow()
+        }
+    
+    return {"status": "models_initializing"}
+
+@api_router.get("/advanced/system-status")
+async def get_advanced_system_status():
+    """Get comprehensive status of all advanced AI systems"""
+    
+    status = {
+        "timestamp": datetime.utcnow(),
+        "services": {
+            "federated_learning": {
+                "status": "active" if federated_service else "unavailable",
+                "global_model_participants": 0,
+                "last_aggregation": None
+            },
+            "literature_integration": {
+                "status": "active" if pubmed_service else "unavailable",
+                "papers_monitored": await db.literature_papers.count_documents({}) if pubmed_service else 0,
+                "last_update": None
+            },
+            "dicom_processing": {
+                "status": "active" if dicom_service else "unavailable",
+                "supported_modalities": dicom_service.supported_modalities if dicom_service else [],
+                "analyses_completed": await db.dicom_analyses.count_documents({}) if dicom_service else 0
+            },
+            "outcome_prediction": {
+                "status": "active" if prediction_service else "unavailable",
+                "models_loaded": len(prediction_service.models) if prediction_service else 0,
+                "predictions_made": await db.outcome_predictions.count_documents({}) if prediction_service else 0
+            }
+        },
+        "database_stats": {
+            "total_patients": await db.patients.count_documents({}),
+            "total_protocols": await db.protocols.count_documents({}),
+            "total_outcomes": await db.outcomes.count_documents({}),
+            "literature_papers": await db.literature_papers.count_documents({}),
+            "federated_participants": await db.federated_participants.count_documents({})
+        }
+    }
+    
+    # Get recent federated model status
+    if federated_service:
+        recent_model = await db.federated_models.find_one(
+            {"model_id": "global_outcome_predictor"}, 
+            sort=[("last_updated", -1)]
+        )
+        if recent_model:
+            status["services"]["federated_learning"]["global_model_participants"] = recent_model.get("participants", 0)
+            status["services"]["federated_learning"]["last_aggregation"] = recent_model.get("last_updated")
+    
+    # Get literature monitoring status
+    if pubmed_service:
+        recent_monitoring = await db.literature_monitoring.find_one(sort=[("last_update", -1)])
+        if recent_monitoring:
+            status["services"]["literature_integration"]["last_update"] = recent_monitoring.get("last_update")
+    
+    return status
+
 # API Endpoints
 @api_router.get("/")
 async def root():
