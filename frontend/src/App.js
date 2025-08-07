@@ -40,7 +40,19 @@ import {
   Sparkles,
   ChartBar,
   Download,
-  Upload
+  Upload,
+  Network,
+  Database,
+  Cpu,
+  Image,
+  BarChart3,
+  Layers,
+  GitBranch,
+  Rss,
+  Search,
+  Monitor,
+  Settings,
+  CloudDownload
 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
