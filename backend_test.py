@@ -989,6 +989,10 @@ def main():
         # Phase 8: Analytics & Outcomes
         ("Dashboard Analytics", tester.test_dashboard_analytics),
         ("Submit Outcome Data", tester.test_submit_outcome),
+        
+        # Phase 9: Create new patient for completeness
+        ("Create New Patient Record", tester.test_create_patient),
+        ("List All Patients", tester.test_list_patients),
     ]
     
     print(f"\nRunning {len(tests)} comprehensive API tests...")
