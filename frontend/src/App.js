@@ -1183,7 +1183,7 @@ function App() {
                             id="chart-upload"
                             className="hidden"
                             accept=".pdf,.docx,.doc,.txt"
-                            onChange={(e) => handleFileUpload(e, 'chart')}
+                            onChange={(e) => handleFileUpload(e.target.files, 'chart', selectedPatient?.patient_id)}
                           />
                           <Button 
                             variant="outline" 
