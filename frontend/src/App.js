@@ -116,6 +116,9 @@ function App() {
   const [literatureUpdates, setLiteratureUpdates] = useState(null);
   const [outcomePredictiion, setOutcomePrediction] = useState(null);
   const [federatedLearningStatus, setFederatedLearningStatus] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [comprehensiveAnalysis, setComprehensiveAnalysis] = useState(null);
   
   // Patient form state
   const [patientForm, setPatientForm] = useState({
