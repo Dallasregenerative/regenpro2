@@ -1143,6 +1143,598 @@ function App() {
             )}
           </TabsContent>
 
+          {/* Outcome Prediction Tab */}
+          <TabsContent value="outcome-prediction" className="space-y-6">
+            {selectedPatient ? (
+              <>
+                <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="h-5 w-5 text-purple-600" />
+                      Machine Learning Outcome Prediction
+                    </CardTitle>
+                    <CardDescription>
+                      Advanced ML models predict treatment success, timeline, and optimal parameters
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {/* Therapy Selection for Prediction */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold">Select Therapy for Outcome Prediction</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <Button
+                            onClick={() => handlePredictOutcome(selectedPatient.patient_id, {
+                              therapy_name: "Platelet-Rich Plasma (PRP)",
+                              dosage: "3-5ml",
+                              delivery_method: "Intra-articular injection"
+                            })}
+                            disabled={loading}
+                            className="h-20 flex flex-col bg-gradient-to-br from-blue-50 to-blue-100 text-blue-800 border-blue-200 hover:from-blue-100 hover:to-blue-200"
+                            variant="outline"
+                          >
+                            <TestTube className="h-6 w-6 mb-2" />
+                            <span>Predict PRP Outcome</span>
+                          </Button>
+                          
+                          <Button
+                            onClick={() => handlePredictOutcome(selectedPatient.patient_id, {
+                              therapy_name: "Bone Marrow Aspirate Concentrate (BMAC)",
+                              dosage: "8-12ml",
+                              delivery_method: "Ultrasound-guided injection"
+                            })}
+                            disabled={loading}
+                            className="h-20 flex flex-col bg-gradient-to-br from-green-50 to-green-100 text-green-800 border-green-200 hover:from-green-100 hover:to-green-200"
+                            variant="outline"
+                          >
+                            <Dna className="h-6 w-6 mb-2" />
+                            <span>Predict BMAC Outcome</span>
+                          </Button>
+                          
+                          <Button
+                            onClick={() => handlePredictOutcome(selectedPatient.patient_id, {
+                              therapy_name: "MSC Exosomes",
+                              dosage: "2ml",
+                              delivery_method: "Direct injection"
+                            })}
+                            disabled={loading}
+                            className="h-20 flex flex-col bg-gradient-to-br from-purple-50 to-purple-100 text-purple-800 border-purple-200 hover:from-purple-100 hover:to-purple-200"
+                            variant="outline"
+                          >
+                            <Microscope className="h-6 w-6 mb-2" />
+                            <span>Predict Exosome Outcome</span>
+                          </Button>
+                        </div>
+                      </div>
+
+                      {loading && (
+                        <div className="text-center py-8">
+                          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-600" />
+                          <p className="text-lg font-medium">Running ML Models...</p>
+                          <p className="text-sm text-slate-600">Analyzing patient data with advanced algorithms</p>
+                        </div>
+                      )}
+
+                      {/* Prediction Results */}
+                      {outcomePredictiion && (
+                        <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-purple-800">
+                              <Cpu className="h-6 w-6" />
+                              ML Prediction Results - {outcomePredictiion.therapy}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-6">
+                            {/* Success Probability */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                              <Card className="bg-white/80">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <div className="text-3xl font-bold text-green-600 mb-2">
+                                      {Math.round(outcomePredictiion.predictions.success_probability * 100)}%
+                                    </div>
+                                    <p className="text-sm text-slate-600">Success Probability</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                              
+                              <Card className="bg-white/80">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <div className="text-lg font-bold text-blue-600 mb-2">
+                                      {outcomePredictiion.predictions.expected_timeline?.most_likely || "4-8 weeks"}
+                                    </div>
+                                    <p className="text-sm text-slate-600">Expected Response Time</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                              
+                              <Card className="bg-white/80">
+                                <CardContent className="pt-6">
+                                  <div className="text-center">
+                                    <div className="text-lg font-bold text-purple-600 mb-2">
+                                      v{outcomePredictiion.model_version}
+                                    </div>
+                                    <p className="text-sm text-slate-600">Model Version</p>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </div>
+
+                            {/* Timeline Breakdown */}
+                            {outcomePredictiion.predictions.expected_timeline?.category_probabilities && (
+                              <div className="space-y-3">
+                                <h4 className="font-semibold">Response Timeline Probabilities:</h4>
+                                {Object.entries(outcomePredictiion.predictions.expected_timeline.category_probabilities).map(([category, probability]) => (
+                                  <div key={category} className="flex items-center justify-between">
+                                    <span className="text-sm capitalize">{category}</span>
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-32 bg-gray-200 rounded-full h-2">
+                                        <div 
+                                          className="bg-blue-600 h-2 rounded-full" 
+                                          style={{width: `${probability * 100}%`}}
+                                        ></div>
+                                      </div>
+                                      <span className="text-sm font-medium">{Math.round(probability * 100)}%</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Risk Assessment */}
+                            {outcomePredictiion.risk_assessment && (
+                              <div className="space-y-3">
+                                <h4 className="font-semibold">Risk Assessment:</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  {outcomePredictiion.risk_assessment.low_risk?.length > 0 && (
+                                    <div className="bg-green-50 p-3 rounded-lg">
+                                      <h5 className="font-medium text-green-800 mb-2">Low Risk Factors</h5>
+                                      <ul className="text-sm text-green-700 space-y-1">
+                                        {outcomePredictiion.risk_assessment.low_risk.map((risk, i) => (
+                                          <li key={i}>• {risk}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  
+                                  {outcomePredictiion.risk_assessment.moderate_risk?.length > 0 && (
+                                    <div className="bg-yellow-50 p-3 rounded-lg">
+                                      <h5 className="font-medium text-yellow-800 mb-2">Moderate Risk Factors</h5>
+                                      <ul className="text-sm text-yellow-700 space-y-1">
+                                        {outcomePredictiion.risk_assessment.moderate_risk.map((risk, i) => (
+                                          <li key={i}>• {risk}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  
+                                  {outcomePredictiion.risk_assessment.high_risk?.length > 0 && (
+                                    <div className="bg-red-50 p-3 rounded-lg">
+                                      <h5 className="font-medium text-red-800 mb-2">High Risk Factors</h5>
+                                      <ul className="text-sm text-red-700 space-y-1">
+                                        {outcomePredictiion.risk_assessment.high_risk.map((risk, i) => (
+                                          <li key={i}>• {risk}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* AI Recommendations */}
+                            {outcomePredictiion.recommendations && (
+                              <div className="bg-blue-50 p-4 rounded-lg">
+                                <h4 className="font-semibold text-blue-800 mb-3">ML-Generated Recommendations:</h4>
+                                <ul className="space-y-2">
+                                  {outcomePredictiion.recommendations.map((rec, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-blue-700">
+                                      <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                      <span className="text-sm">{rec}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                <CardContent className="text-center py-12">
+                  <BarChart3 className="h-16 w-16 mx-auto text-slate-400 mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No Patient Selected</h3>
+                  <p className="text-slate-600">
+                    Select a patient to generate ML-powered outcome predictions.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Advanced Imaging AI Tab */}
+          <TabsContent value="imaging-ai" className="space-y-6">
+            <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Image className="h-5 w-5 text-indigo-600" />
+                  AI-Powered Medical Imaging Analysis
+                </CardTitle>
+                <CardDescription>
+                  Advanced DICOM processing with regenerative medicine insights
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Imaging Modality Support */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                    <CardContent className="p-4 text-center">
+                      <Monitor className="h-8 w-8 mx-auto mb-3 text-blue-600" />
+                      <h4 className="font-semibold text-blue-800">MRI Analysis</h4>
+                      <p className="text-sm text-blue-600 mt-2">Cartilage segmentation, tissue analysis</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                    <CardContent className="p-4 text-center">
+                      <Layers className="h-8 w-8 mx-auto mb-3 text-green-600" />
+                      <h4 className="font-semibold text-green-800">CT Imaging</h4>
+                      <p className="text-sm text-green-600 mt-2">Bone density, structural analysis</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                    <CardContent className="p-4 text-center">
+                      <Zap className="h-8 w-8 mx-auto mb-3 text-purple-600" />
+                      <h4 className="font-semibold text-purple-800">X-Ray AI</h4>
+                      <p className="text-sm text-purple-600 mt-2">Joint space, osteoarthritis grading</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                    <CardContent className="p-4 text-center">
+                      <Activity className="h-8 w-8 mx-auto mb-3 text-orange-600" />
+                      <h4 className="font-semibold text-orange-800">Ultrasound</h4>
+                      <p className="text-sm text-orange-600 mt-2">Injection guidance, soft tissue</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* AI Capabilities */}
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-4">Advanced AI Imaging Capabilities</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-indigo-800">Regenerative Medicine Analysis</h4>
+                      <ul className="text-sm space-y-1">
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Cartilage volume quantification</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Injection target identification</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Tissue viability assessment</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Treatment candidacy scoring</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-purple-800">Clinical Integration</h4>
+                      <ul className="text-sm space-y-1">
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Automated reporting</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Treatment recommendation</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Progress monitoring</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>Outcome prediction</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload Interface */}
+                <Card className="border-2 border-dashed border-slate-300 bg-slate-50">
+                  <CardContent className="p-8 text-center">
+                    <Upload className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                    <h3 className="text-lg font-semibold mb-2">Upload DICOM Images</h3>
+                    <p className="text-slate-600 mb-4">
+                      Drag and drop DICOM files or click to browse
+                    </p>
+                    <Button className="bg-indigo-600 hover:bg-indigo-700">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Select DICOM Files
+                    </Button>
+                  </CardContent>
+                </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Literature Integration Tab */}
+          <TabsContent value="literature" className="space-y-6">
+            <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-green-600" />
+                  Real-Time Literature Integration
+                </CardTitle>
+                <CardDescription>
+                  Live PubMed monitoring and evidence synthesis for regenerative medicine
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Literature Status */}
+                {literatureUpdates && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card className="bg-gradient-to-br from-green-50 to-emerald-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-green-600 mb-1">
+                          {literatureUpdates.processing_result?.new_papers_processed || 0}
+                        </div>
+                        <p className="text-sm text-green-700">New Papers Today</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                          {literatureUpdates.total_papers_in_database || 0}
+                        </div>
+                        <p className="text-sm text-blue-700">Total Papers</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-purple-600 mb-1">
+                          <Rss className="h-6 w-6 mx-auto" />
+                        </div>
+                        <p className="text-sm text-purple-700">Live Monitoring</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Recent Papers */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Search className="h-5 w-5" />
+                    Recent High-Impact Publications
+                  </h3>
+                  
+                  {literatureUpdates?.recent_papers?.slice(0, 5).map((paper, index) => (
+                    <Card key={index} className="hover:shadow-md transition-shadow">
+                      <CardContent className="pt-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="space-y-2 flex-1">
+                            <h4 className="font-semibold text-slate-800 leading-tight">
+                              {paper.title}
+                            </h4>
+                            <div className="flex items-center gap-4 text-sm text-slate-600">
+                              <span>{paper.journal}</span>
+                              <span>{paper.authors?.slice(0, 3).join(", ")}
+                                {paper.authors?.length > 3 && " et al."}
+                              </span>
+                              <span>{new Date(paper.publication_date).getFullYear()}</span>
+                            </div>
+                            <p className="text-sm text-slate-700 line-clamp-2">
+                              {paper.abstract}
+                            </p>
+                          </div>
+                          <div className="ml-4 text-center">
+                            <Badge className={`${getConfidenceColor(paper.relevance_score)} mb-2`}>
+                              {Math.round(paper.relevance_score * 100)}%
+                            </Badge>
+                            <p className="text-xs text-slate-500">Relevance</p>
+                          </div>
+                        </div>
+                        
+                        {/* Keywords */}
+                        <div className="flex flex-wrap gap-1">
+                          {paper.regenerative_keywords?.slice(0, 5).map((keyword, i) => (
+                            <Badge key={i} variant="outline" className="text-xs">
+                              {keyword}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )) || (
+                    <div className="text-center py-8 text-slate-500">
+                      <CloudDownload className="h-12 w-12 mx-auto mb-3" />
+                      <p>Loading latest publications...</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Search Interface */}
+                <Card className="bg-gradient-to-r from-slate-50 to-blue-50">
+                  <CardContent className="p-6">
+                    <h4 className="font-semibold mb-3">Search Literature Database</h4>
+                    <div className="flex gap-3">
+                      <Input
+                        placeholder="Search regenerative medicine literature..."
+                        className="flex-1"
+                      />
+                      <Button>
+                        <Search className="h-4 w-4 mr-2" />
+                        Search
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Federated Learning Tab */}
+          <TabsContent value="federated-learning" className="space-y-6">
+            <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Network className="h-5 w-5 text-blue-600" />
+                  Federated Learning & Continuous Improvement
+                </CardTitle>
+                <CardDescription>
+                  Privacy-preserving collaborative learning across regenerative medicine practices
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Global Model Status */}
+                {federatedLearningStatus && (
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                          {federatedLearningStatus.model_version || 1}
+                        </div>
+                        <p className="text-sm text-blue-700">Model Version</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-green-50 to-green-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-green-600 mb-1">
+                          {federatedLearningStatus.participants || 0}
+                        </div>
+                        <p className="text-sm text-green-700">Active Participants</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-bold text-purple-600 mb-1">
+                          {Math.round((federatedLearningStatus.performance_improvement || 0.05) * 100)}%
+                        </div>
+                        <p className="text-sm text-purple-700">Performance Gain</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-orange-50 to-orange-100">
+                      <CardContent className="p-4 text-center">
+                        <div className="flex items-center justify-center mb-1">
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                          <span className="text-sm font-semibold text-orange-600">LIVE</span>
+                        </div>
+                        <p className="text-sm text-orange-700">System Status</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Federated Learning Benefits */}
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <GitBranch className="h-5 w-5" />
+                    Privacy-Preserving Collaborative Learning
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-blue-800">Security Features</h4>
+                      <ul className="text-sm space-y-2">
+                        <li className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-green-500" />
+                          <span>Differential privacy protection</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-green-500" />
+                          <span>No patient data leaves your clinic</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-green-500" />
+                          <span>Encrypted model updates only</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-green-500" />
+                          <span>HIPAA compliant architecture</span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-purple-800">Learning Benefits</h4>
+                      <ul className="text-sm space-y-2">
+                        <li className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-500" />
+                          <span>Continuous model improvement</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-500" />
+                          <span>Global knowledge aggregation</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-500" />
+                          <span>Rare case pattern recognition</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-500" />
+                          <span>Personalized recommendations</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Participation Controls */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Participation Controls</CardTitle>
+                    <CardDescription>
+                      Manage your clinic's contribution to federated learning
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium text-green-800">Federated Learning Status</h4>
+                        <p className="text-sm text-green-600">Your clinic is actively contributing to global knowledge</p>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800">
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        Active
+                      </Badge>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <Button variant="outline" className="h-12">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Privacy Settings
+                      </Button>
+                      <Button variant="outline" className="h-12">
+                        <BarChart3 className="mr-2 h-4 w-4" />
+                        Contribution Metrics
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Knowledge Base Tab */}
           <TabsContent value="knowledge-base" className="space-y-6">
             <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
