@@ -390,6 +390,233 @@ class RegenMedAIProTester:
             print(f"   Satisfaction Score: {response.get('satisfaction_score', 'Unknown')}")
         return success
 
+    # ========== ADVANCED AI FEATURES TESTING ==========
+
+    def test_advanced_system_status(self):
+        """Test comprehensive advanced system status"""
+        success, response = self.run_test(
+            "Advanced System Status & Health",
+            "GET",
+            "advanced/system-status",
+            200
+        )
+        
+        if success:
+            services = response.get('services', {})
+            db_stats = response.get('database_stats', {})
+            
+            print(f"   Federated Learning: {services.get('federated_learning', {}).get('status', 'unknown')}")
+            print(f"   Literature Integration: {services.get('literature_integration', {}).get('status', 'unknown')}")
+            print(f"   DICOM Processing: {services.get('dicom_processing', {}).get('status', 'unknown')}")
+            print(f"   Outcome Prediction: {services.get('outcome_prediction', {}).get('status', 'unknown')}")
+            
+            print(f"   Total Patients: {db_stats.get('total_patients', 0)}")
+            print(f"   Total Protocols: {db_stats.get('total_protocols', 0)}")
+            print(f"   Literature Papers: {db_stats.get('literature_papers', 0)}")
+            print(f"   Federated Participants: {db_stats.get('federated_participants', 0)}")
+        return success
+
+    def test_federated_register_clinic(self):
+        """Test federated learning clinic registration"""
+        clinic_data = {
+            "total_patients": 150,
+            "avg_age": 58.5,
+            "therapy_distribution": {
+                "prp": 0.4,
+                "bmac": 0.3,
+                "exosomes": 0.3
+            },
+            "outcomes": [
+                {"therapy": "prp", "success_rate": 0.85},
+                {"therapy": "bmac", "success_rate": 0.82}
+            ]
+        }
+
+        success, response = self.run_test(
+            "Register Clinic for Federated Learning",
+            "POST",
+            "federated/register-clinic",
+            200,
+            data=clinic_data
+        )
+        
+        if success:
+            print(f"   Registration Status: {response.get('status', 'unknown')}")
+            print(f"   Clinic ID: {response.get('clinic_id', 'unknown')}")
+            print(f"   Privacy Level: {response.get('privacy_level', 'unknown')}")
+        return success
+
+    def test_federated_global_model_status(self):
+        """Test global federated learning model status"""
+        success, response = self.run_test(
+            "Global Federated Model Status",
+            "GET",
+            "federated/global-model-status",
+            200
+        )
+        
+        if success:
+            print(f"   Model Version: {response.get('model_version', 'unknown')}")
+            print(f"   Participants: {response.get('participants', 0)}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            print(f"   Performance Improvement: {response.get('performance_improvement', 0):.3f}")
+        return success
+
+    def test_literature_latest_updates(self):
+        """Test latest literature updates from PubMed integration"""
+        success, response = self.run_test(
+            "Latest Literature Updates",
+            "GET",
+            "literature/latest-updates",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            processing_result = response.get('processing_result', {})
+            recent_papers = response.get('recent_papers', [])
+            
+            print(f"   Processing Status: {processing_result.get('status', 'unknown')}")
+            print(f"   Recent Papers Found: {len(recent_papers)}")
+            print(f"   Total Papers in DB: {response.get('total_papers_in_database', 0)}")
+            
+            if recent_papers:
+                first_paper = recent_papers[0]
+                print(f"   Sample Paper: {first_paper.get('title', 'Unknown')[:50]}...")
+        return success
+
+    def test_literature_search(self):
+        """Test literature database search functionality"""
+        success, response = self.run_test(
+            "Search Literature Database",
+            "GET",
+            "literature/search?query=regenerative%20medicine&limit=10",
+            200
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            print(f"   Query: {response.get('query', 'unknown')}")
+            print(f"   Results Found: {response.get('results_found', 0)}")
+            print(f"   Papers Returned: {len(papers)}")
+            
+            if papers:
+                first_paper = papers[0]
+                print(f"   Top Result: {first_paper.get('title', 'Unknown')[:50]}...")
+                print(f"   Relevance Score: {first_paper.get('relevance_score', 0):.2f}")
+        return success
+
+    def test_prediction_model_performance(self):
+        """Test ML prediction model performance metrics"""
+        success, response = self.run_test(
+            "ML Model Performance Metrics",
+            "GET",
+            "predictions/model-performance",
+            200
+        )
+        
+        if success:
+            models = response.get('models', {})
+            print(f"   Models Available: {len(models)}")
+            print(f"   Total Predictions Made: {response.get('total_predictions', 0)}")
+            
+            for model_name, model_data in list(models.items())[:3]:  # Show first 3 models
+                performance = model_data.get('performance', {})
+                print(f"   Model '{model_name}': {model_data.get('model_type', 'unknown')} - Accuracy: {performance.get('accuracy', 0):.3f}")
+        return success
+
+    def test_treatment_outcome_prediction(self):
+        """Test ML treatment outcome prediction"""
+        if not self.patient_id:
+            print("❌ No patient ID available for outcome prediction testing")
+            return False
+
+        prediction_request = {
+            "patient_id": self.patient_id,
+            "therapy_plan": {
+                "therapy_name": "Platelet-Rich Plasma (PRP)",
+                "dosage": "3-5ml",
+                "delivery_method": "Intra-articular injection",
+                "target_location": "bilateral knees"
+            }
+        }
+
+        success, response = self.run_test(
+            "ML Treatment Outcome Prediction",
+            "POST",
+            "predictions/treatment-outcome",
+            200,
+            data=prediction_request,
+            timeout=45
+        )
+        
+        if success:
+            predictions = response.get('predictions', {})
+            print(f"   Success Probability: {predictions.get('success_probability', 0):.2f}")
+            print(f"   Expected Timeline: {predictions.get('expected_timeline', {}).get('most_likely', 'unknown')}")
+            print(f"   Model Version: {response.get('model_version', 'unknown')}")
+            
+            risk_assessment = response.get('risk_assessment', {})
+            if risk_assessment:
+                print(f"   Risk Factors - Low: {len(risk_assessment.get('low_risk', []))}, Moderate: {len(risk_assessment.get('moderate_risk', []))}, High: {len(risk_assessment.get('high_risk', []))}")
+        return success
+
+    def test_dicom_analysis_simulation(self):
+        """Test DICOM image analysis (simulated)"""
+        if not self.patient_id:
+            print("❌ No patient ID available for DICOM testing")
+            return False
+
+        # Simulate DICOM data (base64 encoded placeholder)
+        import base64
+        simulated_dicom = base64.b64encode(b"SIMULATED_DICOM_DATA_FOR_TESTING").decode()
+        
+        dicom_data = {
+            "patient_id": self.patient_id,
+            "modality": "MRI",
+            "dicom_data": simulated_dicom,
+            "study_description": "Bilateral knee MRI for regenerative medicine assessment"
+        }
+
+        success, response = self.run_test(
+            "DICOM Image Analysis (AI-Powered)",
+            "POST",
+            "imaging/analyze-dicom",
+            200,
+            data=dicom_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Processing ID: {response.get('processing_id', 'unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'unknown')}")
+            print(f"   Modality Processed: {response.get('modality', 'unknown')}")
+            
+            findings = response.get('findings', {})
+            if findings:
+                print(f"   AI Findings: {len(findings)} detected")
+        return success
+
+    def test_imaging_analysis_history(self):
+        """Test imaging analysis history retrieval"""
+        if not self.patient_id:
+            print("❌ No patient ID available for imaging history testing")
+            return False
+
+        success, response = self.run_test(
+            "Imaging Analysis History",
+            "GET",
+            f"imaging/analysis-history/{self.patient_id}",
+            200
+        )
+        
+        if success:
+            analyses = response.get('analyses', [])
+            print(f"   Patient ID: {response.get('patient_id', 'unknown')}")
+            print(f"   Total Analyses: {response.get('total_analyses', 0)}")
+            print(f"   Analyses Returned: {len(analyses)}")
+        return success
+
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
     print("Advanced Regenerative Medicine Knowledge Platform")
