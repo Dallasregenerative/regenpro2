@@ -367,30 +367,42 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 bg-white/80 backdrop-blur-sm shadow-sm">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <ChartBar className="h-4 w-4" />
+          <TabsList className="grid w-full grid-cols-9 bg-white/80 backdrop-blur-sm shadow-sm text-xs">
+            <TabsTrigger value="dashboard" className="flex items-center gap-1">
+              <ChartBar className="h-3 w-3" />
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="patient-input" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
+            <TabsTrigger value="patient-input" className="flex items-center gap-1">
+              <User className="h-3 w-3" />
               Patient Input
             </TabsTrigger>
-            <TabsTrigger value="patient-analysis" className="flex items-center gap-2">
-              <Brain className="h-4 w-4" />
+            <TabsTrigger value="patient-analysis" className="flex items-center gap-1">
+              <Brain className="h-3 w-3" />
               AI Analysis
             </TabsTrigger>
-            <TabsTrigger value="protocol-generation" className="flex items-center gap-2">
-              <Pill className="h-4 w-4" />
+            <TabsTrigger value="protocol-generation" className="flex items-center gap-1">
+              <Pill className="h-3 w-3" />
               Protocol Gen
             </TabsTrigger>
-            <TabsTrigger value="knowledge-base" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Knowledge Base
+            <TabsTrigger value="outcome-prediction" className="flex items-center gap-1">
+              <BarChart3 className="h-3 w-3" />
+              ML Prediction
             </TabsTrigger>
-            <TabsTrigger value="patients" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Patient Records
+            <TabsTrigger value="imaging-ai" className="flex items-center gap-1">
+              <Image className="h-3 w-3" />
+              Imaging AI
+            </TabsTrigger>
+            <TabsTrigger value="literature" className="flex items-center gap-1">
+              <BookOpen className="h-3 w-3" />
+              Literature
+            </TabsTrigger>
+            <TabsTrigger value="federated-learning" className="flex items-center gap-1">
+              <Network className="h-3 w-3" />
+              Fed Learning
+            </TabsTrigger>
+            <TabsTrigger value="patients" className="flex items-center gap-1">
+              <FileText className="h-3 w-3" />
+              Records
             </TabsTrigger>
           </TabsList>
 
