@@ -208,6 +208,91 @@ function App() {
     }
   };
 
+  const handleFileUpload = async (files, category, patientId) => {
+    if (!patientId) {
+      alert("Please select a patient first");
+      return;
+    }
+
+    setIsUploading(true);
+    
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('patient_id', patientId);
+        formData.append('file_category', category);
+
+        const response = await axios.post(`${API}/files/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer demo-token`
+          }
+        });
+
+        return response.data;
+      });
+
+      const results = await Promise.all(uploadPromises);
+      
+      // Reload files for the patient
+      await loadPatientFiles(patientId);
+      
+      alert(`Successfully uploaded ${results.length} file(s)`);
+      
+    } catch (error) {
+      console.error("File upload failed:", error);
+      alert("File upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const loadPatientFiles = async (patientId) => {
+    try {
+      const response = await axios.get(`${API}/files/patient/${patientId}`, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setUploadedFiles(response.data.uploaded_files || []);
+    } catch (error) {
+      console.error("Failed to load patient files:", error);
+    }
+  };
+
+  const loadComprehensiveAnalysis = async (patientId) => {
+    try {
+      const response = await axios.get(`${API}/files/comprehensive-analysis/${patientId}`, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setComprehensiveAnalysis(response.data.comprehensive_analysis);
+    } catch (error) {
+      console.error("Failed to load comprehensive analysis:", error);
+    }
+  };
+
+  const generateFileBasedProtocol = async (patientId, school) => {
+    setLoading(true);
+    
+    try {
+      const response = await axios.post(`${API}/protocols/generate-from-files`, {
+        patient_id: patientId,
+        school_of_thought: school
+      }, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      
+      setGeneratedProtocol(response.data.protocol);
+      
+      alert(`Generated enhanced protocol using ${response.data.file_insights_used} files`);
+      
+    } catch (error) {
+      console.error("File-based protocol generation failed:", error);
+      alert("Protocol generation failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loadFederatedLearningStatus = async () => {
     try {
       const response = await axios.get(`${API}/federated/global-model-status`, {
