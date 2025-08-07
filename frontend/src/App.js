@@ -1202,13 +1202,13 @@ function App() {
                     </div>
 
                     {/* Upload Progress */}
-                    {fileUpload.uploading && (
+                    {isUploading && (
                       <Card className="bg-yellow-50 border-yellow-200">
                         <CardContent className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600"></div>
                             <span className="text-sm text-yellow-800">
-                              Uploading {fileUpload.fileName}... AI analysis in progress
+                              Uploading files... AI analysis in progress
                             </span>
                           </div>
                         </CardContent>
@@ -1216,27 +1216,27 @@ function App() {
                     )}
 
                     {/* Uploaded Files Summary */}
-                    {fileUpload.uploadedFiles.length > 0 && (
+                    {uploadedFiles.length > 0 && (
                       <Card className="bg-green-50 border-green-200">
                         <CardHeader className="pb-3">
                           <CardTitle className="text-sm text-green-800">
-                            Uploaded Files ({fileUpload.uploadedFiles.length})
+                            Uploaded Files ({uploadedFiles.length})
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
                           <div className="space-y-2">
-                            {fileUpload.uploadedFiles.map((file, index) => (
+                            {uploadedFiles.map((file, index) => (
                               <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
                                 <div className="flex items-center gap-2">
                                   <div className={`w-2 h-2 rounded-full ${
-                                    file.category === 'labs' ? 'bg-green-500' :
-                                    file.category === 'genetics' ? 'bg-purple-500' :
-                                    file.category === 'imaging' ? 'bg-orange-500' :
+                                    file.file_category === 'labs' ? 'bg-green-500' :
+                                    file.file_category === 'genetics' ? 'bg-purple-500' :
+                                    file.file_category === 'imaging' ? 'bg-orange-500' :
                                     'bg-blue-500'
                                   }`}></div>
-                                  <span className="text-sm font-medium">{file.fileName}</span>
+                                  <span className="text-sm font-medium">{file.file_name}</span>
                                   <Badge variant="secondary" className="text-xs">
-                                    {file.category}
+                                    {file.file_category}
                                   </Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -1255,7 +1255,7 @@ function App() {
                     )}
 
                     {/* Generate File-Based Protocol */}
-                    {fileUpload.uploadedFiles.length > 0 && (
+                    {uploadedFiles.length > 0 && (
                       <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
@@ -1271,7 +1271,7 @@ function App() {
                               </div>
                             </div>
                             <Button 
-                              onClick={generateFileBasedProtocol}
+                              onClick={() => generateFileBasedProtocol()}
                               className="bg-purple-600 hover:bg-purple-700"
                               disabled={loading}
                             >
