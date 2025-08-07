@@ -569,6 +569,7 @@ federated_service = None
 pubmed_service = None
 dicom_service = None
 prediction_service = None
+file_processor = None
 
 # Simple auth function for demo
 async def get_current_practitioner(credentials: HTTPAuthorizationCredentials = Depends(security)):
