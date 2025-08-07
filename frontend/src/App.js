@@ -455,7 +455,7 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9 bg-white/80 backdrop-blur-sm shadow-sm text-xs">
+          <TabsList className="grid w-full grid-cols-10 bg-white/80 backdrop-blur-sm shadow-sm text-xs">
             <TabsTrigger value="dashboard" className="flex items-center gap-1">
               <ChartBar className="h-3 w-3" />
               Dashboard
@@ -463,6 +463,10 @@ function App() {
             <TabsTrigger value="patient-input" className="flex items-center gap-1">
               <User className="h-3 w-3" />
               Patient Input
+            </TabsTrigger>
+            <TabsTrigger value="file-upload" className="flex items-center gap-1">
+              <Upload className="h-3 w-3" />
+              File Upload
             </TabsTrigger>
             <TabsTrigger value="patient-analysis" className="flex items-center gap-1">
               <Brain className="h-3 w-3" />
