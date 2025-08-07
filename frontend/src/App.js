@@ -1030,6 +1030,272 @@ function App() {
             )}
           </TabsContent>
 
+          {/* File Upload Tab */}
+          <TabsContent value="file-upload" className="space-y-6">
+            {selectedPatient ? (
+              <>
+                <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                      Multi-Modal File Upload & Analysis
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Upload patient data for comprehensive AI analysis: laboratory results, genetic tests, medical imaging, and clinical charts
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Patient Selection Display */}
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <User className="h-4 w-4" />
+                        <span className="font-medium">Selected Patient:</span>
+                        <span>{selectedPatient.name} (ID: {selectedPatient.patient_id?.slice(0, 8)}...)</span>
+                      </div>
+                    </div>
+
+                    {/* File Upload Categories */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {/* Laboratory Results */}
+                      <Card className="border-2 border-dashed border-green-300 hover:border-green-400 transition-colors">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm flex items-center gap-2 text-green-700">
+                            <Activity className="h-4 w-4" />
+                            Laboratory Results
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="text-xs text-muted-foreground mb-3">
+                            CBC, metabolic panel, inflammatory markers, growth factors
+                          </div>
+                          <input
+                            type="file"
+                            id="labs-upload"
+                            className="hidden"
+                            accept=".json,.csv,.pdf,.txt"
+                            onChange={(e) => handleFileUpload(e, 'labs')}
+                          />
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full text-green-700 border-green-200 hover:bg-green-50"
+                            onClick={() => document.getElementById('labs-upload').click()}
+                          >
+                            <Upload className="h-3 w-3 mr-1" />
+                            Upload Labs
+                          </Button>
+                          <div className="text-xs text-muted-foreground mt-2">
+                            JSON, CSV, PDF, TXT
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Genetic Testing */}
+                      <Card className="border-2 border-dashed border-purple-300 hover:border-purple-400 transition-colors">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm flex items-center gap-2 text-purple-700">
+                            <Dna className="h-4 w-4" />
+                            Genetic Testing
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="text-xs text-muted-foreground mb-3">
+                            Pharmacogenomics, sports medicine variants, healing factors
+                          </div>
+                          <input
+                            type="file"
+                            id="genetics-upload"
+                            className="hidden"
+                            accept=".vcf,.json,.csv,.txt"
+                            onChange={(e) => handleFileUpload(e, 'genetics')}
+                          />
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full text-purple-700 border-purple-200 hover:bg-purple-50"
+                            onClick={() => document.getElementById('genetics-upload').click()}
+                          >
+                            <Upload className="h-3 w-3 mr-1" />
+                            Upload Genetics
+                          </Button>
+                          <div className="text-xs text-muted-foreground mt-2">
+                            VCF, JSON, CSV, TXT
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Medical Imaging */}
+                      <Card className="border-2 border-dashed border-orange-300 hover:border-orange-400 transition-colors">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm flex items-center gap-2 text-orange-700">
+                            <Scan className="h-4 w-4" />
+                            Medical Imaging
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="text-xs text-muted-foreground mb-3">
+                            DICOM files, MRI/CT/X-ray images, radiology reports
+                          </div>
+                          <input
+                            type="file"
+                            id="imaging-upload"
+                            className="hidden"
+                            accept=".dcm,.jpg,.jpeg,.png,.pdf,.txt"
+                            onChange={(e) => handleFileUpload(e, 'imaging')}
+                          />
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full text-orange-700 border-orange-200 hover:bg-orange-50"
+                            onClick={() => document.getElementById('imaging-upload').click()}
+                          >
+                            <Upload className="h-3 w-3 mr-1" />
+                            Upload Imaging
+                          </Button>
+                          <div className="text-xs text-muted-foreground mt-2">
+                            DICOM, JPG, PNG, PDF
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Patient Charts */}
+                      <Card className="border-2 border-dashed border-blue-300 hover:border-blue-400 transition-colors">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm flex items-center gap-2 text-blue-700">
+                            <FileText className="h-4 w-4" />
+                            Patient Charts
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="text-xs text-muted-foreground mb-3">
+                            Clinical notes, medical records, consultation reports
+                          </div>
+                          <input
+                            type="file"
+                            id="chart-upload"
+                            className="hidden"
+                            accept=".pdf,.docx,.doc,.txt"
+                            onChange={(e) => handleFileUpload(e, 'chart')}
+                          />
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full text-blue-700 border-blue-200 hover:bg-blue-50"
+                            onClick={() => document.getElementById('chart-upload').click()}
+                          >
+                            <Upload className="h-3 w-3 mr-1" />
+                            Upload Charts
+                          </Button>
+                          <div className="text-xs text-muted-foreground mt-2">
+                            PDF, DOCX, DOC, TXT
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Upload Progress */}
+                    {fileUpload.uploading && (
+                      <Card className="bg-yellow-50 border-yellow-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600"></div>
+                            <span className="text-sm text-yellow-800">
+                              Uploading {fileUpload.fileName}... AI analysis in progress
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Uploaded Files Summary */}
+                    {fileUpload.uploadedFiles.length > 0 && (
+                      <Card className="bg-green-50 border-green-200">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-sm text-green-800">
+                            Uploaded Files ({fileUpload.uploadedFiles.length})
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="space-y-2">
+                            {fileUpload.uploadedFiles.map((file, index) => (
+                              <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-2 h-2 rounded-full ${
+                                    file.category === 'labs' ? 'bg-green-500' :
+                                    file.category === 'genetics' ? 'bg-purple-500' :
+                                    file.category === 'imaging' ? 'bg-orange-500' :
+                                    'bg-blue-500'
+                                  }`}></div>
+                                  <span className="text-sm font-medium">{file.fileName}</span>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {file.category}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant={file.status === 'processed' ? 'default' : 'destructive'} className="text-xs">
+                                    {file.status}
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground">
+                                    {file.confidence_score ? `${Math.round(file.confidence_score * 100)}%` : ''}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Generate File-Based Protocol */}
+                    {fileUpload.uploadedFiles.length > 0 && (
+                      <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Sparkles className="h-5 w-5 text-purple-600" />
+                              <div>
+                                <div className="font-medium text-purple-900">
+                                  Enhanced AI Protocol Generation
+                                </div>
+                                <div className="text-sm text-purple-700">
+                                  Generate protocols using uploaded multi-modal data
+                                </div>
+                              </div>
+                            </div>
+                            <Button 
+                              onClick={generateFileBasedProtocol}
+                              className="bg-purple-600 hover:bg-purple-700"
+                              disabled={loading}
+                            >
+                              {loading ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                              ) : (
+                                <Zap className="h-4 w-4 mr-2" />
+                              )}
+                              Generate Enhanced Protocol
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                <CardContent className="flex flex-col items-center justify-center py-16">
+                  <User className="h-16 w-16 text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold text-muted-foreground mb-2">
+                    Select a Patient First
+                  </h3>
+                  <p className="text-muted-foreground text-center">
+                    Please select a patient from the Patient Records tab to upload and analyze their medical files.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
           {/* Protocol Generation Tab */}
           <TabsContent value="protocol-generation" className="space-y-6">
             {selectedPatient ? (
