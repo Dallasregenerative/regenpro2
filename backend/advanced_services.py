@@ -767,6 +767,74 @@ class OutcomePredictionService:
         
         return {"model": "timeline_predictor", "accuracy": accuracy}
 
+    async def _train_dosage_optimization_model(self):
+        """Train model for optimal dosage recommendations"""
+        
+        # Generate synthetic dosage optimization data
+        training_data = self._generate_dosage_training_data()
+        
+        X = training_data["features"]
+        y = training_data["optimal_dosages"]
+        
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        
+        # Scale features
+        dosage_scaler = StandardScaler()
+        X_train_scaled = dosage_scaler.fit_transform(X_train)
+        X_test_scaled = dosage_scaler.transform(X_test)
+        
+        # Train Random Forest for dosage optimization
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model.fit(X_train_scaled, y_train)
+        
+        # Evaluate
+        predictions = model.predict(X_test_scaled)
+        mse = mean_squared_error(y_test, predictions)
+        
+        self.models["dosage_optimizer"] = {
+            "model": model,
+            "scaler": dosage_scaler,
+            "performance": {"mse": mse, "accuracy": 1 - mse},
+            "features": ["age", "weight", "severity", "therapy_type", "previous_response"]
+        }
+        
+        return {"model": "dosage_optimizer", "mse": mse}
+
+    def _generate_dosage_training_data(self) -> Dict:
+        """Generate synthetic dosage optimization training data"""
+        
+        n_samples = 800
+        
+        features = []
+        optimal_dosages = []
+        
+        for _ in range(n_samples):
+            age = np.random.normal(50, 20)
+            weight = np.random.normal(70, 15)  # kg
+            severity = np.random.uniform(1, 5)
+            therapy_type = np.random.choice([0, 1, 2])  # PRP, BMAC, Exosomes
+            previous_response = np.random.uniform(0, 1)  # 0=no response, 1=excellent
+            
+            feature_vector = [age, weight, severity, therapy_type, previous_response]
+            features.append(feature_vector)
+            
+            # Calculate optimal dosage based on features
+            base_dosage = 1.0
+            dosage_modifier = (
+                (weight / 70) * 0.3 +  # Weight adjustment
+                severity * 0.2 +  # Severity adjustment
+                (therapy_type + 1) * 0.1 +  # Therapy type adjustment
+                (1 - previous_response) * 0.2  # Previous response adjustment
+            )
+            
+            optimal_dosage = max(0.5, min(3.0, base_dosage + dosage_modifier))
+            optimal_dosages.append(optimal_dosage)
+        
+        return {
+            "features": np.array(features),
+            "optimal_dosages": np.array(optimal_dosages)
+        }
+
     async def predict_treatment_outcome(self, patient_data: Dict, therapy_plan: Dict) -> Dict:
         """Predict treatment outcome for specific patient and therapy"""
         
