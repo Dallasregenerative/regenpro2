@@ -430,6 +430,80 @@ function App() {
     }
   };
 
+  // File upload functions
+  const handleFileUpload = async (event, category) => {
+    const file = event.target.files[0];
+    if (!file || !selectedPatient) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('patient_id', selectedPatient.patient_id);
+    formData.append('file_category', category);
+
+    setFileUpload(prev => ({
+      ...prev,
+      uploading: true,
+      fileName: file.name
+    }));
+
+    try {
+      const response = await axios.post(`${API}/files/upload`, formData, {
+        headers: {
+          Authorization: `Bearer demo-token`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      if (response.data.status === 'processed') {
+        setFileUpload(prev => ({
+          ...prev,
+          uploading: false,
+          fileName: '',
+          uploadedFiles: [...prev.uploadedFiles, {
+            fileName: file.name,
+            category: category,
+            fileId: response.data.file_id,
+            status: response.data.status,
+            confidence_score: response.data.confidence_score
+          }]
+        }));
+        
+        // Show success message
+        alert(`File uploaded and processed successfully! Confidence: ${Math.round(response.data.confidence_score * 100)}%`);
+      }
+    } catch (error) {
+      console.error('File upload error:', error);
+      setFileUpload(prev => ({
+        ...prev,
+        uploading: false,
+        fileName: ''
+      }));
+      alert('File upload failed. Please try again.');
+    }
+  };
+
+  const generateFileBasedProtocol = async () => {
+    if (!selectedPatient || fileUpload.uploadedFiles.length === 0) return;
+    
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API}/protocols/generate-from-files?patient_id=${selectedPatient.patient_id}&school_of_thought=${selectedSchool}`, {}, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      
+      if (response.data.protocol) {
+        setGeneratedProtocol(response.data);
+        setActiveTab('protocol-generation');
+        alert('Enhanced file-based protocol generated successfully!');
+      }
+    } catch (error) {
+      console.error('File-based protocol generation error:', error);
+      alert('Protocol generation failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Advanced Header */}
