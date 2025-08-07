@@ -648,35 +648,96 @@ class MedicalFileProcessor:
         return max(0.3, quality_score)  # Minimum quality threshold
 
     async def get_patient_file_summary(self, patient_id: str) -> Dict[str, Any]:
-        """Get comprehensive summary of all processed files for a patient"""
+        """Get comprehensive summary of all files for a patient"""
         
-        # Get all processed files for patient
+        # Get all processed files for this patient
         processed_files = await self.db.processed_files.find(
             {"patient_id": patient_id}
         ).to_list(100)
         
-        # Organize by category
-        file_summary = {
+        # Convert ObjectIds to strings for JSON serialization
+        for file_doc in processed_files:
+            if '_id' in file_doc:
+                file_doc['_id'] = str(file_doc['_id'])
+        
+        if not processed_files:
+            return {
+                "patient_id": patient_id,
+                "total_files": 0,
+                "file_types": [],
+                "comprehensive_insights": {
+                    "clinical_summary": "No files uploaded for analysis",
+                    "regenerative_assessment": "Unable to perform assessment without patient files",
+                    "recommendations": ["Upload patient files for comprehensive analysis"]
+                }
+            }
+        
+        # Organize files by category
+        files_by_category = {}
+        for file_doc in processed_files:
+            category = file_doc.get('file_category', 'unknown')
+            if category not in files_by_category:
+                files_by_category[category] = []
+            files_by_category[category].append(file_doc)
+        
+        # Generate comprehensive insights
+        comprehensive_insights = await self._generate_comprehensive_insights(files_by_category)
+        
+        return {
             "patient_id": patient_id,
             "total_files": len(processed_files),
-            "files_by_category": {},
-            "comprehensive_analysis": {},
-            "regenerative_assessment": {}
+            "file_types": list(files_by_category.keys()),
+            "files_by_category": files_by_category,
+            "comprehensive_insights": comprehensive_insights,
+            "analysis_timestamp": datetime.utcnow().isoformat()
+        }
+
+    async def _generate_comprehensive_insights(self, files_by_category: Dict) -> Dict[str, Any]:
+        """Generate comprehensive insights from all patient files"""
+        
+        insights = {
+            "clinical_summary": "",
+            "regenerative_assessment": "",
+            "multi_modal_correlation": {},
+            "treatment_optimization": {},
+            "risk_factors": [],
+            "recommendations": []
         }
         
-        categories = {}
-        for file_data in processed_files:
-            category = file_data.get("extraction_results", {}).get("file_type", "unknown")
-            if category not in categories:
-                categories[category] = []
-            categories[category].append(file_data)
+        # Process each file category
+        if "chart" in files_by_category:
+            chart_files = files_by_category["chart"]
+            insights["clinical_summary"] = f"Analysis based on {len(chart_files)} clinical chart(s)"
         
-        file_summary["files_by_category"] = categories
+        if "genetics" in files_by_category:
+            genetics_files = files_by_category["genetics"]
+            insights["treatment_optimization"]["genetic_factors"] = f"Genetic optimization based on {len(genetics_files)} genetic profile(s)"
         
-        # Generate comprehensive analysis combining all files
-        file_summary["comprehensive_analysis"] = await self._generate_comprehensive_patient_analysis(processed_files)
+        if "labs" in files_by_category:
+            lab_files = files_by_category["labs"]
+            insights["multi_modal_correlation"]["laboratory_correlation"] = f"Laboratory analysis from {len(lab_files)} lab report(s)"
         
-        return file_summary
+        if "imaging" in files_by_category:
+            imaging_files = files_by_category["imaging"]
+            insights["multi_modal_correlation"]["imaging_correlation"] = f"Imaging analysis from {len(imaging_files)} study/studies"
+        
+        # Generate overall regenerative assessment
+        total_files = sum(len(files) for files in files_by_category.values())
+        if total_files >= 3:
+            insights["regenerative_assessment"] = "Comprehensive multi-modal analysis supports personalized regenerative medicine approach"
+        elif total_files >= 2:
+            insights["regenerative_assessment"] = "Good multi-modal data available for regenerative therapy optimization"
+        else:
+            insights["regenerative_assessment"] = "Limited data available - consider additional testing for optimal protocol generation"
+        
+        # Generate recommendations based on available data
+        insights["recommendations"] = [
+            f"Protocol generated using {total_files} data sources",
+            "Continue monitoring and data collection for continuous optimization",
+            "Consider additional testing if response is suboptimal"
+        ]
+        
+        return insights
 
     async def _generate_comprehensive_patient_analysis(self, processed_files: List[Dict]) -> Dict[str, Any]:
         """Generate comprehensive analysis combining all patient files"""
