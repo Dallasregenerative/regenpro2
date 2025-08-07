@@ -1271,7 +1271,7 @@ function App() {
                               </div>
                             </div>
                             <Button 
-                              onClick={() => generateFileBasedProtocol()}
+                              onClick={() => generateFileBasedProtocol(selectedPatient?.patient_id, selectedSchool)}
                               className="bg-purple-600 hover:bg-purple-700"
                               disabled={loading}
                             >
