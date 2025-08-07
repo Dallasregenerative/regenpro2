@@ -18,13 +18,18 @@ import hashlib
 from enum import Enum
 import numpy as np
 
-# Import advanced services
+# Import advanced services and file processing
 from advanced_services import (
     FederatedLearningService,
     PubMedIntegrationService, 
     DICOMProcessingService,
     OutcomePredictionService,
     initialize_advanced_services
+)
+from file_processing import (
+    MedicalFileProcessor,
+    FileUpload,
+    ProcessedFileData
 )
 
 ROOT_DIR = Path(__file__).parent
