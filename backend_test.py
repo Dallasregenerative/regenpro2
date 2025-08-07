@@ -390,6 +390,254 @@ class RegenMedAIProTester:
             print(f"   Satisfaction Score: {response.get('satisfaction_score', 'Unknown')}")
         return success
 
+    # ========== FILE UPLOAD AND PROCESSING TESTING ==========
+
+    def test_file_upload_patient_chart(self):
+        """Test uploading and processing patient chart PDF"""
+        if not self.patient_id:
+            print("❌ No patient ID available for file upload testing")
+            return False
+
+        # Create a simulated PDF file content
+        import base64
+        simulated_pdf_content = base64.b64encode(b"SIMULATED_PATIENT_CHART_PDF_CONTENT_FOR_TESTING").decode()
+        
+        # Prepare multipart form data
+        files = {
+            'file': ('patient_chart.pdf', base64.b64decode(simulated_pdf_content), 'application/pdf')
+        }
+        data = {
+            'patient_id': self.patient_id,
+            'file_category': 'chart'
+        }
+        
+        # Remove JSON headers for multipart upload
+        upload_headers = {'Authorization': 'Bearer demo-token'}
+        
+        try:
+            import requests
+            response = requests.post(
+                f"{self.api_url}/files/upload",
+                files=files,
+                data=data,
+                headers=upload_headers,
+                timeout=60
+            )
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                print(f"✅ Patient Chart Upload - Status: {response.status_code}")
+                print(f"   File ID: {response_data.get('file_id', 'Unknown')}")
+                print(f"   Processing Status: {response_data.get('status', 'Unknown')}")
+                print(f"   Confidence Score: {response_data.get('confidence_score', 0):.2f}")
+                print(f"   Medical Insights: {len(response_data.get('medical_insights', {}))}")
+                return True
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                print(f"   Error: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+        finally:
+            self.tests_run += 1
+
+    def test_file_upload_genetic_data(self):
+        """Test uploading and processing genetic test results"""
+        if not self.patient_id:
+            print("❌ No patient ID available for genetic file testing")
+            return False
+
+        # Create simulated genetic data JSON
+        genetic_data = {
+            "patient_id": self.patient_id,
+            "test_type": "pharmacogenomics",
+            "variants": [
+                {"gene": "CYP2D6", "variant": "*1/*2", "phenotype": "normal_metabolizer"},
+                {"gene": "COMT", "variant": "Val158Met", "phenotype": "intermediate"},
+                {"gene": "COL1A1", "variant": "rs1800012", "phenotype": "favorable_healing"}
+            ],
+            "regenerative_markers": {
+                "VEGF_polymorphism": "positive",
+                "collagen_synthesis_genes": "normal",
+                "inflammatory_response": "low_risk"
+            }
+        }
+        
+        import json
+        genetic_json = json.dumps(genetic_data).encode()
+        
+        files = {
+            'file': ('genetic_results.json', genetic_json, 'application/json')
+        }
+        data = {
+            'patient_id': self.patient_id,
+            'file_category': 'genetics'
+        }
+        
+        upload_headers = {'Authorization': 'Bearer demo-token'}
+        
+        try:
+            import requests
+            response = requests.post(
+                f"{self.api_url}/files/upload",
+                files=files,
+                data=data,
+                headers=upload_headers,
+                timeout=60
+            )
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                print(f"✅ Genetic Data Upload - Status: {response.status_code}")
+                print(f"   File ID: {response_data.get('file_id', 'Unknown')}")
+                print(f"   Regenerative Insights: {len(response_data.get('medical_insights', {}))}")
+                print(f"   Confidence Score: {response_data.get('confidence_score', 0):.2f}")
+                return True
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                print(f"   Error: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+        finally:
+            self.tests_run += 1
+
+    def test_file_upload_dicom_imaging(self):
+        """Test uploading and processing DICOM imaging files"""
+        if not self.patient_id:
+            print("❌ No patient ID available for DICOM testing")
+            return False
+
+        # Create simulated DICOM file
+        simulated_dicom = b"SIMULATED_DICOM_FILE_CONTENT_FOR_KNEE_MRI_TESTING"
+        
+        files = {
+            'file': ('knee_mri.dcm', simulated_dicom, 'application/dicom')
+        }
+        data = {
+            'patient_id': self.patient_id,
+            'file_category': 'imaging'
+        }
+        
+        upload_headers = {'Authorization': 'Bearer demo-token'}
+        
+        try:
+            import requests
+            response = requests.post(
+                f"{self.api_url}/files/upload",
+                files=files,
+                data=data,
+                headers=upload_headers,
+                timeout=60
+            )
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                print(f"✅ DICOM Upload - Status: {response.status_code}")
+                print(f"   File ID: {response_data.get('file_id', 'Unknown')}")
+                print(f"   Processing Results: {len(response_data.get('processing_results', {}))}")
+                print(f"   Medical Insights: {len(response_data.get('medical_insights', {}))}")
+                return True
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                print(f"   Error: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+        finally:
+            self.tests_run += 1
+
+    def test_get_patient_files(self):
+        """Test retrieving all uploaded files for a patient"""
+        if not self.patient_id:
+            print("❌ No patient ID available for file retrieval testing")
+            return False
+
+        success, response = self.run_test(
+            "Get Patient Files",
+            "GET",
+            f"files/patient/{self.patient_id}",
+            200
+        )
+        
+        if success:
+            uploaded_files = response.get('uploaded_files', [])
+            processed_files = response.get('processed_files', [])
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Total Files: {response.get('total_files', 0)}")
+            print(f"   Uploaded Files: {len(uploaded_files)}")
+            print(f"   Processed Files: {len(processed_files)}")
+        return success
+
+    def test_comprehensive_patient_analysis(self):
+        """Test comprehensive analysis combining all patient files"""
+        if not self.patient_id:
+            print("❌ No patient ID available for comprehensive analysis testing")
+            return False
+
+        success, response = self.run_test(
+            "Comprehensive Patient File Analysis",
+            "GET",
+            f"files/comprehensive-analysis/{self.patient_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            analysis = response.get('comprehensive_analysis', {})
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Multi-modal Insights: {len(analysis.get('multi_modal_insights', {}))}")
+            print(f"   Integrated Recommendations: {len(analysis.get('integrated_recommendations', []))}")
+            print(f"   Confidence Level: {analysis.get('confidence_level', 0):.2f}")
+        return success
+
+    def test_file_based_protocol_generation(self):
+        """Test generating protocol using comprehensive file analysis"""
+        if not self.patient_id:
+            print("❌ No patient ID available for file-based protocol testing")
+            return False
+
+        protocol_data = {
+            "patient_id": self.patient_id,
+            "school_of_thought": "ai_optimized"
+        }
+
+        print("   This may take 30-60 seconds for file-based AI protocol generation...")
+        success, response = self.run_test(
+            "Generate Protocol from Files",
+            "POST",
+            "protocols/generate-from-files",
+            200,
+            data=protocol_data,
+            timeout=90
+        )
+        
+        if success:
+            protocol = response.get('protocol', {})
+            print(f"   Protocol ID: {protocol.get('protocol_id', 'Unknown')}")
+            print(f"   Files Analyzed: {response.get('file_insights_used', 0)}")
+            print(f"   Enhancement Confidence: {response.get('enhancement_confidence', 0):.2f}")
+            print(f"   Multi-modal Analysis: {len(response.get('multi_modal_analysis', {}))}")
+            print(f"   Protocol Steps: {len(protocol.get('protocol_steps', []))}")
+            
+            # Store protocol ID for potential cleanup
+            if not self.protocol_id:
+                self.protocol_id = protocol.get('protocol_id')
+        return success
+
     # ========== ADVANCED AI FEATURES TESTING ==========
 
     def test_advanced_system_status(self):
