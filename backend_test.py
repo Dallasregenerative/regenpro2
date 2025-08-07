@@ -559,6 +559,67 @@ class RegenMedAIProTester:
         finally:
             self.tests_run += 1
 
+    def test_file_upload_lab_results(self):
+        """Test uploading and processing lab results"""
+        if not self.patient_id:
+            print("❌ No patient ID available for lab results testing")
+            return False
+
+        # Create simulated lab results CSV
+        lab_data = """Test,Value,Reference Range,Units,Status
+CBC - WBC,6.2,4.0-11.0,K/uL,Normal
+CBC - RBC,4.5,4.2-5.4,M/uL,Normal
+CBC - Platelets,285,150-450,K/uL,Normal
+ESR,18,0-30,mm/hr,Normal
+CRP,2.1,<3.0,mg/L,Normal
+Vitamin D,32,30-100,ng/mL,Normal
+Vitamin C,1.2,0.4-2.0,mg/dL,Normal
+Zinc,95,70-120,mcg/dL,Normal
+Magnesium,2.1,1.7-2.2,mg/dL,Normal
+PDGF,45,20-80,pg/mL,Normal
+VEGF,125,62-707,pg/mL,Normal
+IGF-1,180,109-284,ng/mL,Normal"""
+        
+        files = {
+            'file': ('lab_results.csv', lab_data.encode(), 'text/csv')
+        }
+        data = {
+            'patient_id': self.patient_id,
+            'file_category': 'labs'
+        }
+        
+        upload_headers = {'Authorization': 'Bearer demo-token'}
+        
+        try:
+            import requests
+            response = requests.post(
+                f"{self.api_url}/files/upload",
+                files=files,
+                data=data,
+                headers=upload_headers,
+                timeout=60
+            )
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                response_data = response.json()
+                print(f"✅ Lab Results Upload - Status: {response.status_code}")
+                print(f"   File ID: {response_data.get('file_id', 'Unknown')}")
+                print(f"   Processing Results: {len(response_data.get('processing_results', {}))}")
+                print(f"   Regenerative Insights: {len(response_data.get('medical_insights', {}))}")
+                return True
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                print(f"   Error: {response.text}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
+        finally:
+            self.tests_run += 1
+
     def test_get_patient_files(self):
         """Test retrieving all uploaded files for a patient"""
         if not self.patient_id:
