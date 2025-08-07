@@ -183,6 +183,59 @@ function App() {
     }
   };
 
+  const loadAdvancedSystemStatus = async () => {
+    try {
+      const response = await axios.get(`${API}/advanced/system-status`, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setAdvancedSystemStatus(response.data);
+    } catch (error) {
+      console.error("Failed to load advanced system status:", error);
+    }
+  };
+
+  const loadLiteratureUpdates = async () => {
+    try {
+      const response = await axios.get(`${API}/literature/latest-updates`, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setLiteratureUpdates(response.data);
+    } catch (error) {
+      console.error("Failed to load literature updates:", error);
+    }
+  };
+
+  const loadFederatedLearningStatus = async () => {
+    try {
+      const response = await axios.get(`${API}/federated/global-model-status`, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setFederatedLearningStatus(response.data);
+    } catch (error) {
+      console.error("Failed to load federated learning status:", error);
+    }
+  };
+
+  const handlePredictOutcome = async (patientId, therapyPlan) => {
+    setLoading(true);
+    setOutcomePrediction(null);
+    
+    try {
+      const response = await axios.post(`${API}/predictions/treatment-outcome`, {
+        patient_id: patientId,
+        therapy_plan: therapyPlan
+      }, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setOutcomePrediction(response.data);
+    } catch (error) {
+      console.error("Outcome prediction failed:", error);
+      alert("Outcome prediction failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loadTherapiesData = async () => {
     try {
       const response = await axios.get(`${API}/therapies`);
