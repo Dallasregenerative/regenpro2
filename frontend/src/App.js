@@ -1081,7 +1081,7 @@ function App() {
                             id="labs-upload"
                             className="hidden"
                             accept=".json,.csv,.pdf,.txt"
-                            onChange={(e) => handleFileUpload(e, 'labs')}
+                            onChange={(e) => handleFileUpload(e.target.files, 'labs', selectedPatient?.patient_id)}
                           />
                           <Button 
                             variant="outline" 
