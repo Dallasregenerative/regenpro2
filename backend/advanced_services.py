@@ -907,6 +907,53 @@ class OutcomePredictionService:
             "most_likely": "moderate response expected"
         }
 
+    async def _optimize_dosage(self, features: np.ndarray, therapy_plan: Dict) -> Dict:
+        """Optimize dosage based on patient features and therapy plan"""
+        
+        if "dosage_optimizer" in self.models:
+            model_data = self.models["dosage_optimizer"]
+            scaled_features = model_data["scaler"].transform([features[:5]])  # Use first 5 features
+            predicted_dosage = model_data["model"].predict(scaled_features)[0]
+            
+            # Convert to therapy-specific dosage recommendations
+            therapy_name = therapy_plan.get("therapy", "").lower()
+            
+            if "prp" in therapy_name:
+                return {
+                    "recommended_dosage": f"{predicted_dosage:.1f}ml PRP",
+                    "concentration": f"{predicted_dosage * 4:.0f}x baseline",
+                    "sessions": "1-3 sessions" if predicted_dosage < 2.0 else "2-3 sessions",
+                    "interval": "4-6 weeks between sessions"
+                }
+            elif "bmac" in therapy_name:
+                return {
+                    "recommended_dosage": f"{predicted_dosage * 2:.1f}ml BMAC",
+                    "cell_concentration": f"{predicted_dosage * 50:.0f}M cells/ml",
+                    "sessions": "1-2 sessions" if predicted_dosage < 1.5 else "2 sessions",
+                    "interval": "6-8 weeks between sessions"
+                }
+            elif "exosome" in therapy_name:
+                return {
+                    "recommended_dosage": f"{predicted_dosage * 1.5:.1f}ml exosomes",
+                    "particle_concentration": f"{predicted_dosage * 100:.0f}B particles/ml",
+                    "sessions": "2-3 sessions",
+                    "interval": "2-3 weeks between sessions"
+                }
+            else:
+                return {
+                    "recommended_dosage": f"{predicted_dosage:.1f}x standard dose",
+                    "notes": "Adjust based on therapy type and patient response",
+                    "sessions": "As per protocol",
+                    "interval": "Standard intervals"
+                }
+        
+        return {
+            "recommended_dosage": "Standard dosing recommended",
+            "notes": "Dosage optimization model not available",
+            "sessions": "As per standard protocol",
+            "interval": "Standard intervals"
+        }
+
     def _generate_synthetic_training_data(self) -> Dict:
         """Generate synthetic training data for model development"""
         
