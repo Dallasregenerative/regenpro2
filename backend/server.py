@@ -16,6 +16,16 @@ import httpx
 import base64
 import hashlib
 from enum import Enum
+import numpy as np
+
+# Import advanced services
+from advanced_services import (
+    FederatedLearningService,
+    PubMedIntegrationService, 
+    DICOMProcessingService,
+    OutcomePredictionService,
+    initialize_advanced_services
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
