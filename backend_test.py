@@ -675,18 +675,13 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print("❌ No patient ID available for file-based protocol testing")
             return False
 
-        protocol_data = {
-            "patient_id": self.patient_id,
-            "school_of_thought": "ai_optimized"
-        }
-
         print("   This may take 30-60 seconds for file-based AI protocol generation...")
         success, response = self.run_test(
             "Generate Protocol from Files",
             "POST",
-            "protocols/generate-from-files",
+            f"protocols/generate-from-files?patient_id={self.patient_id}&school_of_thought=ai_optimized",
             200,
-            data=protocol_data,
+            data={},
             timeout=90
         )
         
