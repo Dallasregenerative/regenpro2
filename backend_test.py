@@ -258,6 +258,10 @@ class RegenMedAIProTester:
         """Test protocol generation - AI Optimized"""
         return self._test_protocol_generation("ai_optimized", "AI-Optimized Best Protocol")
 
+    def test_generate_protocol_experimental(self):
+        """Test protocol generation - Experimental Cutting Edge"""
+        return self._test_protocol_generation("experimental", "Experimental & Cutting-Edge")
+
     def _test_protocol_generation(self, school_key, school_name):
         """Helper method to test protocol generation for different schools"""
         if not self.patient_id:
