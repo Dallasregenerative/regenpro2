@@ -300,8 +300,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Patient Data Integration" 
-  stuck_tasks: []
+    - "File Upload Interface"
+  stuck_tasks:
+    - "File Upload Interface"
   test_all: false
   test_priority: "high_first"
 
