@@ -556,8 +556,14 @@ Always format responses as valid JSON with complete protocol details."""
             "ai_reasoning": "Protocol requires customization based on clinical judgment."
         }
 
-# Initialize AI engine
+# Initialize AI engine and advanced services
 regen_ai = RegenerativeMedicineAI(OPENAI_API_KEY)
+
+# Advanced services (will be initialized on startup)
+federated_service = None
+pubmed_service = None
+dicom_service = None
+prediction_service = None
 
 # Simple auth function for demo
 async def get_current_practitioner(credentials: HTTPAuthorizationCredentials = Depends(security)):
