@@ -456,7 +456,7 @@ function App() {
       <main className="max-w-7xl mx-auto px-6 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-10 bg-white/80 backdrop-blur-sm shadow-sm text-xs">
-            <TabsTrigger value="dashboard" className="flex items-center gap-1">
+            <TabsTrigger value="dashboard" className="flex items-center gap-1 text-slate-800 font-medium data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900">
               <ChartBar className="h-3 w-3" />
               Dashboard
             </TabsTrigger>
