@@ -303,9 +303,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "File Upload Interface"
-  stuck_tasks:
-    - "File Upload Interface"
+    - "Literature Integration Testing"
+    - "Protocol Generation Enhancement Testing"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
