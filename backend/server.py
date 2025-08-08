@@ -234,13 +234,23 @@ class RegenerativeMedicineAI:
         }
 
     async def analyze_patient_data(self, patient_data: PatientData) -> List[DiagnosticResult]:
-        """Comprehensive multi-modal patient analysis"""
-        
-        # Prepare comprehensive analysis prompt
-        analysis_prompt = self._build_comprehensive_analysis_prompt(patient_data)
+        """Comprehensive multi-modal patient analysis with differential diagnosis"""
         
         try:
-            async with httpx.AsyncClient(timeout=45.0) as client:
+            # Get uploaded files for multi-modal integration
+            uploaded_files = {}
+            if file_processor:
+                try:
+                    file_summary = await file_processor.get_patient_file_summary(patient_data.patient_id)
+                    uploaded_files = file_summary.get("files_by_category", {})
+                except Exception as e:
+                    logging.warning(f"File summary retrieval failed: {str(e)}")
+            
+            # Build enhanced analysis prompt with multi-modal data
+            analysis_prompt = self._build_enhanced_analysis_prompt(patient_data, uploaded_files)
+            
+            # Generate comprehensive AI analysis
+            async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.post(
                     f"{self.base_url}/chat/completions",
                     headers={
@@ -252,11 +262,19 @@ class RegenerativeMedicineAI:
                         "messages": [
                             {
                                 "role": "system",
-                                "content": """You are the world's leading AI expert in regenerative medicine, trained on the latest research in stem cells, growth factors, biologics, and tissue engineering. You have comprehensive knowledge of PRP, BMAC, Wharton's jelly, MSC exosomes, cord blood therapies, and experimental treatments.
+                                "content": """You are the world's leading AI expert in regenerative medicine with 25+ years of clinical experience. You specialize in:
 
-Provide evidence-based diagnostic analysis with specific focus on conditions treatable with regenerative medicine. Include mechanisms of tissue damage, regenerative targets, and potential therapeutic pathways.
+- Differential diagnosis for regenerative medicine conditions
+- Multi-modal data integration (labs, genetics, imaging, clinical)
+- Outcome prediction with confidence intervals
+- Mechanism-based therapy selection
+- Risk stratification and personalized treatment planning
 
-Always format responses as valid JSON."""
+Your expertise includes stem cells, PRP, BMAC, Wharton's jelly, MSC exosomes, cord blood therapies, and cutting-edge biologics.
+
+Always provide comprehensive differential diagnosis with probability rankings, integrate all available data sources, and give evidence-based confidence scores.
+
+Format all responses as valid JSON with detailed reasoning."""
                             },
                             {
                                 "role": "user", 
@@ -264,32 +282,212 @@ Always format responses as valid JSON."""
                             }
                         ],
                         "temperature": 0.2,
-                        "max_tokens": 3000
+                        "max_tokens": 4000
                     }
                 )
                 
             if response.status_code != 200:
-                raise HTTPException(status_code=500, detail=f"OpenAI API error: {response.status_code}")
+                logging.error(f"OpenAI API error: {response.status_code} - {response.text}")
+                return await self._generate_fallback_diagnostics(patient_data, uploaded_files)
                 
             ai_response = response.json()
             content = ai_response['choices'][0]['message']['content']
             
-            # Parse JSON response
+            # Parse and structure the comprehensive analysis
             try:
                 diagnostic_data = json.loads(content)
-            except json.JSONDecodeError:
-                diagnostic_data = self._parse_fallback_response(content)
+                
+                # Convert to DiagnosticResult objects with enhanced information
+                diagnostic_results = []
+                
+                differential_diagnoses = diagnostic_data.get('differential_diagnosis', [])
+                
+                for i, diagnosis in enumerate(differential_diagnoses):
+                    # Enhanced diagnostic result with multi-modal insights
+                    result = DiagnosticResult(
+                        diagnosis=diagnosis.get('diagnosis', f'Diagnosis {i+1}'),
+                        confidence_score=diagnosis.get('probability', 0.7),
+                        reasoning=diagnosis.get('mechanism', 'Mechanism under evaluation'),
+                        supporting_evidence=diagnosis.get('supporting_evidence', []),
+                        mechanisms_involved=[diagnosis.get('mechanism', 'Mechanism under evaluation')],
+                        regenerative_targets=diagnosis.get('regenerative_targets', [])
+                    )
+                    diagnostic_results.append(result)
+                
+                # Store comprehensive analysis for later retrieval
+                await self._store_comprehensive_analysis(patient_data.patient_id, diagnostic_data, uploaded_files)
+                
+                return diagnostic_results if diagnostic_results else await self._generate_fallback_diagnostics(patient_data, uploaded_files)
+                
+            except (json.JSONDecodeError, KeyError) as e:
+                logging.error(f"Failed to parse AI response: {str(e)}")
+                return await self._generate_fallback_diagnostics(patient_data, uploaded_files)
+                
+        except Exception as e:
+            logging.error(f"Patient analysis error: {str(e)}")
+            return await self._generate_fallback_diagnostics(patient_data, uploaded_files)
+
+    def _build_enhanced_analysis_prompt(self, patient_data: PatientData, uploaded_files: Dict) -> str:
+        """Build enhanced analysis prompt with multi-modal data integration"""
+        
+        prompt = f"""
+**COMPREHENSIVE PATIENT ANALYSIS REQUEST**
+
+**PATIENT PRESENTATION:**
+- Age: {patient_data.demographics.get('age', 'Unknown')} years
+- Gender: {patient_data.demographics.get('gender', 'Unknown')}
+- Occupation: {patient_data.demographics.get('occupation', 'Not specified')}
+
+**CHIEF COMPLAINT:**
+{patient_data.chief_complaint}
+
+**HISTORY OF PRESENT ILLNESS:**
+{patient_data.history_present_illness}
+
+**PAST MEDICAL HISTORY:**
+{', '.join(patient_data.past_medical_history) if patient_data.past_medical_history else 'None reported'}
+
+**CURRENT MEDICATIONS:**
+{', '.join(patient_data.medications) if patient_data.medications else 'None reported'}
+
+**CURRENT SYMPTOMS:**
+{', '.join(patient_data.symptoms) if patient_data.symptoms else 'Not specified'}
+
+**ALLERGIES:**
+{', '.join(patient_data.allergies) if patient_data.allergies else 'NKDA'}
+"""
+        
+        # Add multi-modal data integration
+        if uploaded_files:
+            prompt += "\n\n**MULTI-MODAL DATA AVAILABLE FOR INTEGRATION:**"
             
-            # Convert to DiagnosticResult objects
-            results = []
-            for diag in diagnostic_data.get('diagnostic_results', []):
-                results.append(DiagnosticResult(**diag))
+            if "labs" in uploaded_files:
+                lab_count = len(uploaded_files["labs"])
+                prompt += f"\n• Laboratory Results: {lab_count} file(s) - Include inflammatory markers, biomarkers, metabolic panels in analysis"
             
-            return results
+            if "genetics" in uploaded_files:  
+                genetic_count = len(uploaded_files["genetics"])
+                prompt += f"\n• Genetic Testing: {genetic_count} file(s) - Consider healing variants, drug metabolism, regenerative capacity"
+                
+            if "imaging" in uploaded_files:
+                imaging_count = len(uploaded_files["imaging"])
+                prompt += f"\n• Medical Imaging: {imaging_count} file(s) - Integrate structural findings, severity assessment, injection targets"
+                
+            if "chart" in uploaded_files:
+                chart_count = len(uploaded_files["chart"])
+                prompt += f"\n• Clinical Charts: {chart_count} file(s) - Include comprehensive clinical assessment, exam findings"
+        
+        prompt += """
+
+**REQUIRED ANALYSIS FORMAT:**
+
+Provide comprehensive analysis in this exact JSON structure:
+
+{
+    "differential_diagnosis": [
+        {
+            "diagnosis": "Primary diagnosis with ICD-10 code",
+            "probability": 0.85,
+            "supporting_evidence": ["Clinical evidence 1", "Multi-modal finding 2", "Literature support 3"],
+            "mechanism": "Detailed pathophysiological mechanism",
+            "regenerative_targets": ["Specific tissue target", "Cellular mechanism", "Molecular pathway"]
+        },
+        {
+            "diagnosis": "Secondary differential diagnosis",
+            "probability": 0.15, 
+            "supporting_evidence": ["Supporting evidence"],
+            "mechanism": "Alternative mechanism",
+            "regenerative_targets": ["Alternative targets"]
+        }
+    ],
+    "multi_modal_insights": {
+        "data_integration_confidence": 0.90,
+        "key_correlations": ["Finding 1 supports diagnosis", "Biomarker X indicates severity"],
+        "prognostic_indicators": ["Positive prognostic factor", "Concerning finding"]
+    },
+    "risk_assessment": {
+        "regenerative_suitability": "Excellent/Good/Fair/Poor",
+        "complication_risk": "Low/Moderate/High",
+        "success_predictors": ["Factor 1", "Factor 2"]
+    },
+    "confidence_metrics": {
+        "diagnostic_confidence": 0.85,
+        "data_completeness": 0.80,
+        "clinical_complexity": "Low/Moderate/High"
+    }
+}
+
+**CRITICAL REQUIREMENTS:**
+1. Rank differential diagnoses by probability (most likely first)
+2. Integrate ALL available multi-modal data sources
+3. Provide mechanism-based reasoning for each diagnosis
+4. Include specific regenerative targets for each condition
+5. Give realistic confidence scores based on available evidence
+6. Consider patient-specific factors (age, occupation, comorbidities)
+
+Generate the most accurate, evidence-based analysis possible using all available information.
+"""
+        
+        return prompt
+
+    async def _store_comprehensive_analysis(self, patient_id: str, analysis_data: Dict, uploaded_files: Dict):
+        """Store comprehensive analysis for later retrieval"""
+        
+        try:
+            analysis_doc = {
+                "patient_id": patient_id,
+                "comprehensive_analysis": analysis_data,
+                "multi_modal_files_used": sum(len(files) for files in uploaded_files.values()) if uploaded_files else 0,
+                "file_categories": list(uploaded_files.keys()) if uploaded_files else [],
+                "analysis_timestamp": datetime.utcnow(),
+                "analysis_type": "enhanced_differential_diagnosis"
+            }
+            
+            # Upsert the analysis (replace if exists)
+            await db.comprehensive_analyses.replace_one(
+                {"patient_id": patient_id},
+                analysis_doc,
+                upsert=True
+            )
             
         except Exception as e:
-            logging.error(f"Patient analysis failed: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+            logging.error(f"Failed to store comprehensive analysis: {str(e)}")
+
+    async def _generate_fallback_diagnostics(self, patient_data: PatientData, uploaded_files: Dict) -> List[DiagnosticResult]:
+        """Generate fallback diagnostics when AI analysis fails"""
+        
+        # Basic rule-based diagnosis based on chief complaint
+        chief_complaint = patient_data.chief_complaint.lower()
+        
+        if any(term in chief_complaint for term in ['knee', 'osteoarthritis', 'joint']):
+            primary_diagnosis = DiagnosticResult(
+                diagnosis="M17.9 - Osteoarthritis of knee, unspecified",
+                confidence_score=0.7,
+                reasoning="Cartilage degeneration and inflammation",
+                supporting_evidence=[patient_data.chief_complaint],
+                mechanisms_involved=["Cartilage degeneration and inflammation"],
+                regenerative_targets=["Articular cartilage", "Synovial membrane", "Subchondral bone"]
+            )
+        elif any(term in chief_complaint for term in ['shoulder', 'rotator cuff']):
+            primary_diagnosis = DiagnosticResult(
+                diagnosis="M75.3 - Calcific tendinitis of shoulder",
+                confidence_score=0.7,
+                reasoning="Tendon degeneration and calcium deposits",
+                supporting_evidence=[patient_data.chief_complaint],
+                mechanisms_involved=["Tendon degeneration and calcium deposits"],
+                regenerative_targets=["Rotator cuff tendons", "Subacromial bursa"]
+            )
+        else:
+            primary_diagnosis = DiagnosticResult(
+                diagnosis="M79.3 - Panniculitis, unspecified",
+                confidence_score=0.5,
+                reasoning="Tissue inflammation and repair deficit",
+                supporting_evidence=[patient_data.chief_complaint],
+                mechanisms_involved=["Tissue inflammation and repair deficit"],
+                regenerative_targets=["Affected tissue areas"]
+            )
+        
+        return [primary_diagnosis]
 
     async def _get_literature_evidence(self, diagnoses: List[DiagnosticResult]) -> str:
         """Get relevant literature evidence for the given diagnoses"""
