@@ -565,11 +565,9 @@ Always format responses as valid JSON with complete protocol details."""
                 }}
             ],
             "expected_outcomes": [
-                {{
-                    "timeframe": "2-4 weeks",
-                    "outcome": "Pain reduction 30-50%",
-                    "probability": "80%"
-                }}
+                "Pain reduction 30-50% within 2-4 weeks",
+                "Functional improvement at 6-12 weeks",
+                "Sustained benefit at 6-12 months"
             ],
             "timeline_predictions": {{
                 "short_term": "2-4 weeks: Initial improvement",
