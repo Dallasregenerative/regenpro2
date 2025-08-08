@@ -2094,6 +2094,105 @@ def _get_feature_value(feature: str, patient: Dict, analysis: Dict) -> str:
     
     return str(feature_values.get(feature, "Not assessed"))
 
+@api_router.post("/evidence/synthesize-protocol")
+async def synthesize_evidence_based_protocol(
+    synthesis_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """AI-driven evidence synthesis to generate protocols from latest literature"""
+    
+    condition = synthesis_request.get("condition", "")
+    existing_evidence = synthesis_request.get("existing_evidence", [])
+    
+    if not condition:
+        raise HTTPException(status_code=400, detail="Condition is required for evidence synthesis")
+    
+    if pubmed_service:
+        try:
+            # Initialize evidence synthesis engine if not already done
+            await pubmed_service.initialize_evidence_synthesis_engine()
+            
+            # Perform comprehensive evidence synthesis
+            synthesis_result = await pubmed_service.synthesize_evidence_into_protocol(
+                condition=condition,
+                existing_evidence=existing_evidence
+            )
+            
+            # Log synthesis for audit
+            await db.audit_log.insert_one({
+                "timestamp": datetime.utcnow(),
+                "practitioner_id": practitioner.id,
+                "action": "evidence_synthesis_protocol_generated",
+                "condition": condition,
+                "synthesis_result": synthesis_result.get("synthesis_result", "unknown"),
+                "evidence_sources": synthesis_result.get("evidence_sources", 0),
+                "confidence_score": synthesis_result.get("synthesis_confidence", 0)
+            })
+            
+            return {
+                "status": "synthesis_completed",
+                "condition": condition,
+                "synthesis_result": synthesis_result,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+        except Exception as e:
+            logging.error(f"Evidence synthesis error: {str(e)}")
+            return {
+                "status": "synthesis_failed",
+                "error": str(e),
+                "fallback_available": True,
+                "message": "Evidence synthesis encountered an error, but fallback protocols are available"
+            }
+    
+    return {
+        "status": "service_unavailable",
+        "message": "Evidence synthesis service not initialized"
+    }
+
+@api_router.get("/evidence/synthesis-status")
+async def get_evidence_synthesis_status():
+    """Get status of evidence synthesis system"""
+    
+    if pubmed_service:
+        try:
+            # Check if evidence synthesis engine is initialized
+            db_status = await pubmed_service.get_literature_database_status()
+            
+            # Get recent synthesis results
+            recent_syntheses = await db.synthesized_protocols.find().sort("synthesis_timestamp", -1).limit(5).to_list(5)
+            
+            # Convert ObjectId to string for JSON serialization
+            for synthesis in recent_syntheses:
+                if '_id' in synthesis:
+                    synthesis['_id'] = str(synthesis['_id'])
+            
+            return {
+                "synthesis_engine_status": "active",
+                "literature_database": db_status,
+                "recent_syntheses": len(recent_syntheses),
+                "recent_synthesis_results": recent_syntheses,
+                "capabilities": [
+                    "comprehensive_literature_analysis",
+                    "ai_protocol_generation", 
+                    "real_world_outcome_integration",
+                    "practitioner_feedback_synthesis",
+                    "evidence_quality_validation"
+                ]
+            }
+            
+        except Exception as e:
+            logging.error(f"Evidence synthesis status error: {str(e)}")
+            return {
+                "synthesis_engine_status": "error",
+                "error": str(e)
+            }
+    
+    return {
+        "synthesis_engine_status": "unavailable",
+        "message": "Evidence synthesis service not initialized"
+    }
+
 @api_router.get("/knowledge-engine/mechanisms/{condition}")
 async def get_mechanism_based_suggestions(
     condition: str,
