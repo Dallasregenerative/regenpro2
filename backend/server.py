@@ -957,7 +957,14 @@ async def get_latest_literature_updates():
     
     if pubmed_service:
         try:
-            # Perform actual PubMed searches for key regenerative medicine topics
+            # First, populate database with essential papers if it's empty
+            db_status = await pubmed_service.get_literature_database_status()
+            
+            if db_status.get("total_papers", 0) == 0:
+                population_result = await pubmed_service.populate_initial_literature_database()
+                logger.info(f"Literature database initialization: {population_result}")
+            
+            # Now perform PubMed searches for additional papers
             search_topics = [
                 "platelet rich plasma osteoarthritis",
                 "stem cell therapy tendinopathy", 
@@ -968,26 +975,44 @@ async def get_latest_literature_updates():
             all_papers = []
             total_processed = 0
             
-            # Search each topic and collect papers
+            # Try PubMed search for each topic, fallback to database
             for topic in search_topics:
-                result = await pubmed_service.perform_pubmed_search(topic, max_results=5)
-                if result.get("papers"):
-                    all_papers.extend(result["papers"])
-                    total_processed += len(result["papers"])
+                try:
+                    result = await pubmed_service.perform_pubmed_search(topic, max_results=3)
+                    if result.get("papers"):
+                        all_papers.extend(result["papers"])
+                        total_processed += len(result["papers"])
+                except Exception as e:
+                    logger.warning(f"PubMed search failed for {topic}: {str(e)}")
+                    continue
             
-            # Get database status
-            db_status = await pubmed_service.get_literature_database_status()
+            # If PubMed searches failed, get papers from local database
+            if not all_papers:
+                try:
+                    local_papers = await db.literature_papers.find().sort("relevance_score", -1).limit(10).to_list(10)
+                    # Convert ObjectId to string for JSON serialization
+                    for paper in local_papers:
+                        if '_id' in paper:
+                            paper['_id'] = str(paper['_id'])
+                    all_papers = local_papers
+                    total_processed = len(local_papers)
+                except Exception as e:
+                    logger.error(f"Database fallback failed: {str(e)}")
+            
+            # Get updated database status
+            updated_db_status = await pubmed_service.get_literature_database_status()
             
             return {
                 "processing_result": {
                     "new_papers_processed": total_processed,
                     "search_topics": search_topics,
-                    "status": "completed"
+                    "status": "completed",
+                    "data_source": "pubmed_api_and_database" if all_papers else "database_only"
                 },
                 "recent_papers": all_papers[:10],  # Most recent/relevant
-                "total_papers_in_database": db_status.get("total_papers", 0),
+                "total_papers_in_database": updated_db_status.get("total_papers", 0),
                 "last_update": datetime.utcnow().isoformat(),
-                "database_status": db_status
+                "database_status": updated_db_status
             }
             
         except Exception as e:
