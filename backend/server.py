@@ -439,26 +439,31 @@ Always format responses as valid JSON with complete protocol details."""
 
     def _build_protocol_prompt(self, patient_data: PatientData, diagnoses: List[DiagnosticResult], 
                               school: SchoolOfThought, available_therapies: List[TherapyInfo]) -> str:
-        """Build comprehensive protocol generation prompt"""
+        """Build comprehensive protocol generation prompt with literature evidence"""
         
+        # Get therapy descriptions
         therapy_descriptions = []
         for therapy in available_therapies:
             therapy_descriptions.append(f"""
-            {therapy.name}:
-            - Mechanisms: {', '.join(therapy.mechanism)}
-            - Success Rate: {therapy.success_rate:.1%}
+            **{therapy.name}**
+            - Description: {therapy.description}
             - Evidence Level: {therapy.evidence_level.value}
             - Legal Status: {therapy.legal_status}
             - Indications: {', '.join(therapy.indications)}
             """)
+        
+        # Note: Literature evidence will be added by the calling async method
+        literature_evidence = ""
         
         return f"""
         Generate a comprehensive regenerative medicine protocol for this patient:
 
         **PATIENT SUMMARY:**
         Age: {patient_data.demographics.get('age', 'Unknown')}
+        Gender: {patient_data.demographics.get('gender', 'Unknown')}
         Primary Diagnoses: {', '.join([d.diagnosis for d in diagnoses[:3]])}
         School of Thought: {school.value}
+        Chief Complaint: {patient_data.chief_complaint}
         
         **AVAILABLE THERAPIES:**
         {chr(10).join(therapy_descriptions)}
@@ -468,59 +473,71 @@ Always format responses as valid JSON with complete protocol details."""
             'diagnosis': d.diagnosis,
             'confidence': d.confidence_score,
             'mechanisms': d.mechanisms_involved,
-            'targets': d.regenerative_targets
-        } for d in diagnoses], indent=2)}
-
-        **REQUIRED OUTPUT (JSON FORMAT):**
+            'supporting_evidence': d.supporting_evidence
+        } for d in diagnoses[:3]], indent=2)}
+        
+        **MEDICAL HISTORY:**
+        Past History: {', '.join(patient_data.past_medical_history) if patient_data.past_medical_history else 'None reported'}
+        Current Medications: {', '.join(patient_data.medications) if patient_data.medications else 'None reported'}
+        Allergies: {', '.join(patient_data.allergies) if patient_data.allergies else 'NKDA'}
+        
+        {literature_evidence}
+        
+        **INSTRUCTIONS:**
+        Generate a detailed, evidence-based regenerative medicine protocol in JSON format with the following structure:
+        
         {{
             "protocol_steps": [
                 {{
-                    "step_number": 1,
-                    "therapy": "Specific therapy name",
-                    "dosage": "Exact dosage with units (e.g., '3-5ml PRP, 1.5x10^8 platelets/ml')",
-                    "timing": "When to perform (e.g., 'Week 1, Day 0')",
-                    "delivery_method": "Specific technique (e.g., 'Ultrasound-guided intra-articular injection')",
-                    "monitoring_parameters": ["Pain scale", "Range of motion", "Imaging findings"],
-                    "expected_outcome": "Specific expected result",
-                    "timeframe": "When to expect results (e.g., '2-4 weeks')"
+                    "step": 1,
+                    "therapy": "Therapy Name",
+                    "description": "Detailed procedure description",
+                    "dosage": "Specific dosage/concentration",
+                    "timing": "When to perform (e.g., Week 1)",
+                    "delivery_method": "Injection technique and guidance",
+                    "expected_outcome": "What to expect and timeline",
+                    "evidence_citation": "Reference to supporting literature"
                 }}
             ],
             "supporting_evidence": [
                 {{
-                    "study_title": "Recent clinical trial title",
-                    "journal": "Journal name",
-                    "year": 2023,
-                    "evidence_level": 2,
-                    "key_finding": "Primary outcome result",
-                    "relevance": "How it applies to this case"
+                    "citation": "Study citation with PMID",
+                    "finding": "Key clinical finding supporting this protocol",
+                    "evidence_level": "Study type and quality"
                 }}
             ],
             "expected_outcomes": [
-                "Primary outcome with timeline",
-                "Secondary benefits with timeline"
+                {{
+                    "timeframe": "2-4 weeks",
+                    "outcome": "Pain reduction 30-50%",
+                    "probability": "80%"
+                }}
             ],
             "timeline_predictions": {{
-                "immediate": "0-2 weeks: Expected immediate effects",
-                "short_term": "2-8 weeks: Early improvements",
-                "medium_term": "2-6 months: Significant benefits",
-                "long_term": "6-12+ months: Sustained outcomes"
+                "short_term": "2-4 weeks: Initial improvement",
+                "medium_term": "2-3 months: Significant functional gains", 
+                "long_term": "6-12 months: Maximum benefit achieved"
             }},
-            "contraindications": ["Specific contraindications for this patient"],
-            "legal_warnings": ["Any regulatory or legal considerations"],
-            "cost_estimate": "Estimated total cost range",
+            "contraindications": ["List specific contraindications"],
+            "legal_warnings": ["Regulatory considerations and off-label warnings"],
+            "cost_estimate": "$X,XXX - $X,XXX",
             "confidence_score": 0.85,
-            "ai_reasoning": "Detailed explanation of protocol selection and rationale"
+            "lifestyle_recommendations": [
+                "Specific activity modifications",
+                "Nutritional recommendations",
+                "Supplement protocols"
+            ],
+            "monitoring_schedule": [
+                {{
+                    "timepoint": "Week 2",
+                    "assessment": "Pain and function evaluation",
+                    "action": "Consider dose adjustment"
+                }}
+            ],
+            "ai_reasoning": "Detailed explanation of why this protocol was selected based on patient factors and evidence"
         }}
-
-        **GUIDELINES:**
-        1. Include specific dosages based on latest evidence
-        2. Sequence therapies for optimal synergy
-        3. Include monitoring and safety parameters
-        4. Provide realistic timelines based on published data
-        5. Consider patient-specific factors (age, comorbidities, etc.)
-        6. Include legal status warnings for non-FDA approved treatments
-        7. Estimate costs based on current market rates
         
+        Base all recommendations on the provided evidence literature. Reference specific studies from the evidence section above. Ensure realistic timelines and success probabilities based on clinical data.
         Generate the most evidence-based, personalized protocol possible.
         """
 
