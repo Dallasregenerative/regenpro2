@@ -253,6 +253,219 @@ class PubMedIntegrationService:
         
         return {"status": "monitoring_initialized", "queries": len(self.monitoring_queries)}
 
+    async def perform_pubmed_search(self, search_terms: str, max_results: int = 20) -> Dict[str, Any]:
+        """Perform real PubMed search for regenerative medicine literature"""
+        
+        import requests
+        import feedparser
+        from urllib.parse import quote
+        
+        try:
+            # Build PubMed search query for regenerative medicine
+            base_query = f"({search_terms}) AND (regenerative medicine OR stem cell therapy OR PRP OR platelet rich plasma OR BMAC OR bone marrow concentrate)"
+            encoded_query = quote(base_query)
+            
+            # Search PubMed using E-utilities
+            search_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term={encoded_query}&retmax={max_results}&retmode=xml"
+            
+            search_response = requests.get(search_url, timeout=10)
+            
+            if search_response.status_code != 200:
+                return {"error": "PubMed search failed", "papers": [], "total_count": 0}
+            
+            # Parse XML response to get PMIDs
+            import xml.etree.ElementTree as ET
+            search_root = ET.fromstring(search_response.content)
+            
+            pmids = []
+            for id_elem in search_root.findall('.//Id'):
+                pmids.append(id_elem.text)
+            
+            if not pmids:
+                return {
+                    "search_query": search_terms,
+                    "papers": [],
+                    "total_count": 0,
+                    "message": "No recent papers found for this query"
+                }
+            
+            # Fetch paper details
+            pmid_string = ",".join(pmids[:10])  # Limit to top 10 for details
+            fetch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id={pmid_string}&retmode=xml"
+            
+            fetch_response = requests.get(fetch_url, timeout=15)
+            
+            if fetch_response.status_code != 200:
+                return {"error": "Failed to fetch paper details", "papers": [], "total_count": len(pmids)}
+            
+            # Parse paper details
+            fetch_root = ET.fromstring(fetch_response.content)
+            papers = []
+            
+            for article in fetch_root.findall('.//PubmedArticle'):
+                try:
+                    # Extract paper information
+                    pmid_elem = article.find('.//PMID')
+                    title_elem = article.find('.//ArticleTitle')
+                    abstract_elem = article.find('.//AbstractText')
+                    journal_elem = article.find('.//Title')  # Journal title
+                    date_elem = article.find('.//PubDate/Year')
+                    
+                    # Extract authors
+                    authors = []
+                    for author in article.findall('.//Author'):
+                        lastname = author.find('LastName')
+                        firstname = author.find('ForeName')
+                        if lastname is not None and firstname is not None:
+                            authors.append(f"{firstname.text} {lastname.text}")
+                    
+                    paper_data = {
+                        "pmid": pmid_elem.text if pmid_elem is not None else "Unknown",
+                        "title": title_elem.text if title_elem is not None else "Title not available",
+                        "abstract": abstract_elem.text if abstract_elem is not None else "Abstract not available",
+                        "journal": journal_elem.text if journal_elem is not None else "Journal unknown",
+                        "year": date_elem.text if date_elem is not None else "Year unknown",
+                        "authors": authors[:3],  # First 3 authors
+                        "relevance_score": self._calculate_relevance_score(
+                            title_elem.text if title_elem is not None else "",
+                            abstract_elem.text if abstract_elem is not None else "",
+                            search_terms
+                        ),
+                        "url": f"https://pubmed.ncbi.nlm.nih.gov/{pmid_elem.text if pmid_elem is not None else ''}"
+                    }
+                    papers.append(paper_data)
+                    
+                except Exception as e:
+                    continue  # Skip malformed papers
+            
+            # Sort by relevance score
+            papers.sort(key=lambda x: x.get('relevance_score', 0), reverse=True)
+            
+            # Store in database for future use
+            await self._store_literature_papers(papers, search_terms)
+            
+            return {
+                "search_query": search_terms,
+                "papers": papers,
+                "total_count": len(pmids),
+                "search_timestamp": datetime.utcnow().isoformat(),
+                "status": "success"
+            }
+            
+        except Exception as e:
+            logging.error(f"PubMed search error: {str(e)}")
+            return {
+                "error": f"Literature search failed: {str(e)}",
+                "papers": [],
+                "total_count": 0
+            }
+
+    def _calculate_relevance_score(self, title: str, abstract: str, search_terms: str) -> float:
+        """Calculate relevance score for a paper based on search terms"""
+        
+        if not title and not abstract:
+            return 0.0
+        
+        text = f"{title} {abstract}".lower()
+        search_terms_lower = search_terms.lower()
+        
+        # Base relevance factors
+        score = 0.0
+        
+        # Title contains search terms (higher weight)
+        if search_terms_lower in title.lower():
+            score += 0.5
+        
+        # Abstract contains search terms
+        if search_terms_lower in abstract.lower():
+            score += 0.3
+        
+        # High-value regenerative medicine keywords
+        high_value_terms = [
+            "platelet rich plasma", "prp", "stem cell", "bmac", 
+            "bone marrow concentrate", "mesenchymal", "exosome",
+            "regenerative medicine", "tissue engineering", "growth factor"
+        ]
+        
+        for term in high_value_terms:
+            if term in text:
+                score += 0.1
+        
+        # Recent studies get bonus
+        current_year = datetime.now().year
+        # We'd need to parse the year from the paper, but for now give base score
+        
+        return min(score, 1.0)  # Cap at 1.0
+
+    async def _store_literature_papers(self, papers: List[Dict], search_query: str):
+        """Store literature papers in database"""
+        
+        try:
+            for paper in papers:
+                # Check if paper already exists
+                existing = await self.db.literature_papers.find_one({"pmid": paper["pmid"]})
+                
+                if not existing:
+                    paper_doc = {
+                        **paper,
+                        "search_queries": [search_query],
+                        "created_at": datetime.utcnow(),
+                        "last_accessed": datetime.utcnow()
+                    }
+                    await self.db.literature_papers.insert_one(paper_doc)
+                else:
+                    # Update search queries and last accessed
+                    await self.db.literature_papers.update_one(
+                        {"pmid": paper["pmid"]},
+                        {
+                            "$addToSet": {"search_queries": search_query},
+                            "$set": {"last_accessed": datetime.utcnow()}
+                        }
+                    )
+                    
+        except Exception as e:
+            logging.error(f"Error storing literature papers: {str(e)}")
+
+    async def get_literature_database_status(self) -> Dict[str, Any]:
+        """Get current status of literature database"""
+        
+        try:
+            total_papers = await self.db.literature_papers.count_documents({})
+            
+            # Get recent papers (last 30 days)
+            thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+            recent_papers = await self.db.literature_papers.count_documents({
+                "created_at": {"$gte": thirty_days_ago}
+            })
+            
+            # Get top search terms
+            pipeline = [
+                {"$unwind": "$search_queries"},
+                {"$group": {"_id": "$search_queries", "count": {"$sum": 1}}},
+                {"$sort": {"count": -1}},
+                {"$limit": 5}
+            ]
+            
+            top_searches = await self.db.literature_papers.aggregate(pipeline).to_list(5)
+            
+            return {
+                "total_papers": total_papers,
+                "recent_papers": recent_papers,
+                "top_search_terms": [item["_id"] for item in top_searches],
+                "last_update": datetime.utcnow().isoformat(),
+                "status": "active" if total_papers > 0 else "initializing"
+            }
+            
+        except Exception as e:
+            logging.error(f"Literature database status error: {str(e)}")
+            return {
+                "total_papers": 0,
+                "recent_papers": 0,
+                "top_search_terms": [],
+                "last_update": datetime.utcnow().isoformat(),
+                "status": "error"
+            }
+
     async def fetch_latest_publications(self, query: str, days_back: int = 1) -> List[Dict]:
         """Fetch latest publications from PubMed"""
         
