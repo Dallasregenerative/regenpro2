@@ -39,6 +39,12 @@ import logging
 # Set up logger
 logger = logging.getLogger(__name__)
 
+# Simple AI engine class to avoid circular imports
+class RegenerativeMedicineAI:
+    def __init__(self):
+        self.base_url = "https://api.openai.com/v1"
+        self.api_key = "your-api-key-here"  # In production, use environment variable
+
 # Import AI engine from server
 from .server import RegenerativeMedicineAI
 
