@@ -33,6 +33,11 @@ import torchvision.transforms as transforms
 from motor.motor_asyncio import AsyncIOMotorClient
 import re
 import pandas as pd
+import uuid
+import logging
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 # Federated Learning Models
 class FederatedLearningService:
