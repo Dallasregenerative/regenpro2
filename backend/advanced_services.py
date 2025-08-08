@@ -39,6 +39,9 @@ import logging
 # Set up logger
 logger = logging.getLogger(__name__)
 
+# Import AI engine from server
+from .server import RegenerativeMedicineAI
+
 # Federated Learning Models
 class FederatedLearningService:
     """Privacy-preserving federated learning for continuous improvement"""
