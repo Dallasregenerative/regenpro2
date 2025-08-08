@@ -26,4 +26,5 @@ scikit-image==0.22.0
 scipy==1.11.4
 psutil==5.9.6
 lxml==4.9.3
-flower==2.0.1
+requests==2.31.0
+feedparser==6.0.10
