@@ -1123,6 +1123,13 @@ def main():
         ("Literature - Latest Updates", tester.test_literature_latest_updates),
         ("Literature - Search Database", tester.test_literature_search),
         
+        # Phase 6.5: Evidence Synthesis System (NEW)
+        ("Evidence Synthesis - System Status", tester.test_evidence_synthesis_status),
+        ("Evidence Synthesis - Osteoarthritis Protocol", tester.test_evidence_synthesis_osteoarthritis),
+        ("Evidence Synthesis - Rotator Cuff Protocol", tester.test_evidence_synthesis_rotator_cuff),
+        ("Evidence Synthesis - Error Handling (Missing Condition)", tester.test_evidence_synthesis_missing_condition),
+        ("Evidence Synthesis - Invalid Condition", tester.test_evidence_synthesis_invalid_condition),
+        
         # Phase 7: ML Prediction & DICOM Processing
         ("ML Model Performance", tester.test_prediction_model_performance),
         ("ML Treatment Outcome Prediction", tester.test_treatment_outcome_prediction),
