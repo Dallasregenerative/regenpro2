@@ -291,6 +291,49 @@ Always format responses as valid JSON."""
             logging.error(f"Patient analysis failed: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
+    async def _get_literature_evidence(self, diagnoses: List[DiagnosticResult]) -> str:
+        """Get relevant literature evidence for the given diagnoses"""
+        literature_evidence = ""
+        if pubmed_service:
+            try:
+                # Extract condition keywords for literature search
+                condition_keywords = []
+                for diagnosis in diagnoses[:2]:
+                    if "osteoarthritis" in diagnosis.diagnosis.lower():
+                        condition_keywords.append("platelet rich plasma osteoarthritis")
+                    elif "rotator cuff" in diagnosis.diagnosis.lower() or "shoulder" in diagnosis.diagnosis.lower():
+                        condition_keywords.append("BMAC rotator cuff") 
+                    elif "tendon" in diagnosis.diagnosis.lower():
+                        condition_keywords.append("stem cell therapy tendinopathy")
+                    else:
+                        condition_keywords.append("regenerative medicine")
+                
+                # Search literature database for relevant papers
+                for keyword in condition_keywords[:2]:  # Limit to 2 searches
+                    try:
+                        # Search local database first
+                        papers = await db.literature_papers.find({
+                            "$or": [
+                                {"title": {"$regex": keyword.split()[0], "$options": "i"}},
+                                {"search_queries": {"$in": [keyword.lower()]}}
+                            ]
+                        }).sort("relevance_score", -1).limit(2).to_list(2)
+                        
+                        if papers:
+                            literature_evidence += f"\n**RELEVANT EVIDENCE for {keyword.upper()}:**\n"
+                            for i, paper in enumerate(papers, 1):
+                                literature_evidence += f"{i}. {paper.get('title', 'Unknown title')} ({paper.get('year', 'Unknown')})\n"
+                                literature_evidence += f"   Journal: {paper.get('journal', 'Unknown')}\n" 
+                                literature_evidence += f"   Abstract: {paper.get('abstract', 'No abstract')[:300]}...\n"
+                                literature_evidence += f"   PMID: {paper.get('pmid', 'Unknown')}\n\n"
+                    except Exception as e:
+                        continue
+                        
+            except Exception as e:
+                logging.error(f"Literature search error: {str(e)}")
+        
+        return literature_evidence
+
     async def generate_regenerative_protocol(
         self, 
         patient_data: PatientData, 
