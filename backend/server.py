@@ -504,7 +504,7 @@ Always format responses as valid JSON with complete protocol details."""
         for therapy in available_therapies:
             therapy_descriptions.append(f"""
             **{therapy.name}**
-            - Description: {therapy.description}
+            - Mechanisms: {', '.join(therapy.mechanism)}
             - Evidence Level: {therapy.evidence_level.value}
             - Legal Status: {therapy.legal_status}
             - Indications: {', '.join(therapy.indications)}
