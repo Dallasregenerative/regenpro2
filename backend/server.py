@@ -1688,6 +1688,179 @@ def _parse_outcome_prediction_fallback(prediction_content, therapy_plan):
         "evidence_basis": "Clinical assessment and standard protocols"
     }
 
+@api_router.get("/patients/{patient_id}/comprehensive-analysis")
+async def get_comprehensive_patient_analysis_v2(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get comprehensive patient analysis including differential diagnosis and multi-modal insights"""
+    
+    try:
+        # Get the most recent comprehensive analysis
+        analysis = await db.comprehensive_analyses.find_one(
+            {"patient_id": patient_id},
+            sort=[("analysis_timestamp", -1)]
+        )
+        
+        if not analysis:
+            # If no analysis exists, generate one
+            patient = await db.patients.find_one({"patient_id": patient_id})
+            if not patient:
+                raise HTTPException(status_code=404, detail="Patient not found")
+            
+            # Convert to PatientData object and analyze
+            patient_data = PatientData(**patient)
+            ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
+            diagnostic_results = await ai_engine.analyze_patient_data(patient_data)
+            
+            # Try to get the analysis that was just created
+            analysis = await db.comprehensive_analyses.find_one(
+                {"patient_id": patient_id},
+                sort=[("analysis_timestamp", -1)]
+            )
+        
+        if analysis:
+            # Convert ObjectId to string for JSON serialization
+            if '_id' in analysis:
+                analysis['_id'] = str(analysis['_id'])
+                
+            return {
+                "patient_id": patient_id,
+                "analysis": analysis.get("comprehensive_analysis", {}),
+                "multi_modal_files_used": analysis.get("multi_modal_files_used", 0),
+                "file_categories": analysis.get("file_categories", []),
+                "analysis_timestamp": analysis.get("analysis_timestamp"),
+                "status": "completed"
+            }
+        else:
+            return {
+                "patient_id": patient_id,
+                "analysis": {"status": "Analysis in progress"},
+                "multi_modal_files_used": 0,
+                "file_categories": [],
+                "analysis_timestamp": datetime.utcnow().isoformat(),
+                "status": "generating"
+            }
+            
+    except Exception as e:
+        logging.error(f"Comprehensive analysis retrieval error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis retrieval failed: {str(e)}")
+
+@api_router.post("/patients/{patient_id}/outcome-prediction")
+async def predict_treatment_outcomes_advanced(
+    patient_id: str,
+    therapy_plan: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Generate advanced outcome predictions with confidence intervals and biomarker analysis"""
+    
+    try:
+        # Get patient data
+        patient = await db.patients.find_one({"patient_id": patient_id})
+        if not patient:
+            raise HTTPException(status_code=404, detail="Patient not found")
+        
+        # Get comprehensive analysis if available
+        comprehensive_analysis = await db.comprehensive_analyses.find_one(
+            {"patient_id": patient_id},
+            sort=[("analysis_timestamp", -1)]
+        )
+        
+        # Get uploaded files for enhanced predictions
+        uploaded_files = {}
+        if file_processor:
+            try:
+                file_summary = await file_processor.get_patient_file_summary(patient_id)
+                uploaded_files = file_summary.get("files_by_category", {})
+            except Exception as e:
+                logging.warning(f"File summary retrieval failed: {str(e)}")
+        
+        # Build outcome prediction prompt
+        prediction_prompt = _build_outcome_prediction_prompt(
+            patient, comprehensive_analysis, therapy_plan, uploaded_files
+        )
+        
+        # Generate AI-powered outcome prediction using the existing OpenAI integration
+        try:
+            ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
+            
+            # Use the existing httpx client pattern
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    f"{ai_engine.base_url}/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {ai_engine.api_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": "gpt-4",
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": """You are a world-renowned expert in regenerative medicine outcomes research and predictive analytics. You have access to:
+
+- 25+ years of clinical outcome data
+- Advanced biomarker analysis and prognostic modeling
+- Genetic variants affecting treatment response
+- Multi-modal data integration for personalized predictions
+- Statistical modeling for confidence intervals
+
+Your expertise includes predicting treatment success rates, timeline to improvement, risk factors, and personalized optimization strategies based on patient-specific factors.
+
+Provide evidence-based outcome predictions with statistical confidence intervals and detailed reasoning."""
+                            },
+                            {"role": "user", "content": prediction_prompt}
+                        ],
+                        "max_tokens": 3000,
+                        "temperature": 0.3
+                    }
+                )
+            
+            if response.status_code != 200:
+                logging.error(f"OpenAI API error: {response.status_code} - {response.text}")
+                return _generate_fallback_outcome_prediction(patient, therapy_plan)
+            
+            ai_response = response.json()
+            prediction_content = ai_response['choices'][0]['message']['content']
+            
+            # Parse and structure outcome predictions
+            try:
+                prediction_data = json.loads(prediction_content)
+            except json.JSONDecodeError:
+                # Fallback parsing if JSON fails
+                prediction_data = _parse_outcome_prediction_fallback(prediction_content, therapy_plan)
+            
+            # Store prediction in database
+            prediction_doc = {
+                "patient_id": patient_id,
+                "therapy_plan": therapy_plan,
+                "outcome_prediction": prediction_data,
+                "prediction_timestamp": datetime.utcnow(),
+                "multi_modal_enhancement": bool(uploaded_files),
+                "files_integrated": sum(len(files) for files in uploaded_files.values()) if uploaded_files else 0
+            }
+            
+            await db.outcome_predictions.insert_one(prediction_doc)
+            
+            return {
+                "patient_id": patient_id,
+                "therapy_plan": therapy_plan,
+                "predictions": prediction_data,
+                "prediction_confidence": prediction_data.get("overall_confidence", 0.8),
+                "multi_modal_enhancement": bool(uploaded_files),
+                "prediction_timestamp": datetime.utcnow().isoformat()
+            }
+            
+        except Exception as e:
+            logging.error(f"AI outcome prediction failed: {str(e)}")
+            # Generate fallback prediction
+            fallback_prediction = _generate_fallback_outcome_prediction(patient, therapy_plan)
+            return fallback_prediction
+            
+    except Exception as e:
+        logging.error(f"Outcome prediction error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Outcome prediction failed: {str(e)}")
+
 @api_router.get("/advanced/system-status")
 async def get_advanced_system_status():
     """Get comprehensive status of all advanced AI systems"""
