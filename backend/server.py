@@ -547,14 +547,14 @@ Always format responses as valid JSON with complete protocol details."""
         {{
             "protocol_steps": [
                 {{
-                    "step": 1,
+                    "step_number": 1,
                     "therapy": "Therapy Name",
-                    "description": "Detailed procedure description",
                     "dosage": "Specific dosage/concentration",
                     "timing": "When to perform (e.g., Week 1)",
                     "delivery_method": "Injection technique and guidance",
+                    "monitoring_parameters": ["Pain scale", "Range of motion", "Imaging findings"],
                     "expected_outcome": "What to expect and timeline",
-                    "evidence_citation": "Reference to supporting literature"
+                    "timeframe": "When to expect results (e.g., 2-4 weeks)"
                 }}
             ],
             "supporting_evidence": [
