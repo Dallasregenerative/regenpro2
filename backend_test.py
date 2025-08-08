@@ -925,6 +925,154 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print(f"   Analyses Returned: {len(analyses)}")
         return success
 
+    # ========== EVIDENCE SYNTHESIS SYSTEM TESTING ==========
+
+    def test_evidence_synthesis_status(self):
+        """Test evidence synthesis system status"""
+        success, response = self.run_test(
+            "Evidence Synthesis System Status",
+            "GET",
+            "evidence/synthesis-status",
+            200
+        )
+        
+        if success:
+            print(f"   Synthesis Engine Status: {response.get('synthesis_engine_status', 'unknown')}")
+            
+            literature_db = response.get('literature_database', {})
+            if literature_db:
+                print(f"   Literature Database Papers: {literature_db.get('total_papers', 0)}")
+                print(f"   Database Status: {literature_db.get('status', 'unknown')}")
+            
+            print(f"   Recent Syntheses: {response.get('recent_syntheses', 0)}")
+            
+            capabilities = response.get('capabilities', [])
+            print(f"   System Capabilities: {len(capabilities)}")
+            if capabilities:
+                print(f"   Key Capabilities: {', '.join(capabilities[:3])}")
+        return success
+
+    def test_evidence_synthesis_osteoarthritis(self):
+        """Test evidence synthesis for osteoarthritis condition"""
+        synthesis_request = {
+            "condition": "osteoarthritis",
+            "existing_evidence": [
+                {
+                    "source": "clinical_experience",
+                    "finding": "PRP shows good results in knee osteoarthritis",
+                    "confidence": 0.8
+                }
+            ]
+        }
+
+        print("   This may take 30-60 seconds for comprehensive literature analysis...")
+        success, response = self.run_test(
+            "Evidence Synthesis - Osteoarthritis Protocol",
+            "POST",
+            "evidence/synthesize-protocol",
+            200,
+            data=synthesis_request,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Synthesis Status: {response.get('status', 'unknown')}")
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            
+            synthesis_result = response.get('synthesis_result', {})
+            if synthesis_result:
+                print(f"   Evidence Sources: {synthesis_result.get('evidence_sources', 0)}")
+                print(f"   Synthesis Confidence: {synthesis_result.get('synthesis_confidence', 0):.2f}")
+                print(f"   Protocol Generated: {synthesis_result.get('protocol_generated', False)}")
+                
+                # Check for protocol recommendations
+                recommendations = synthesis_result.get('protocol_recommendations', [])
+                if recommendations:
+                    print(f"   Protocol Recommendations: {len(recommendations)}")
+                    print(f"   Top Recommendation: {recommendations[0].get('therapy', 'Unknown')[:50]}...")
+        return success
+
+    def test_evidence_synthesis_rotator_cuff(self):
+        """Test evidence synthesis for rotator cuff injury condition"""
+        synthesis_request = {
+            "condition": "rotator cuff injury",
+            "existing_evidence": []
+        }
+
+        print("   This may take 30-60 seconds for comprehensive literature analysis...")
+        success, response = self.run_test(
+            "Evidence Synthesis - Rotator Cuff Protocol",
+            "POST",
+            "evidence/synthesize-protocol",
+            200,
+            data=synthesis_request,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Synthesis Status: {response.get('status', 'unknown')}")
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            
+            synthesis_result = response.get('synthesis_result', {})
+            if synthesis_result:
+                print(f"   Evidence Sources: {synthesis_result.get('evidence_sources', 0)}")
+                print(f"   Synthesis Confidence: {synthesis_result.get('synthesis_confidence', 0):.2f}")
+                
+                # Check for literature analysis
+                literature_analysis = synthesis_result.get('literature_analysis', {})
+                if literature_analysis:
+                    print(f"   Literature Papers Analyzed: {literature_analysis.get('papers_analyzed', 0)}")
+                    print(f"   Evidence Quality Score: {literature_analysis.get('evidence_quality_score', 0):.2f}")
+        return success
+
+    def test_evidence_synthesis_missing_condition(self):
+        """Test evidence synthesis error handling when condition is missing"""
+        synthesis_request = {
+            "existing_evidence": []
+        }
+
+        success, response = self.run_test(
+            "Evidence Synthesis - Missing Condition (Error Handling)",
+            "POST",
+            "evidence/synthesize-protocol",
+            400,  # Expecting 400 Bad Request
+            data=synthesis_request
+        )
+        
+        if success:
+            print(f"   Error Handling: Correctly returned 400 for missing condition")
+            print(f"   Error Detail: {response.get('detail', 'No detail provided')}")
+        return success
+
+    def test_evidence_synthesis_invalid_condition(self):
+        """Test evidence synthesis with invalid/unsupported condition"""
+        synthesis_request = {
+            "condition": "invalid_medical_condition_xyz123",
+            "existing_evidence": []
+        }
+
+        print("   Testing with invalid condition...")
+        success, response = self.run_test(
+            "Evidence Synthesis - Invalid Condition",
+            "POST",
+            "evidence/synthesize-protocol",
+            200,  # Should still return 200 but with appropriate status
+            data=synthesis_request,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Synthesis Status: {response.get('status', 'unknown')}")
+            
+            # Check if system handles invalid condition gracefully
+            if response.get('status') in ['synthesis_failed', 'synthesis_completed']:
+                print(f"   System handled invalid condition appropriately")
+                if 'error' in response:
+                    print(f"   Error Message: {response.get('error', 'No error message')[:50]}...")
+                if response.get('fallback_available'):
+                    print(f"   Fallback Available: {response.get('fallback_available')}")
+        return success
+
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
     print("Advanced Regenerative Medicine Knowledge Platform v2.0")
