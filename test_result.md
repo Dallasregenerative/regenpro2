@@ -165,6 +165,18 @@ backend:
         agent: "testing"
         comment: "Minor: Some endpoints have MongoDB ObjectId serialization issues causing 500 errors (comprehensive file analysis, outcome prediction, dashboard analytics). Core functionality works but these specific endpoints need ObjectId to string conversion fixes."
 
+  - task: "Evidence Synthesis System API Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added missing API endpoints for evidence synthesis system: POST /api/evidence/synthesize-protocol and GET /api/evidence/synthesis-status. These endpoints expose the comprehensive evidence synthesis functionality that was already implemented in advanced_services.py. The system can now perform AI-driven literature analysis and generate evidence-based protocols from the latest scientific literature."
+
   - task: "Complete Diagnostic Workflow"
     implemented: true
     working: true
