@@ -953,23 +953,53 @@ async def get_global_model_status():
 
 @api_router.get("/literature/latest-updates")
 async def get_latest_literature_updates():
-    """Get latest regenerative medicine literature updates"""
+    """Get latest regenerative medicine literature updates with real PubMed search"""
     
     if pubmed_service:
-        # Process new literature
-        processing_result = await pubmed_service.process_new_literature()
-        
-        # Get recent papers
-        recent_papers = await db.literature_papers.find().sort("extracted_at", -1).limit(10).to_list(10)
-        
-        return {
-            "processing_result": processing_result,
-            "recent_papers": recent_papers,
-            "total_papers_in_database": await db.literature_papers.count_documents({}),
-            "last_update": datetime.utcnow()
-        }
+        try:
+            # Perform actual PubMed searches for key regenerative medicine topics
+            search_topics = [
+                "platelet rich plasma osteoarthritis",
+                "stem cell therapy tendinopathy", 
+                "BMAC rotator cuff",
+                "regenerative medicine cartilage repair"
+            ]
+            
+            all_papers = []
+            total_processed = 0
+            
+            # Search each topic and collect papers
+            for topic in search_topics:
+                result = await pubmed_service.perform_pubmed_search(topic, max_results=5)
+                if result.get("papers"):
+                    all_papers.extend(result["papers"])
+                    total_processed += len(result["papers"])
+            
+            # Get database status
+            db_status = await pubmed_service.get_literature_database_status()
+            
+            return {
+                "processing_result": {
+                    "new_papers_processed": total_processed,
+                    "search_topics": search_topics,
+                    "status": "completed"
+                },
+                "recent_papers": all_papers[:10],  # Most recent/relevant
+                "total_papers_in_database": db_status.get("total_papers", 0),
+                "last_update": datetime.utcnow().isoformat(),
+                "database_status": db_status
+            }
+            
+        except Exception as e:
+            logger.error(f"Literature update error: {str(e)}")
+            return {
+                "processing_result": {"error": str(e), "new_papers_processed": 0},
+                "recent_papers": [],
+                "total_papers_in_database": 0,
+                "last_update": datetime.utcnow().isoformat()
+            }
     
-    return {"status": "service_unavailable"}
+    return {"status": "service_unavailable", "message": "PubMed service not initialized"}
 
 @api_router.get("/literature/search")
 async def search_literature_database(
@@ -977,17 +1007,62 @@ async def search_literature_database(
     relevance_threshold: float = 0.7,
     limit: int = 20
 ):
-    """Search the integrated literature database"""
+    """Search literature using real PubMed API and local database"""
     
-    # Search papers by keywords and relevance
-    search_filter = {
-        "$or": [
-            {"title": {"$regex": query, "$options": "i"}},
-            {"abstract": {"$regex": query, "$options": "i"}},
-            {"regenerative_keywords": {"$in": [query.lower()]}}
-        ],
-        "relevance_score": {"$gte": relevance_threshold}
-    }
+    if pubmed_service:
+        try:
+            # First, search local database
+            search_filter = {
+                "$or": [
+                    {"title": {"$regex": query, "$options": "i"}},
+                    {"abstract": {"$regex": query, "$options": "i"}},
+                    {"search_queries": {"$in": [query.lower()]}}
+                ],
+                "relevance_score": {"$gte": relevance_threshold}
+            }
+            
+            local_papers = await db.literature_papers.find(search_filter).sort("relevance_score", -1).limit(limit).to_list(limit)
+            
+            # Convert ObjectId to string for JSON serialization
+            for paper in local_papers:
+                if '_id' in paper:
+                    paper['_id'] = str(paper['_id'])
+            
+            # If we don't have enough papers locally, search PubMed
+            if len(local_papers) < limit:
+                remaining_limit = limit - len(local_papers)
+                pubmed_result = await pubmed_service.perform_pubmed_search(query, max_results=remaining_limit)
+                
+                if pubmed_result.get("papers"):
+                    # Filter by relevance threshold
+                    filtered_pubmed = [p for p in pubmed_result["papers"] if p.get("relevance_score", 0) >= relevance_threshold]
+                    
+                    # Combine results, avoiding duplicates
+                    existing_pmids = {p.get("pmid") for p in local_papers}
+                    new_papers = [p for p in filtered_pubmed if p.get("pmid") not in existing_pmids]
+                    
+                    local_papers.extend(new_papers)
+            
+            return {
+                "query": query,
+                "papers": local_papers,
+                "total_results": len(local_papers),
+                "relevance_threshold": relevance_threshold,
+                "search_timestamp": datetime.utcnow().isoformat(),
+                "sources": ["local_database", "pubmed_api"]
+            }
+            
+        except Exception as e:
+            logger.error(f"Literature search error: {str(e)}")
+            return {
+                "query": query,
+                "papers": [],
+                "total_results": 0,
+                "error": str(e),
+                "search_timestamp": datetime.utcnow().isoformat()
+            }
+    
+    return {"status": "service_unavailable", "message": "Literature search service not available"}
     
     papers = await db.literature_papers.find(search_filter).sort("relevance_score", -1).limit(limit).to_list(limit)
     
