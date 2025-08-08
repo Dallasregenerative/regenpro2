@@ -45,9 +45,6 @@ class RegenerativeMedicineAI:
         self.base_url = "https://api.openai.com/v1"
         self.api_key = "your-api-key-here"  # In production, use environment variable
 
-# Import AI engine from server
-from .server import RegenerativeMedicineAI
-
 # Federated Learning Models
 class FederatedLearningService:
     """Privacy-preserving federated learning for continuous improvement"""
