@@ -345,8 +345,23 @@ Always format responses as valid JSON."""
         # Get therapy recommendations based on school of thought
         available_therapies = self._get_therapies_by_school(school)
         
+        # Get literature evidence for the diagnoses
+        literature_evidence = await self._get_literature_evidence(diagnoses)
+        
         # Build protocol generation prompt
         protocol_prompt = self._build_protocol_prompt(patient_data, diagnoses, school, available_therapies)
+        
+        # Add literature evidence to the prompt
+        if literature_evidence:
+            protocol_prompt = protocol_prompt.replace(
+                "{literature_evidence}",
+                literature_evidence
+            )
+        else:
+            protocol_prompt = protocol_prompt.replace(
+                "{literature_evidence}",
+                "\n**LITERATURE EVIDENCE:**\nNo specific literature evidence found in database for this condition. Protocol based on general regenerative medicine principles.\n"
+            )
         
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
