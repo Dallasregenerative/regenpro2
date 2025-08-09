@@ -119,6 +119,18 @@ user_problem_statement: "Fully integrate the analysis of uploaded patient charts
         agent: "testing"
         comment: "✅ PASSED - Google Scholar integration system is fully functional with 100% test success rate (10/10 tests). HTML parsing works excellently extracting titles, authors, journals, years, abstracts, citation counts. Relevance scoring operational (0.05-0.85 range), year filtering functional, error handling graceful. Multi-source search successfully combines PubMed and Google Scholar results with effective deduplication. Source statistics reporting accurate, database storage working with proper source attribution. System significantly expands literature coverage beyond PubMed as requested. Ready for production use."
 
+  - task: "ClinicalTrials.gov API Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/advanced_services.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added comprehensive ClinicalTrials.gov API integration for real-time clinical trial matching. Implemented search_clinical_trials method with JSON API parsing, intervention categorization, and relevance scoring. Added find_matching_clinical_trials method for patient-specific trial matching with eligibility assessment. Created new API endpoints: GET /api/clinical-trials/search and GET /api/clinical-trials/patient-matching. Added trial categorization for regenerative medicine interventions (PRP, BMAC, Stem Cells, Exosomes). System can now match patients to relevant clinical trials based on condition and therapy preferences, providing next steps and eligibility guidance. Enables practitioners to identify cutting-edge treatment opportunities and research participation for patients."
+
 backend:
   - task: "File Upload and Processing System"
     implemented: true
