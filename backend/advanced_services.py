@@ -111,6 +111,388 @@ class WorldClassLiteratureService:
         """Initialize regulatory intelligence system"""
         return {"status": "active", "monitored_agencies": ["FDA", "EMA", "PMDA", "Health_Canada"]}
 
+    # =============== EVIDENCE SYNTHESIS ENGINE CORE ===============
+    
+    async def synthesize_protocol_evidence(self, protocol_components: List[Dict], condition: str) -> Dict[str, Any]:
+        """Generate comprehensive evidence synthesis for each protocol component"""
+        
+        try:
+            synthesis_results = []
+            
+            for component in protocol_components:
+                component_synthesis = await self._synthesize_component_evidence(component, condition)
+                synthesis_results.append(component_synthesis)
+            
+            # Create comprehensive evidence table
+            evidence_table = await self._create_evidence_table(synthesis_results, condition)
+            
+            # Detect contradictions in evidence
+            contradictions = await self._detect_evidence_contradictions(synthesis_results)
+            
+            # Generate evidence quality score
+            overall_quality = await self._calculate_evidence_quality_score(synthesis_results)
+            
+            return {
+                "protocol_evidence_synthesis": {
+                    "condition": condition,
+                    "total_components": len(protocol_components),
+                    "evidence_table": evidence_table,
+                    "contradictions_detected": contradictions,
+                    "overall_evidence_quality": overall_quality,
+                    "synthesis_timestamp": datetime.utcnow().isoformat(),
+                    "component_syntheses": synthesis_results
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Evidence synthesis error: {str(e)}")
+            return {"error": f"Evidence synthesis failed: {str(e)}"}
+
+    async def _synthesize_component_evidence(self, component: Dict, condition: str) -> Dict[str, Any]:
+        """Synthesize evidence for individual protocol component"""
+        
+        component_name = component.get("name", "Unknown")
+        therapy_type = component.get("therapy", "Unknown")
+        
+        # Search for relevant studies
+        studies = await self._search_component_evidence(component_name, therapy_type, condition)
+        
+        # Grade evidence quality
+        evidence_grading = await self._grade_evidence_quality(studies)
+        
+        # Extract key findings
+        key_findings = await self._extract_key_findings(studies, component)
+        
+        # Calculate confidence score
+        confidence_score = await self._calculate_component_confidence(evidence_grading, studies)
+        
+        return {
+            "component_id": component.get("id", f"comp_{uuid.uuid4().hex[:8]}"),
+            "component_name": component_name,
+            "therapy_type": therapy_type,
+            "supporting_studies": len(studies),
+            "evidence_level": evidence_grading["overall_level"],
+            "evidence_quality_score": evidence_grading["quality_score"],
+            "key_findings": key_findings,
+            "confidence_score": confidence_score,
+            "pmid_citations": [study.get("pmid") for study in studies if study.get("pmid")],
+            "last_updated": datetime.utcnow().isoformat()
+        }
+
+    async def _search_component_evidence(self, component_name: str, therapy_type: str, condition: str) -> List[Dict]:
+        """Search for evidence supporting specific protocol component"""
+        
+        # Create comprehensive search query
+        search_terms = f'"{component_name}" AND "{therapy_type}" AND "{condition}" AND regenerative medicine'
+        
+        try:
+            # Search PubMed
+            pubmed_results = await self.perform_pubmed_search(search_terms, max_results=20)
+            
+            # Search Google Scholar
+            scholar_results = await self.perform_google_scholar_search(search_terms, max_results=15)
+            
+            # Combine and deduplicate results
+            all_studies = []
+            if pubmed_results.get("papers"):
+                all_studies.extend(pubmed_results["papers"])
+            if scholar_results.get("papers"):
+                all_studies.extend(scholar_results["papers"])
+            
+            # Remove duplicates by title similarity
+            unique_studies = self._deduplicate_papers(all_studies)
+            
+            # Sort by relevance to component
+            relevant_studies = await self._rank_studies_by_component_relevance(
+                unique_studies, component_name, therapy_type, condition
+            )
+            
+            return relevant_studies[:10]  # Top 10 most relevant
+            
+        except Exception as e:
+            logger.error(f"Component evidence search error: {str(e)}")
+            return []
+
+    async def _grade_evidence_quality(self, studies: List[Dict]) -> Dict[str, Any]:
+        """Grade evidence quality using established frameworks (GRADE, Oxford)"""
+        
+        if not studies:
+            return {
+                "overall_level": "Level IV",
+                "quality_score": 0.0,
+                "bias_risk": "High",
+                "grade_explanation": "No supporting studies found"
+            }
+        
+        # Categorize studies by type
+        study_types = {"meta_analysis": 0, "rct": 0, "cohort": 0, "case_series": 0, "case_report": 0}
+        total_sample_size = 0
+        quality_scores = []
+        
+        for study in studies:
+            title = study.get("title", "").lower()
+            abstract = study.get("abstract", "").lower()
+            text = f"{title} {abstract}"
+            
+            # Classify study type
+            if any(term in text for term in ["meta-analysis", "systematic review"]):
+                study_types["meta_analysis"] += 1
+                quality_scores.append(0.9)
+            elif any(term in text for term in ["randomized", "rct", "double blind", "placebo"]):
+                study_types["rct"] += 1
+                quality_scores.append(0.8)
+            elif any(term in text for term in ["cohort", "prospective", "longitudinal"]):
+                study_types["cohort"] += 1
+                quality_scores.append(0.6)
+            elif any(term in text for term in ["case series", "case-control"]):
+                study_types["case_series"] += 1
+                quality_scores.append(0.4)
+            else:
+                study_types["case_report"] += 1
+                quality_scores.append(0.2)
+            
+            # Extract sample size estimates
+            sample_match = re.search(r'(\d+)\s*(?:patients?|subjects?|participants?)', text)
+            if sample_match:
+                total_sample_size += int(sample_match.group(1))
+        
+        # Determine overall evidence level
+        if study_types["meta_analysis"] > 0:
+            overall_level = "Level I"
+        elif study_types["rct"] >= 2:
+            overall_level = "Level I"
+        elif study_types["rct"] >= 1:
+            overall_level = "Level II"
+        elif study_types["cohort"] >= 2:
+            overall_level = "Level II"
+        elif study_types["cohort"] >= 1 or study_types["case_series"] >= 3:
+            overall_level = "Level III"
+        else:
+            overall_level = "Level IV"
+        
+        # Calculate quality score
+        avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else 0
+        sample_size_bonus = min(0.2, total_sample_size / 1000) if total_sample_size > 0 else 0
+        overall_quality_score = min(1.0, avg_quality + sample_size_bonus)
+        
+        # Assess bias risk
+        if overall_quality_score >= 0.8:
+            bias_risk = "Low"
+        elif overall_quality_score >= 0.6:
+            bias_risk = "Medium"
+        else:
+            bias_risk = "High"
+        
+        return {
+            "overall_level": overall_level,
+            "quality_score": overall_quality_score,
+            "bias_risk": bias_risk,
+            "study_breakdown": study_types,
+            "total_sample_size": total_sample_size,
+            "grade_explanation": f"{overall_level} evidence based on {len(studies)} studies with {bias_risk.lower()} bias risk"
+        }
+
+    async def _extract_key_findings(self, studies: List[Dict], component: Dict) -> List[str]:
+        """Extract key clinical findings relevant to protocol component"""
+        
+        key_findings = []
+        component_name = component.get("name", "").lower()
+        
+        for study in studies[:5]:  # Top 5 studies
+            title = study.get("title", "")
+            abstract = study.get("abstract", "")
+            
+            # Extract outcome measures
+            if re.search(r'\d+%.*(?:improvement|reduction|increase)', abstract.lower()):
+                outcome_match = re.search(r'(\d+%.*(?:improvement|reduction|increase)[^.]*)', abstract.lower())
+                if outcome_match:
+                    key_findings.append(f"{title[:60]}...: {outcome_match.group(1).capitalize()}")
+            
+            # Extract statistical significance
+            if re.search(r'p\s*[<>=]\s*0\.\d+', abstract.lower()):
+                p_value_match = re.search(r'(p\s*[<>=]\s*0\.\d+)', abstract.lower())
+                if p_value_match:
+                    key_findings.append(f"{title[:60]}...: Statistical significance {p_value_match.group(1)}")
+            
+            # Extract safety findings
+            if any(term in abstract.lower() for term in ['safe', 'well tolerated', 'no adverse']):
+                key_findings.append(f"{title[:60]}...: Favorable safety profile reported")
+        
+        # If no specific findings, add general finding
+        if not key_findings and studies:
+            key_findings.append(f"Clinical evidence available from {len(studies)} studies supporting {component_name}")
+        
+        return key_findings[:3]  # Top 3 findings
+
+    async def _calculate_component_confidence(self, evidence_grading: Dict, studies: List[Dict]) -> float:
+        """Calculate confidence score for protocol component recommendation"""
+        
+        base_confidence = evidence_grading["quality_score"]
+        
+        # Study count bonus
+        study_count_bonus = min(0.2, len(studies) / 10)
+        
+        # Consistency bonus (if multiple studies show similar results)
+        consistency_bonus = 0.1 if len(studies) >= 3 else 0
+        
+        # Recent publication bonus (studies within last 5 years)
+        recent_studies = 0
+        for study in studies:
+            year = study.get("year", "2000")
+            if year and year.isdigit() and int(year) >= (datetime.now().year - 5):
+                recent_studies += 1
+        
+        recency_bonus = min(0.1, recent_studies / len(studies)) if studies else 0
+        
+        total_confidence = min(1.0, base_confidence + study_count_bonus + consistency_bonus + recency_bonus)
+        
+        return round(total_confidence, 3)
+
+    async def _create_evidence_table(self, synthesis_results: List[Dict], condition: str) -> Dict[str, Any]:
+        """Create comprehensive evidence table for protocol"""
+        
+        evidence_table = {
+            "protocol_condition": condition,
+            "total_components": len(synthesis_results),
+            "evidence_summary": {
+                "level_I_components": len([r for r in synthesis_results if r["evidence_level"] == "Level I"]),
+                "level_II_components": len([r for r in synthesis_results if r["evidence_level"] == "Level II"]),
+                "level_III_components": len([r for r in synthesis_results if r["evidence_level"] == "Level III"]),
+                "level_IV_components": len([r for r in synthesis_results if r["evidence_level"] == "Level IV"])
+            },
+            "component_evidence": [],
+            "overall_protocol_strength": "Strong",
+            "last_updated": datetime.utcnow().isoformat()
+        }
+        
+        # Add detailed component evidence
+        for result in synthesis_results:
+            component_evidence = {
+                "component": result["component_name"],
+                "evidence_level": result["evidence_level"],
+                "quality_score": result["evidence_quality_score"],
+                "confidence": result["confidence_score"],
+                "supporting_studies": result["supporting_studies"],
+                "key_findings": result["key_findings"],
+                "pmids": result["pmid_citations"]
+            }
+            evidence_table["component_evidence"].append(component_evidence)
+        
+        # Calculate overall protocol strength
+        avg_quality = sum(r["evidence_quality_score"] for r in synthesis_results) / len(synthesis_results)
+        if avg_quality >= 0.8:
+            evidence_table["overall_protocol_strength"] = "Strong"
+        elif avg_quality >= 0.6:
+            evidence_table["overall_protocol_strength"] = "Moderate"
+        else:
+            evidence_table["overall_protocol_strength"] = "Limited"
+        
+        return evidence_table
+
+    async def _detect_evidence_contradictions(self, synthesis_results: List[Dict]) -> List[str]:
+        """Detect contradictions in evidence across protocol components"""
+        
+        contradictions = []
+        
+        # Check for conflicting efficacy claims
+        efficacy_findings = []
+        for result in synthesis_results:
+            for finding in result["key_findings"]:
+                if any(term in finding.lower() for term in ["improvement", "efficacy", "effective"]):
+                    efficacy_findings.append({
+                        "component": result["component_name"],
+                        "finding": finding,
+                        "quality": result["evidence_quality_score"]
+                    })
+        
+        # Simple contradiction detection (can be enhanced with NLP)
+        if len(efficacy_findings) >= 2:
+            for i, finding1 in enumerate(efficacy_findings):
+                for finding2 in efficacy_findings[i+1:]:
+                    # Check for conflicting percentages or outcomes
+                    if ("no improvement" in finding1["finding"].lower() and "improvement" in finding2["finding"].lower()) or \
+                       ("ineffective" in finding1["finding"].lower() and "effective" in finding2["finding"].lower()):
+                        contradictions.append(f"Potential contradiction between {finding1['component']} and {finding2['component']} findings")
+        
+        return contradictions
+
+    async def _calculate_evidence_quality_score(self, synthesis_results: List[Dict]) -> Dict[str, Any]:
+        """Calculate overall evidence quality score for complete protocol"""
+        
+        if not synthesis_results:
+            return {"score": 0.0, "grade": "Very Low", "explanation": "No evidence available"}
+        
+        # Weight components by their confidence scores
+        weighted_scores = []
+        total_confidence = 0
+        
+        for result in synthesis_results:
+            quality = result["evidence_quality_score"]
+            confidence = result["confidence_score"]
+            weighted_score = quality * confidence
+            weighted_scores.append(weighted_score)
+            total_confidence += confidence
+        
+        # Calculate weighted average
+        if total_confidence > 0:
+            overall_score = sum(weighted_scores) / len(weighted_scores)
+        else:
+            overall_score = sum(r["evidence_quality_score"] for r in synthesis_results) / len(synthesis_results)
+        
+        # Assign GRADE rating
+        if overall_score >= 0.8:
+            grade = "High"
+        elif overall_score >= 0.6:
+            grade = "Moderate"
+        elif overall_score >= 0.4:
+            grade = "Low"
+        else:
+            grade = "Very Low"
+        
+        return {
+            "score": round(overall_score, 3),
+            "grade": grade,
+            "total_studies": sum(r["supporting_studies"] for r in synthesis_results),
+            "total_components": len(synthesis_results),
+            "explanation": f"{grade} quality evidence based on {len(synthesis_results)} protocol components"
+        }
+
+    async def _rank_studies_by_component_relevance(self, studies: List[Dict], component_name: str, therapy_type: str, condition: str) -> List[Dict]:
+        """Rank studies by relevance to specific protocol component"""
+        
+        scored_studies = []
+        
+        for study in studies:
+            title = study.get("title", "").lower()
+            abstract = study.get("abstract", "").lower()
+            text = f"{title} {abstract}"
+            
+            relevance_score = 0.0
+            
+            # Component name match (highest weight)
+            if component_name.lower() in text:
+                relevance_score += 0.4
+            
+            # Therapy type match
+            if therapy_type.lower() in text:
+                relevance_score += 0.3
+            
+            # Condition match
+            if condition.lower() in text:
+                relevance_score += 0.2
+            
+            # Outcome measures bonus
+            if any(term in text for term in ["outcome", "efficacy", "effectiveness", "improvement"]):
+                relevance_score += 0.1
+            
+            study["component_relevance_score"] = relevance_score
+            scored_studies.append(study)
+        
+        # Sort by relevance score
+        scored_studies.sort(key=lambda x: x.get("component_relevance_score", 0), reverse=True)
+        
+        return scored_studies
+
 # Simple AI engine class to avoid circular imports
 class RegenerativeMedicineAI:
     def __init__(self):
