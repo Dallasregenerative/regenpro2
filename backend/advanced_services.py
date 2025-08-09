@@ -493,6 +493,391 @@ class WorldClassLiteratureService:
         
         return scored_studies
 
+    # =============== LIVING SYSTEMATIC REVIEWS ENGINE ===============
+    
+    async def initialize_living_systematic_review(self, condition: str, intervention: str) -> Dict[str, Any]:
+        """Initialize a living systematic review for continuous evidence monitoring"""
+        
+        review_id = f"lsr_{condition.replace(' ', '_')}_{intervention.replace(' ', '_')}_{uuid.uuid4().hex[:8]}"
+        
+        # Perform initial comprehensive search
+        initial_search = await self._perform_comprehensive_literature_search(condition, intervention)
+        
+        # Create review record
+        living_review = {
+            "review_id": review_id,
+            "condition": condition,
+            "intervention": intervention,
+            "creation_date": datetime.utcnow(),
+            "last_search_date": datetime.utcnow(),
+            "total_studies": len(initial_search.get("studies", [])),
+            "new_studies_pending": 0,
+            "contradictions_detected": [],
+            "update_alerts": [],
+            "search_strategy": {
+                "databases": ["PubMed", "Google Scholar", "ClinicalTrials.gov"],
+                "search_terms": initial_search.get("search_terms", []),
+                "inclusion_criteria": [
+                    "Human studies",
+                    "Regenerative medicine interventions",
+                    "Clinical outcomes reported",
+                    "Published in peer-reviewed journals"
+                ],
+                "exclusion_criteria": [
+                    "Animal studies only",
+                    "Case reports with n<3",
+                    "Non-English (unless high impact)"
+                ]
+            },
+            "auto_update_schedule": "daily",
+            "alert_thresholds": {
+                "new_studies": 5,
+                "contradiction_detected": True,
+                "high_impact_study": True
+            }
+        }
+        
+        # Store in database
+        await self.db.living_systematic_reviews.insert_one(living_review)
+        
+        # Set up monitoring
+        await self._setup_review_monitoring(review_id)
+        
+        return {
+            "review_id": review_id,
+            "status": "initialized",
+            "initial_studies": living_review["total_studies"],
+            "monitoring_active": True,
+            "next_update": (datetime.utcnow() + timedelta(days=1)).isoformat()
+        }
+
+    async def _perform_comprehensive_literature_search(self, condition: str, intervention: str) -> Dict[str, Any]:
+        """Perform comprehensive literature search for systematic review"""
+        
+        # Create comprehensive search strategy
+        search_terms = [
+            f'"{condition}" AND "{intervention}"',
+            f'{condition.replace(" ", " OR ")} AND regenerative medicine',
+            f'{intervention} AND clinical trial AND outcome',
+            f'{condition} AND stem cell OR PRP OR BMAC OR exosome'
+        ]
+        
+        all_studies = []
+        
+        for search_term in search_terms:
+            try:
+                # PubMed search
+                pubmed_results = await self.perform_pubmed_search(search_term, max_results=50)
+                if pubmed_results.get("papers"):
+                    all_studies.extend(pubmed_results["papers"])
+                
+                # Google Scholar search  
+                scholar_results = await self.perform_google_scholar_search(search_term, max_results=30)
+                if scholar_results.get("papers"):
+                    all_studies.extend(scholar_results["papers"])
+                
+                # Add delay to respect rate limits
+                await asyncio.sleep(1)
+                
+            except Exception as e:
+                logger.error(f"Search error for term '{search_term}': {str(e)}")
+                continue
+        
+        # Remove duplicates
+        unique_studies = self._deduplicate_papers(all_studies)
+        
+        # Apply inclusion/exclusion criteria
+        filtered_studies = await self._apply_systematic_review_criteria(unique_studies, condition, intervention)
+        
+        return {
+            "studies": filtered_studies,
+            "search_terms": search_terms,
+            "total_retrieved": len(all_studies),
+            "after_deduplication": len(unique_studies),
+            "after_screening": len(filtered_studies)
+        }
+
+    async def _apply_systematic_review_criteria(self, studies: List[Dict], condition: str, intervention: str) -> List[Dict]:
+        """Apply systematic review inclusion/exclusion criteria"""
+        
+        filtered_studies = []
+        
+        for study in studies:
+            title = study.get("title", "").lower()
+            abstract = study.get("abstract", "").lower()
+            text = f"{title} {abstract}"
+            
+            # Inclusion criteria checks
+            include_study = True
+            exclusion_reason = None
+            
+            # Must be human study (exclude pure animal studies)
+            if any(term in text for term in ["animal model", "rat study", "mouse study", "in vitro only"]) and \
+               not any(term in text for term in ["human", "patient", "clinical"]):
+                include_study = False
+                exclusion_reason = "Animal study only"
+            
+            # Must involve regenerative medicine
+            if not any(term in text for term in [
+                "regenerative", "stem cell", "prp", "platelet rich plasma",
+                "bmac", "bone marrow", "exosome", "growth factor", "tissue engineering"
+            ]):
+                include_study = False
+                exclusion_reason = "Not regenerative medicine"
+            
+            # Must have clinical outcomes
+            if not any(term in text for term in [
+                "outcome", "efficacy", "effectiveness", "improvement",
+                "pain", "function", "recovery", "healing"
+            ]):
+                include_study = False
+                exclusion_reason = "No clinical outcomes"
+            
+            # Exclude very small case reports
+            sample_match = re.search(r'(\d+)\s*(?:patients?|subjects?|participants?|cases?)', text)
+            if sample_match:
+                sample_size = int(sample_match.group(1))
+                if sample_size < 3 and "case report" in text:
+                    include_study = False
+                    exclusion_reason = "Case report n<3"
+            
+            if include_study:
+                study["inclusion_status"] = "included"
+                study["relevance_to_condition"] = self._calculate_condition_relevance(text, condition)
+                study["relevance_to_intervention"] = self._calculate_intervention_relevance(text, intervention)
+                filtered_studies.append(study)
+            else:
+                study["inclusion_status"] = "excluded"
+                study["exclusion_reason"] = exclusion_reason
+        
+        # Sort by relevance
+        filtered_studies.sort(key=lambda x: (x.get("relevance_to_condition", 0) + x.get("relevance_to_intervention", 0)) / 2, reverse=True)
+        
+        return filtered_studies
+
+    def _calculate_condition_relevance(self, text: str, condition: str) -> float:
+        """Calculate study relevance to specific condition"""
+        condition_terms = condition.lower().split()
+        relevance_score = 0.0
+        
+        for term in condition_terms:
+            if term in text:
+                relevance_score += 1.0 / len(condition_terms)
+        
+        # Bonus for exact phrase match
+        if condition.lower() in text:
+            relevance_score += 0.5
+        
+        return min(1.0, relevance_score)
+
+    def _calculate_intervention_relevance(self, text: str, intervention: str) -> float:
+        """Calculate study relevance to specific intervention"""
+        intervention_terms = intervention.lower().split()
+        relevance_score = 0.0
+        
+        for term in intervention_terms:
+            if term in text:
+                relevance_score += 1.0 / len(intervention_terms)
+        
+        # Bonus for exact phrase match
+        if intervention.lower() in text:
+            relevance_score += 0.5
+        
+        return min(1.0, relevance_score)
+
+    async def _setup_review_monitoring(self, review_id: str) -> bool:
+        """Set up continuous monitoring for living systematic review"""
+        
+        # Create monitoring configuration
+        monitoring_config = {
+            "review_id": review_id,
+            "monitoring_active": True,
+            "last_check": datetime.utcnow(),
+            "check_frequency": "daily",
+            "alert_settings": {
+                "email_notifications": True,
+                "dashboard_alerts": True,
+                "contradiction_alerts": True
+            },
+            "search_automation": {
+                "auto_search_enabled": True,
+                "auto_screening_enabled": True,
+                "manual_review_threshold": 5
+            }
+        }
+        
+        # Store monitoring configuration
+        await self.db.review_monitoring.insert_one(monitoring_config)
+        
+        return True
+
+    async def check_living_systematic_reviews_for_updates(self) -> Dict[str, Any]:
+        """Check all living systematic reviews for new evidence and contradictions"""
+        
+        # Get all active reviews
+        active_reviews = await self.db.living_systematic_reviews.find({"monitoring_active": True}).to_list(None)
+        
+        update_summary = {
+            "reviews_checked": len(active_reviews),
+            "new_studies_found": 0,
+            "contradictions_detected": 0,
+            "alerts_generated": 0,
+            "reviews_updated": []
+        }
+        
+        for review in active_reviews:
+            try:
+                # Check for new studies
+                new_studies = await self._check_for_new_studies(review)
+                
+                if new_studies:
+                    # Screen new studies
+                    screened_studies = await self._screen_new_studies(new_studies, review)
+                    
+                    if screened_studies:
+                        # Check for contradictions with existing evidence
+                        contradictions = await self._check_for_contradictions(screened_studies, review)
+                        
+                        # Update review
+                        update_result = await self._update_living_review(review["review_id"], screened_studies, contradictions)
+                        
+                        update_summary["new_studies_found"] += len(screened_studies)
+                        update_summary["contradictions_detected"] += len(contradictions)
+                        update_summary["reviews_updated"].append({
+                            "review_id": review["review_id"],
+                            "condition": review["condition"],
+                            "new_studies": len(screened_studies),
+                            "contradictions": len(contradictions)
+                        })
+                        
+                        # Generate alerts if necessary
+                        if len(screened_studies) >= 5 or contradictions:
+                            await self._generate_review_alerts(review["review_id"], screened_studies, contradictions)
+                            update_summary["alerts_generated"] += 1
+                
+            except Exception as e:
+                logger.error(f"Error checking review {review['review_id']}: {str(e)}")
+                continue
+        
+        return update_summary
+
+    async def _check_for_new_studies(self, review: Dict) -> List[Dict]:
+        """Check for new studies since last review update"""
+        
+        last_search_date = review.get("last_search_date", datetime.utcnow() - timedelta(days=30))
+        condition = review["condition"]
+        intervention = review["intervention"]
+        
+        # Search for studies published since last check
+        recent_search = await self._perform_comprehensive_literature_search(condition, intervention)
+        
+        # Filter for truly new studies (published after last search)
+        new_studies = []
+        for study in recent_search.get("studies", []):
+            study_year = study.get("year")
+            if study_year and study_year.isdigit():
+                study_date = datetime(int(study_year), 1, 1)
+                if study_date > last_search_date:
+                    new_studies.append(study)
+        
+        return new_studies
+
+    async def _screen_new_studies(self, new_studies: List[Dict], review: Dict) -> List[Dict]:
+        """Screen new studies using same criteria as original review"""
+        
+        condition = review["condition"]
+        intervention = review["intervention"]
+        
+        screened_studies = await self._apply_systematic_review_criteria(new_studies, condition, intervention)
+        
+        return [study for study in screened_studies if study.get("inclusion_status") == "included"]
+
+    async def _check_for_contradictions(self, new_studies: List[Dict], review: Dict) -> List[str]:
+        """Check if new studies contradict existing evidence"""
+        
+        contradictions = []
+        
+        # Get existing studies from review
+        existing_studies = await self.db.review_studies.find({"review_id": review["review_id"]}).to_list(None)
+        
+        # Simple contradiction detection (can be enhanced with NLP)
+        for new_study in new_studies:
+            new_abstract = new_study.get("abstract", "").lower()
+            new_title = new_study.get("title", "").lower()
+            
+            for existing_study in existing_studies:
+                existing_abstract = existing_study.get("abstract", "").lower()
+                existing_title = existing_study.get("title", "").lower()
+                
+                # Check for contradictory outcomes
+                if ("no significant" in new_abstract and "significant improvement" in existing_abstract) or \
+                   ("ineffective" in new_abstract and "effective" in existing_abstract) or \
+                   ("no benefit" in new_abstract and "beneficial" in existing_abstract):
+                    contradictions.append(
+                        f"Potential contradiction: '{new_study.get('title', 'New study')}' vs '{existing_study.get('title', 'Existing study')}'"
+                    )
+        
+        return contradictions
+
+    async def _update_living_review(self, review_id: str, new_studies: List[Dict], contradictions: List[str]) -> bool:
+        """Update living systematic review with new evidence"""
+        
+        try:
+            # Update review record
+            update_data = {
+                "$inc": {"total_studies": len(new_studies)},
+                "$set": {
+                    "last_search_date": datetime.utcnow(),
+                    "last_updated": datetime.utcnow()
+                },
+                "$push": {
+                    "update_alerts": {
+                        "$each": [f"Added {len(new_studies)} new studies on {datetime.utcnow().strftime('%Y-%m-%d')}"]
+                    }
+                }
+            }
+            
+            if contradictions:
+                update_data["$push"]["contradictions_detected"] = {"$each": contradictions}
+            
+            await self.db.living_systematic_reviews.update_one(
+                {"review_id": review_id},
+                update_data
+            )
+            
+            # Store new studies
+            for study in new_studies:
+                study["review_id"] = review_id
+                study["added_date"] = datetime.utcnow()
+                await self.db.review_studies.insert_one(study)
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error updating living review {review_id}: {str(e)}")
+            return False
+
+    async def _generate_review_alerts(self, review_id: str, new_studies: List[Dict], contradictions: List[str]) -> bool:
+        """Generate alerts for significant review updates"""
+        
+        alert_data = {
+            "alert_id": f"alert_{review_id}_{uuid.uuid4().hex[:8]}",
+            "review_id": review_id,
+            "alert_type": "living_review_update",
+            "timestamp": datetime.utcnow(),
+            "new_studies_count": len(new_studies),
+            "contradictions_count": len(contradictions),
+            "priority": "high" if contradictions else "medium",
+            "alert_message": f"Living systematic review updated: {len(new_studies)} new studies found",
+            "action_required": len(contradictions) > 0,
+            "contradictions": contradictions
+        }
+        
+        # Store alert
+        await self.db.review_alerts.insert_one(alert_data)
+        
+        return True
+
 # Simple AI engine class to avoid circular imports
 class RegenerativeMedicineAI:
     def __init__(self):
