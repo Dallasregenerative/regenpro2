@@ -2234,7 +2234,7 @@ You create protocols that are both scientifically rigorous and clinically practi
                         "phases": phases,
                         "eligible_ages": eligible_ages,
                         "gender": gender,
-                        "locations": [{"facility": loc.get("LocationFacility", ""), "city": loc.get("LocationCity", ""), "country": loc.get("LocationCountry", "")} for loc in locations[:5]],
+                        "locations": [{"facility": loc.get("facility", ""), "city": loc.get("city", ""), "country": loc.get("country", "")} for loc in locations[:5]],
                         "relevance_score": relevance_score,
                         "search_condition": condition,
                         "trial_url": f"https://clinicaltrials.gov/ct2/show/{nct_id}",
