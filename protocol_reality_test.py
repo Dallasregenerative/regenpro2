@@ -9,7 +9,7 @@ import json
 import hashlib
 
 def test_protocol_generation_reality():
-    base_url = "https://e39019a0-74aa-4828-80fe-b1e4b1fed539.preview.emergentagent.com"
+    base_url = "https://ed4e4952-b9f5-42dd-8eae-fb43144bcaeb.preview.emergentagent.com"
     api_url = f"{base_url}/api"
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer demo-token'}
     
