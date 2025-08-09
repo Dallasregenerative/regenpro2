@@ -2301,9 +2301,9 @@ You create protocols that are both scientifically rigorous and clinically practi
         regen_interventions = []
         
         for intervention in interventions:
-            intervention_name = intervention.get("InterventionName", "")
-            intervention_type = intervention.get("InterventionType", "")
-            description = intervention.get("InterventionDescription", "")
+            intervention_name = intervention.get("name", "")
+            intervention_type = intervention.get("type", "")
+            description = intervention.get("description", "")
             
             # Check if it's a regenerative medicine intervention
             regen_keywords = [
