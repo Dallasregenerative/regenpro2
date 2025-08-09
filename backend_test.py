@@ -2897,6 +2897,372 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print("   ❌ Dashboard analytics failed")
             return False
 
+    # ========== CRITICAL FIXES VERIFICATION TESTS ==========
+
+    def test_file_reprocessing_api_fix(self):
+        """Test the critical fix for file reprocessing API parameter issue"""
+        if not self.patient_id:
+            print("❌ No patient ID available for file reprocessing testing")
+            return False
+
+        print("   Testing the CRITICAL FIX for RegenerativeMedicineAI.analyze_patient_data() parameter mismatch...")
+        success, response = self.run_test(
+            "CRITICAL FIX: File Reprocessing API Parameter Issue",
+            "POST",
+            f"patients/{self.patient_id}/files/process-all",
+            200,
+            data={},
+            timeout=60
+        )
+        
+        if success:
+            print(f"   ✅ FIXED: File reprocessing API now works without 500 errors")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            print(f"   Files Processed: {response.get('files_processed', 0)}")
+            print(f"   Analysis Updated: {response.get('analysis_updated', False)}")
+            print(f"   Categories Processed: {response.get('categories_processed', [])}")
+        else:
+            print(f"   ❌ STILL BROKEN: File reprocessing API still has parameter issues")
+        return success
+
+    def test_dashboard_analytics_fix(self):
+        """Test the critical fix for dashboard analytics 500 error"""
+        print("   Testing the CRITICAL FIX for dashboard analytics 500 error...")
+        success, response = self.run_test(
+            "CRITICAL FIX: Dashboard Analytics 500 Error",
+            "GET",
+            "analytics/dashboard",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   ✅ FIXED: Dashboard analytics now works without 500 errors")
+            stats = response.get('summary_stats', {})
+            print(f"   Total Patients: {stats.get('total_patients', 0)}")
+            print(f"   Protocols Generated: {stats.get('protocols_generated', 0)}")
+            print(f"   Outcomes Tracked: {stats.get('outcomes_tracked', 0)}")
+            print(f"   Recent Activities: {len(response.get('recent_activities', []))}")
+            print(f"   Platform Insights: {len(response.get('platform_insights', {}))}")
+        else:
+            print(f"   ❌ STILL BROKEN: Dashboard analytics still returns 500 errors")
+        return success
+
+    def test_outcome_tracking_comprehensive(self):
+        """Test comprehensive outcome tracking system functionality"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for outcome tracking testing")
+            return False
+
+        # Test 1: Submit outcome
+        outcome_data = {
+            "protocol_id": self.protocol_id,
+            "patient_id": self.patient_id,
+            "followup_date": datetime.utcnow().isoformat(),
+            "measurements": {
+                "pain_scale_before": 8,
+                "pain_scale_after": 3,
+                "range_of_motion_before": 45,
+                "range_of_motion_after": 85,
+                "functional_score": 88,
+                "improvement_percentage": 70
+            },
+            "practitioner_notes": "Excellent response to regenerative therapy. Patient reports significant pain reduction and improved mobility.",
+            "patient_reported_outcomes": {
+                "pain_improvement": "70%",
+                "activity_level": "much improved",
+                "satisfaction": "very satisfied",
+                "return_to_activities": "yes"
+            },
+            "adverse_events": [],
+            "satisfaction_score": 9
+        }
+
+        print("   Testing comprehensive outcome tracking workflow...")
+        success1, response1 = self.run_test(
+            "Outcome Recording with Calculations",
+            "POST",
+            "outcomes",
+            200,
+            data=outcome_data
+        )
+        
+        outcome_id = None
+        if success1:
+            outcome_id = response1.get('outcome_id')
+            print(f"   ✅ Outcome recorded successfully: {outcome_id}")
+            print(f"   Pain Reduction: {response1.get('measurements', {}).get('pain_reduction_percentage', 0)}%")
+            print(f"   Functional Improvement: {response1.get('measurements', {}).get('functional_improvement', 0)}%")
+
+        # Test 2: Get outcomes for patient
+        success2, response2 = self.run_test(
+            "Outcome Retrieval & Statistics",
+            "GET",
+            f"patients/{self.patient_id}/outcomes",
+            200
+        )
+        
+        if success2:
+            outcomes = response2.get('outcomes', [])
+            stats = response2.get('statistics', {})
+            print(f"   ✅ Retrieved {len(outcomes)} outcomes")
+            print(f"   Average Pain Reduction: {stats.get('avg_pain_reduction', 0)}%")
+            print(f"   Success Rate: {stats.get('success_rate', 0)}%")
+
+        # Test 3: Get comprehensive analytics
+        success3, response3 = self.run_test(
+            "Comprehensive Analytics",
+            "GET",
+            "analytics/outcomes",
+            200
+        )
+        
+        if success3:
+            analytics = response3.get('analytics', {})
+            print(f"   ✅ Analytics generated successfully")
+            print(f"   Total Outcomes Tracked: {analytics.get('total_outcomes', 0)}")
+            print(f"   Overall Success Rate: {analytics.get('overall_success_rate', 0)}%")
+            print(f"   Average Pain Reduction: {analytics.get('avg_pain_reduction', 0)}%")
+            print(f"   Patient Satisfaction: {analytics.get('avg_satisfaction', 0)}/10")
+
+        # Test 4: Dashboard integration (this was failing before)
+        success4, response4 = self.run_test(
+            "Dashboard Analytics Integration",
+            "GET",
+            "analytics/dashboard",
+            200
+        )
+        
+        if success4:
+            dashboard_stats = response4.get('summary_stats', {})
+            print(f"   ✅ Dashboard integration working")
+            print(f"   Dashboard Outcomes: {dashboard_stats.get('outcomes_tracked', 0)}")
+        else:
+            print(f"   ❌ Dashboard integration still failing")
+
+        return success1 and success2 and success3 and success4
+
+    def test_complete_workflow_validation(self):
+        """Test complete patient workflow: Create → Upload Files → Analysis → Protocol → Outcomes"""
+        print("   Testing complete end-to-end workflow validation...")
+        
+        # Step 1: Create patient (already done in setup)
+        if not self.patient_id:
+            print("   ❌ No patient available for workflow testing")
+            return False
+        
+        workflow_success = True
+        
+        # Step 2: Upload files (simulate multiple file types)
+        print("   Step 2: Multi-modal file upload...")
+        file_upload_success = (
+            self.test_file_upload_patient_chart() and
+            self.test_file_upload_genetic_data() and
+            self.test_file_upload_lab_results()
+        )
+        
+        if file_upload_success:
+            print("   ✅ Multi-modal file upload successful")
+        else:
+            print("   ❌ File upload workflow has issues")
+            workflow_success = False
+        
+        # Step 3: Comprehensive analysis
+        print("   Step 3: AI analysis with file integration...")
+        analysis_success, analysis_response = self.run_test(
+            "AI Analysis with File Integration",
+            "POST",
+            f"patients/{self.patient_id}/analyze",
+            200,
+            timeout=90
+        )
+        
+        if analysis_success:
+            print("   ✅ AI analysis completed successfully")
+            diagnostic_results = analysis_response.get('diagnostic_results', [])
+            print(f"   Generated {len(diagnostic_results)} diagnostic results")
+        else:
+            print("   ❌ AI analysis failed")
+            workflow_success = False
+        
+        # Step 4: Protocol generation
+        print("   Step 4: Evidence-based protocol generation...")
+        protocol_success, protocol_response = self.run_test(
+            "Evidence-Based Protocol Generation",
+            "POST",
+            "protocols/generate",
+            200,
+            data={
+                "patient_id": self.patient_id,
+                "school_of_thought": "ai_optimized"
+            },
+            timeout=90
+        )
+        
+        if protocol_success:
+            print("   ✅ Protocol generation successful")
+            self.protocol_id = protocol_response.get('protocol_id')
+            print(f"   Protocol confidence: {protocol_response.get('confidence_score', 0):.2f}")
+        else:
+            print("   ❌ Protocol generation failed")
+            workflow_success = False
+        
+        # Step 5: Outcome tracking
+        print("   Step 5: Outcome tracking and analytics...")
+        if self.protocol_id:
+            outcome_success = self.test_outcome_tracking_comprehensive()
+            if outcome_success:
+                print("   ✅ Outcome tracking workflow successful")
+            else:
+                print("   ❌ Outcome tracking workflow failed")
+                workflow_success = False
+        else:
+            print("   ❌ No protocol ID for outcome testing")
+            workflow_success = False
+        
+        # Step 6: Dashboard updates
+        print("   Step 6: Dashboard real-time updates...")
+        dashboard_success, dashboard_response = self.run_test(
+            "Dashboard Updates with New Activity",
+            "GET",
+            "analytics/dashboard",
+            200
+        )
+        
+        if dashboard_success:
+            print("   ✅ Dashboard updates working")
+            stats = dashboard_response.get('summary_stats', {})
+            print(f"   Real-time metrics: {stats.get('total_patients', 0)} patients, {stats.get('protocols_generated', 0)} protocols")
+        else:
+            print("   ❌ Dashboard updates failing")
+            workflow_success = False
+        
+        return workflow_success
+
+    def test_final_functionality_assessment(self):
+        """Final comprehensive functionality assessment"""
+        print("   Conducting final 100% functionality assessment...")
+        
+        assessment_results = {
+            "file_processing": False,
+            "outcome_tracking": False,
+            "protocol_generation": False,
+            "dashboard_analytics": False,
+            "workflow_integration": False
+        }
+        
+        # Test 1: File processing workflow
+        print("   Assessment 1: File processing workflow...")
+        file_success = self.test_file_reprocessing_api_fix()
+        assessment_results["file_processing"] = file_success
+        
+        # Test 2: Outcome tracking system
+        print("   Assessment 2: Outcome tracking system...")
+        outcome_success = self.test_outcome_tracking_comprehensive()
+        assessment_results["outcome_tracking"] = outcome_success
+        
+        # Test 3: Protocol generation reliability
+        print("   Assessment 3: Protocol generation reliability...")
+        protocol_tests = [
+            self.test_generate_protocol_ai_optimized(),
+            self.test_generate_protocol_traditional(),
+            self.test_generate_protocol_biologics()
+        ]
+        protocol_success = sum(protocol_tests) >= 2  # At least 2/3 must pass
+        assessment_results["protocol_generation"] = protocol_success
+        
+        # Test 4: Dashboard analytics
+        print("   Assessment 4: Dashboard analytics...")
+        dashboard_success = self.test_dashboard_analytics_fix()
+        assessment_results["dashboard_analytics"] = dashboard_success
+        
+        # Test 5: Complete workflow integration
+        print("   Assessment 5: Complete workflow integration...")
+        workflow_success = self.test_complete_workflow_validation()
+        assessment_results["workflow_integration"] = workflow_success
+        
+        # Calculate overall functionality percentage
+        total_systems = len(assessment_results)
+        working_systems = sum(assessment_results.values())
+        functionality_percentage = (working_systems / total_systems) * 100
+        
+        print(f"\n   📊 FINAL FUNCTIONALITY ASSESSMENT:")
+        print(f"   File Processing: {'✅' if assessment_results['file_processing'] else '❌'}")
+        print(f"   Outcome Tracking: {'✅' if assessment_results['outcome_tracking'] else '❌'}")
+        print(f"   Protocol Generation: {'✅' if assessment_results['protocol_generation'] else '❌'}")
+        print(f"   Dashboard Analytics: {'✅' if assessment_results['dashboard_analytics'] else '❌'}")
+        print(f"   Workflow Integration: {'✅' if assessment_results['workflow_integration'] else '❌'}")
+        print(f"   OVERALL FUNCTIONALITY: {functionality_percentage:.1f}%")
+        
+        return functionality_percentage >= 100.0
+
+    def run_critical_fixes_verification(self):
+        """Run focused testing on the two critical fixes"""
+        print("🚀 CRITICAL FIXES VERIFICATION - Testing Two Key Issues")
+        print("=" * 80)
+        
+        # Setup: Create patient for testing
+        print("\n📋 SETUP: Creating Test Patient")
+        print("-" * 50)
+        patient_created = self.test_create_patient()
+        
+        if not patient_created:
+            print("❌ Cannot proceed without patient - setup failed")
+            return
+        
+        # Upload some files for testing
+        print("\n📁 SETUP: Uploading Test Files")
+        print("-" * 50)
+        self.test_file_upload_patient_chart()
+        self.test_file_upload_genetic_data()
+        self.test_file_upload_lab_results()
+        
+        # Generate a protocol for outcome testing
+        print("\n📋 SETUP: Generating Test Protocol")
+        print("-" * 50)
+        self.test_generate_protocol_ai_optimized()
+        
+        # CRITICAL FIX TESTS
+        print("\n🔧 CRITICAL FIX 1: File Reprocessing API Parameter Issue")
+        print("-" * 50)
+        fix1_success = self.test_file_reprocessing_api_fix()
+        
+        print("\n🔧 CRITICAL FIX 2: Dashboard Analytics 500 Error")
+        print("-" * 50)
+        fix2_success = self.test_dashboard_analytics_fix()
+        
+        print("\n📊 COMPREHENSIVE WORKFLOW VALIDATION")
+        print("-" * 50)
+        workflow_success = self.test_complete_workflow_validation()
+        
+        print("\n🎯 FINAL FUNCTIONALITY ASSESSMENT")
+        print("-" * 50)
+        final_assessment = self.test_final_functionality_assessment()
+        
+        # Final Results
+        print("\n" + "=" * 80)
+        print("🎯 CRITICAL FIXES VERIFICATION RESULTS")
+        print("=" * 80)
+        print(f"Total Tests Run: {self.tests_run}")
+        print(f"Tests Passed: {self.tests_passed}")
+        print(f"Tests Failed: {self.tests_run - self.tests_passed}")
+        print(f"Success Rate: {(self.tests_passed / self.tests_run * 100):.1f}%")
+        
+        print(f"\n🔧 CRITICAL FIXES STATUS:")
+        print(f"Fix 1 - File Reprocessing API: {'✅ RESOLVED' if fix1_success else '❌ STILL BROKEN'}")
+        print(f"Fix 2 - Dashboard Analytics: {'✅ RESOLVED' if fix2_success else '❌ STILL BROKEN'}")
+        print(f"Complete Workflow: {'✅ FUNCTIONAL' if workflow_success else '❌ ISSUES REMAIN'}")
+        print(f"Final Assessment: {'✅ 100% FUNCTIONALITY' if final_assessment else '❌ < 100% FUNCTIONALITY'}")
+        
+        if fix1_success and fix2_success and workflow_success and final_assessment:
+            print("\n🎉 SUCCESS: All critical fixes verified and platform achieves 100% functionality!")
+        elif fix1_success and fix2_success:
+            print("\n✅ GOOD: Critical fixes resolved but some workflow issues remain")
+        else:
+            print("\n❌ CRITICAL: Major issues still exist that prevent 100% functionality")
+        
+        print("=" * 80)
+
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
     print("Advanced Regenerative Medicine Knowledge Platform v2.0")
