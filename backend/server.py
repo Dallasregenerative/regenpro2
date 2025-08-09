@@ -1359,15 +1359,81 @@ async def search_literature_database(
             }
     
     return {"status": "service_unavailable", "message": "Literature search service not available"}
+
+@api_router.get("/literature/google-scholar-search")
+async def search_google_scholar(
+    query: str,
+    max_results: int = 20,
+    year_filter: int = None
+):
+    """Search Google Scholar for broader literature coverage"""
     
-    papers = await db.literature_papers.find(search_filter).sort("relevance_score", -1).limit(limit).to_list(limit)
+    if pubmed_service:
+        try:
+            result = await pubmed_service.perform_google_scholar_search(
+                search_terms=query,
+                max_results=max_results,
+                year_filter=year_filter
+            )
+            
+            return {
+                "source": "google_scholar",
+                "query": query,
+                "papers": result.get("papers", []),
+                "total_results": result.get("total_count", 0),
+                "search_timestamp": result.get("search_timestamp"),
+                "status": result.get("status", "completed")
+            }
+            
+        except Exception as e:
+            logging.error(f"Google Scholar search error: {str(e)}")
+            return {
+                "source": "google_scholar",
+                "query": query,
+                "papers": [],
+                "total_results": 0,
+                "error": str(e),
+                "status": "error"
+            }
     
-    return {
-        "query": query,
-        "results_found": len(papers),
-        "papers": papers,
-        "search_timestamp": datetime.utcnow()
-    }
+    return {"status": "service_unavailable", "message": "Google Scholar search service not available"}
+
+@api_router.get("/literature/multi-source-search")
+async def search_multi_source_literature(
+    query: str,
+    max_results_per_source: int = 10
+):
+    """Search both PubMed and Google Scholar for comprehensive literature coverage"""
+    
+    if pubmed_service:
+        try:
+            result = await pubmed_service.perform_multi_source_search(
+                search_terms=query,
+                max_results_per_source=max_results_per_source
+            )
+            
+            return {
+                "search_type": "multi_source",
+                "query": query,
+                "total_unique_papers": result.get("total_unique_papers", 0),
+                "papers": result.get("papers", []),
+                "source_statistics": result.get("source_statistics", {}),
+                "search_timestamp": result.get("search_timestamp"),
+                "status": result.get("status", "completed")
+            }
+            
+        except Exception as e:
+            logging.error(f"Multi-source search error: {str(e)}")
+            return {
+                "search_type": "multi_source",
+                "query": query,
+                "total_unique_papers": 0,
+                "papers": [],
+                "error": str(e),
+                "status": "error"
+            }
+    
+    return {"status": "service_unavailable", "message": "Multi-source search service not available"}
 
 @api_router.post("/imaging/analyze-dicom")
 async def analyze_dicom_image(
