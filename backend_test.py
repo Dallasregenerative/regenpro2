@@ -805,13 +805,275 @@ IGF-1,180,109-284,ng/mL,Normal"""
         if success:
             papers = response.get('papers', [])
             print(f"   Query: {response.get('query', 'unknown')}")
-            print(f"   Results Found: {response.get('results_found', 0)}")
+            print(f"   Results Found: {response.get('total_results', 0)}")
             print(f"   Papers Returned: {len(papers)}")
             
             if papers:
                 first_paper = papers[0]
                 print(f"   Top Result: {first_paper.get('title', 'Unknown')[:50]}...")
                 print(f"   Relevance Score: {first_paper.get('relevance_score', 0):.2f}")
+        return success
+
+    # ========== GOOGLE SCHOLAR INTEGRATION TESTING ==========
+
+    def test_google_scholar_search_basic(self):
+        """Test basic Google Scholar search functionality"""
+        success, response = self.run_test(
+            "Google Scholar Search - Basic Query",
+            "GET",
+            "literature/google-scholar-search?query=platelet%20rich%20plasma%20osteoarthritis&max_results=10",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            print(f"   Query: {response.get('query', 'unknown')}")
+            print(f"   Source: {response.get('source', 'unknown')}")
+            print(f"   Papers Found: {response.get('total_results', 0)}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            if papers:
+                first_paper = papers[0]
+                print(f"   Top Result: {first_paper.get('title', 'Unknown')[:60]}...")
+                print(f"   Authors: {', '.join(first_paper.get('authors', [])[:2])}")
+                print(f"   Journal: {first_paper.get('journal', 'Unknown')}")
+                print(f"   Year: {first_paper.get('year', 'Unknown')}")
+                print(f"   Citations: {first_paper.get('citation_count', 0)}")
+                print(f"   Relevance Score: {first_paper.get('relevance_score', 0):.2f}")
+        return success
+
+    def test_google_scholar_search_stem_cell(self):
+        """Test Google Scholar search with stem cell therapy query"""
+        success, response = self.run_test(
+            "Google Scholar Search - Stem Cell Therapy",
+            "GET",
+            "literature/google-scholar-search?query=stem%20cell%20therapy&max_results=15",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            print(f"   Query: {response.get('query', 'unknown')}")
+            print(f"   Papers Found: {len(papers)}")
+            print(f"   Search Timestamp: {response.get('search_timestamp', 'unknown')}")
+            
+            # Check for regenerative medicine relevance
+            relevant_papers = [p for p in papers if p.get('relevance_score', 0) >= 0.5]
+            print(f"   High Relevance Papers (≥0.5): {len(relevant_papers)}")
+            
+            if relevant_papers:
+                top_paper = relevant_papers[0]
+                print(f"   Top Relevant Paper: {top_paper.get('title', 'Unknown')[:50]}...")
+                print(f"   Abstract Preview: {top_paper.get('abstract', 'No abstract')[:100]}...")
+        return success
+
+    def test_google_scholar_search_with_year_filter(self):
+        """Test Google Scholar search with year filter"""
+        success, response = self.run_test(
+            "Google Scholar Search - With Year Filter",
+            "GET",
+            "literature/google-scholar-search?query=BMAC%20rotator%20cuff&max_results=10&year_filter=2023",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            print(f"   Query: {response.get('query', 'unknown')}")
+            print(f"   Year Filter Applied: 2023+")
+            print(f"   Papers Found: {len(papers)}")
+            
+            # Check year distribution
+            recent_papers = [p for p in papers if p.get('year', '').isdigit() and int(p.get('year', '0')) >= 2023]
+            print(f"   Papers from 2023+: {len(recent_papers)}")
+            
+            if papers:
+                sample_paper = papers[0]
+                print(f"   Sample Paper Year: {sample_paper.get('year', 'Unknown')}")
+                print(f"   Sample Title: {sample_paper.get('title', 'Unknown')[:50]}...")
+        return success
+
+    def test_google_scholar_error_handling(self):
+        """Test Google Scholar search error handling"""
+        success, response = self.run_test(
+            "Google Scholar Search - Error Handling",
+            "GET",
+            "literature/google-scholar-search?query=&max_results=5",  # Empty query
+            200,  # Should still return 200 with error in response
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Status: {response.get('status', 'unknown')}")
+            if 'error' in response:
+                print(f"   Error Handled: {response.get('error', 'unknown')[:50]}...")
+            print(f"   Papers Returned: {len(response.get('papers', []))}")
+            print(f"   Fallback Available: {'fallback_suggestion' in response}")
+        return success
+
+    def test_multi_source_search_comprehensive(self):
+        """Test comprehensive multi-source search (PubMed + Google Scholar)"""
+        success, response = self.run_test(
+            "Multi-Source Search - Regenerative Medicine",
+            "GET",
+            "literature/multi-source-search?query=regenerative%20medicine&max_results_per_source=8",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            source_stats = response.get('source_statistics', {})
+            
+            print(f"   Query: {response.get('query', 'unknown')}")
+            print(f"   Search Type: {response.get('search_type', 'unknown')}")
+            print(f"   Total Unique Papers: {response.get('total_unique_papers', 0)}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            # Source statistics
+            pubmed_stats = source_stats.get('pubmed', {})
+            scholar_stats = source_stats.get('google_scholar', {})
+            
+            print(f"   PubMed: {pubmed_stats.get('papers_found', 0)} papers, status: {pubmed_stats.get('status', 'unknown')}")
+            print(f"   Google Scholar: {scholar_stats.get('papers_found', 0)} papers, status: {scholar_stats.get('status', 'unknown')}")
+            
+            if papers:
+                # Check source diversity
+                pubmed_papers = [p for p in papers if p.get('source') == 'pubmed']
+                scholar_papers = [p for p in papers if p.get('source') == 'google_scholar']
+                
+                print(f"   PubMed Papers in Results: {len(pubmed_papers)}")
+                print(f"   Google Scholar Papers in Results: {len(scholar_papers)}")
+                
+                # Show top result from each source
+                if pubmed_papers:
+                    top_pubmed = pubmed_papers[0]
+                    print(f"   Top PubMed: {top_pubmed.get('title', 'Unknown')[:40]}... (PMID: {top_pubmed.get('pmid', 'N/A')})")
+                
+                if scholar_papers:
+                    top_scholar = scholar_papers[0]
+                    print(f"   Top Scholar: {top_scholar.get('title', 'Unknown')[:40]}... (Citations: {top_scholar.get('citation_count', 0)})")
+        return success
+
+    def test_multi_source_search_bmac(self):
+        """Test multi-source search for BMAC rotator cuff"""
+        success, response = self.run_test(
+            "Multi-Source Search - BMAC Rotator Cuff",
+            "GET",
+            "literature/multi-source-search?query=BMAC%20rotator%20cuff&max_results_per_source=6",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            source_stats = response.get('source_statistics', {})
+            
+            print(f"   Query: BMAC rotator cuff")
+            print(f"   Total Unique Papers: {response.get('total_unique_papers', 0)}")
+            print(f"   Deduplication Working: {len(papers) <= 12}")  # Should be ≤ max_results_per_source * 2
+            
+            # Check for relevant content
+            bmac_papers = [p for p in papers if 'bmac' in p.get('title', '').lower() or 'bone marrow' in p.get('title', '').lower()]
+            rotator_papers = [p for p in papers if 'rotator' in p.get('title', '').lower() or 'shoulder' in p.get('title', '').lower()]
+            
+            print(f"   BMAC-related Papers: {len(bmac_papers)}")
+            print(f"   Rotator Cuff-related Papers: {len(rotator_papers)}")
+            
+            # Check relevance scores
+            high_relevance = [p for p in papers if p.get('relevance_score', 0) >= 0.7]
+            print(f"   High Relevance Papers (≥0.7): {len(high_relevance)}")
+            
+            if papers:
+                top_paper = papers[0]
+                print(f"   Top Result: {top_paper.get('title', 'Unknown')[:50]}...")
+                print(f"   Top Relevance Score: {top_paper.get('relevance_score', 0):.2f}")
+        return success
+
+    def test_multi_source_deduplication(self):
+        """Test deduplication functionality in multi-source search"""
+        success, response = self.run_test(
+            "Multi-Source Search - Deduplication Test",
+            "GET",
+            "literature/multi-source-search?query=platelet%20rich%20plasma&max_results_per_source=10",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            source_stats = response.get('source_statistics', {})
+            
+            total_before_dedup = source_stats.get('pubmed', {}).get('papers_found', 0) + source_stats.get('google_scholar', {}).get('papers_found', 0)
+            total_after_dedup = response.get('total_unique_papers', 0)
+            
+            print(f"   Papers Before Deduplication: {total_before_dedup}")
+            print(f"   Papers After Deduplication: {total_after_dedup}")
+            print(f"   Deduplication Effective: {total_after_dedup <= total_before_dedup}")
+            
+            # Check for potential duplicates (shouldn't find any)
+            titles = [p.get('title', '').lower().strip() for p in papers]
+            unique_titles = set(titles)
+            
+            print(f"   Unique Titles: {len(unique_titles)}")
+            print(f"   Total Papers: {len(papers)}")
+            print(f"   No Title Duplicates: {len(unique_titles) == len(papers)}")
+            
+            if papers:
+                # Show source distribution
+                sources = {}
+                for paper in papers:
+                    source = paper.get('source', 'unknown')
+                    sources[source] = sources.get(source, 0) + 1
+                
+                print(f"   Source Distribution: {sources}")
+        return success
+
+    def test_literature_integration_evidence_extraction(self):
+        """Test evidence extraction helper methods"""
+        success, response = self.run_test(
+            "Literature Integration - Evidence Extraction",
+            "GET",
+            "literature/search?query=osteoarthritis%20PRP&limit=5",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            papers = response.get('papers', [])
+            print(f"   Papers for Evidence Extraction: {len(papers)}")
+            
+            if papers:
+                sample_paper = papers[0]
+                
+                # Check for evidence extraction fields
+                evidence_fields = ['title', 'abstract', 'authors', 'journal', 'relevance_score']
+                available_fields = [field for field in evidence_fields if field in sample_paper]
+                
+                print(f"   Evidence Fields Available: {len(available_fields)}/{len(evidence_fields)}")
+                print(f"   Available Fields: {', '.join(available_fields)}")
+                
+                # Check for therapy implications
+                abstract = sample_paper.get('abstract', '').lower()
+                therapy_keywords = ['therapy', 'treatment', 'efficacy', 'outcome', 'safety', 'dosage']
+                therapy_mentions = [kw for kw in therapy_keywords if kw in abstract]
+                
+                print(f"   Therapy Keywords Found: {len(therapy_mentions)}")
+                print(f"   Keywords: {', '.join(therapy_mentions[:3])}")
+                
+                # Check for outcome data
+                outcome_keywords = ['improvement', 'reduction', 'success', 'failure', 'adverse', 'benefit']
+                outcome_mentions = [kw for kw in outcome_keywords if kw in abstract]
+                
+                print(f"   Outcome Keywords Found: {len(outcome_mentions)}")
+                
+                # Check for evidence level indicators
+                evidence_keywords = ['randomized', 'controlled', 'trial', 'systematic', 'meta-analysis', 'cohort']
+                evidence_mentions = [kw for kw in evidence_keywords if kw in abstract]
+                
+                print(f"   Evidence Level Indicators: {len(evidence_mentions)}")
         return success
 
     def test_prediction_model_performance(self):
