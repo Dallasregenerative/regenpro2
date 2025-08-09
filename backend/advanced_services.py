@@ -2087,6 +2087,502 @@ You create protocols that are both scientifically rigorous and clinically practi
         
         return "Level IV"  # Default to lowest level if unclear
 
+    # =============== CLINICAL TRIALS.GOV INTEGRATION ===============
+    
+    async def search_clinical_trials(self, condition: str, intervention: str = None, recruitment_status: str = "RECRUITING", max_results: int = 20) -> Dict[str, Any]:
+        """Search ClinicalTrials.gov for relevant regenerative medicine trials"""
+        
+        try:
+            import requests
+            from urllib.parse import urlencode
+            
+            # Build search parameters
+            params = {
+                "format": "json",
+                "markupFormat": "markdown",
+                "query.cond": condition,
+                "query.term": "regenerative medicine OR stem cell OR PRP OR platelet rich plasma OR BMAC OR tissue engineering",
+                "pageSize": max_results,
+                "countTotal": "true"
+            }
+            
+            # Add intervention filter if provided
+            if intervention:
+                params["query.intr"] = intervention
+            
+            # Add recruitment status filter
+            if recruitment_status:
+                params["query.recr"] = recruitment_status
+            
+            # Build API URL
+            api_url = f"{self.clinicaltrials_base_url}/query/full_studies?" + urlencode(params)
+            
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(api_url)
+                
+                if response.status_code != 200:
+                    return {
+                        "error": f"ClinicalTrials.gov API error: {response.status_code}",
+                        "trials": [],
+                        "total_count": 0
+                    }
+                
+                # Parse JSON response
+                data = response.json()
+                trials = self._parse_clinical_trials_response(data, condition)
+                
+                # Store trials in database
+                await self._store_clinical_trials(trials, condition, intervention)
+                
+                return {
+                    "search_condition": condition,
+                    "intervention_filter": intervention,
+                    "recruitment_status": recruitment_status,
+                    "trials": trials,
+                    "total_count": len(trials),
+                    "search_timestamp": datetime.utcnow().isoformat(),
+                    "source": "clinicaltrials_gov",
+                    "status": "success"
+                }
+                
+        except Exception as e:
+            logging.error(f"ClinicalTrials.gov search error: {str(e)}")
+            return {
+                "error": f"Clinical trials search failed: {str(e)}",
+                "trials": [],
+                "total_count": 0,
+                "fallback_suggestion": "Try searching with broader terms"
+            }
+
+    def _parse_clinical_trials_response(self, data: Dict, condition: str) -> List[Dict]:
+        """Parse ClinicalTrials.gov API response"""
+        
+        trials = []
+        
+        try:
+            studies = data.get("FullStudiesResponse", {}).get("FullStudies", [])
+            
+            for study_wrapper in studies:
+                study = study_wrapper.get("Study", {})
+                
+                try:
+                    # Extract protocol section
+                    protocol_section = study.get("ProtocolSection", {})
+                    
+                    # Identification module
+                    identification = protocol_section.get("IdentificationModule", {})
+                    nct_id = identification.get("NCTId", "")
+                    title = identification.get("BriefTitle", "")
+                    
+                    # Status module
+                    status_module = protocol_section.get("StatusModule", {})
+                    overall_status = status_module.get("OverallStatus", "")
+                    start_date = status_module.get("StartDateStruct", {}).get("StartDate", "")
+                    
+                    # Description module
+                    description = protocol_section.get("DescriptionModule", {})
+                    brief_summary = description.get("BriefSummary", "")
+                    detailed_description = description.get("DetailedDescription", "")
+                    
+                    # Conditions module
+                    conditions_module = protocol_section.get("ConditionsModule", {})
+                    conditions = conditions_module.get("ConditionList", [])
+                    
+                    # Arms/interventions module
+                    arms_module = protocol_section.get("ArmsInterventionsModule", {})
+                    interventions = arms_module.get("InterventionList", [])
+                    
+                    # Design module
+                    design_module = protocol_section.get("DesignModule", {})
+                    study_type = design_module.get("StudyType", "")
+                    phases = design_module.get("PhaseList", [])
+                    
+                    # Eligibility module
+                    eligibility = protocol_section.get("EligibilityModule", {})
+                    eligible_ages = eligibility.get("StdAgeList", [])
+                    gender = eligibility.get("Gender", "")
+                    
+                    # Contacts module
+                    contacts = protocol_section.get("ContactsLocationsModule", {})
+                    locations = contacts.get("LocationList", [])
+                    
+                    # Calculate relevance score
+                    relevance_score = self._calculate_trial_relevance(
+                        title, brief_summary, detailed_description, interventions, condition
+                    )
+                    
+                    # Extract regenerative medicine interventions
+                    regen_interventions = self._extract_regenerative_interventions(interventions)
+                    
+                    trial_data = {
+                        "nct_id": nct_id,
+                        "title": title,
+                        "overall_status": overall_status,
+                        "start_date": start_date,
+                        "brief_summary": brief_summary[:1000],  # Limit length
+                        "detailed_description": detailed_description[:2000] if detailed_description else "",
+                        "conditions": conditions,
+                        "interventions": regen_interventions,
+                        "study_type": study_type,
+                        "phases": phases,
+                        "eligible_ages": eligible_ages,
+                        "gender": gender,
+                        "locations": [{"facility": loc.get("LocationFacility", ""), "city": loc.get("LocationCity", ""), "country": loc.get("LocationCountry", "")} for loc in locations[:5]],
+                        "relevance_score": relevance_score,
+                        "search_condition": condition,
+                        "trial_url": f"https://clinicaltrials.gov/ct2/show/{nct_id}",
+                        "extracted_at": datetime.utcnow()
+                    }
+                    
+                    trials.append(trial_data)
+                    
+                except Exception as e:
+                    logging.warning(f"Error parsing trial data: {str(e)}")
+                    continue
+                    
+        except Exception as e:
+            logging.error(f"Error parsing clinical trials response: {str(e)}")
+        
+        # Sort by relevance score
+        trials.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
+        
+        return trials
+
+    def _calculate_trial_relevance(self, title: str, summary: str, description: str, interventions: List, condition: str) -> float:
+        """Calculate relevance score for clinical trial"""
+        
+        score = 0.0
+        
+        # Combine all text for analysis
+        all_text = f"{title} {summary} {description}".lower()
+        condition_lower = condition.lower()
+        
+        # Condition match in title (high weight)
+        if condition_lower in title.lower():
+            score += 0.3
+        
+        # Condition match in summary/description
+        if condition_lower in summary.lower():
+            score += 0.2
+        if condition_lower in description.lower():
+            score += 0.1
+        
+        # Regenerative medicine keywords
+        regen_keywords = [
+            "regenerative medicine", "stem cell", "mesenchymal", "prp", 
+            "platelet rich plasma", "bone marrow", "bmac", "tissue engineering",
+            "exosome", "growth factor", "cell therapy", "biological"
+        ]
+        
+        keyword_matches = sum(1 for keyword in regen_keywords if keyword in all_text)
+        score += min(keyword_matches * 0.05, 0.25)
+        
+        # Check interventions for regenerative therapies
+        regen_intervention_count = 0
+        for intervention in interventions:
+            intervention_name = intervention.get("InterventionName", "").lower()
+            if any(keyword in intervention_name for keyword in regen_keywords):
+                regen_intervention_count += 1
+        
+        score += min(regen_intervention_count * 0.1, 0.15)
+        
+        return min(score, 1.0)
+
+    def _extract_regenerative_interventions(self, interventions: List) -> List[Dict]:
+        """Extract and categorize regenerative medicine interventions"""
+        
+        regen_interventions = []
+        
+        for intervention in interventions:
+            intervention_name = intervention.get("InterventionName", "")
+            intervention_type = intervention.get("InterventionType", "")
+            description = intervention.get("InterventionDescription", "")
+            
+            # Check if it's a regenerative medicine intervention
+            regen_keywords = [
+                "stem cell", "mesenchymal", "prp", "platelet rich plasma",
+                "bone marrow", "bmac", "exosome", "growth factor",
+                "tissue engineering", "cell therapy", "regenerative"
+            ]
+            
+            if any(keyword in intervention_name.lower() for keyword in regen_keywords):
+                # Categorize the intervention
+                category = self._categorize_regenerative_intervention(intervention_name)
+                
+                regen_interventions.append({
+                    "name": intervention_name,
+                    "type": intervention_type,
+                    "description": description[:500],  # Limit length
+                    "category": category,
+                    "regenerative_medicine": True
+                })
+            else:
+                # Include non-regenerative interventions but mark them
+                regen_interventions.append({
+                    "name": intervention_name,
+                    "type": intervention_type,
+                    "description": description[:500],
+                    "category": "other",
+                    "regenerative_medicine": False
+                })
+        
+        return regen_interventions
+
+    def _categorize_regenerative_intervention(self, intervention_name: str) -> str:
+        """Categorize regenerative medicine intervention"""
+        
+        name_lower = intervention_name.lower()
+        
+        if any(term in name_lower for term in ["prp", "platelet rich plasma", "platelet-rich"]):
+            return "PRP"
+        elif any(term in name_lower for term in ["bone marrow", "bmac", "bone marrow aspirate"]):
+            return "BMAC"
+        elif any(term in name_lower for term in ["mesenchymal", "msc", "stem cell"]):
+            return "Stem Cells"
+        elif any(term in name_lower for term in ["exosome", "extracellular vesicle"]):
+            return "Exosomes"
+        elif any(term in name_lower for term in ["growth factor", "cytokine"]):
+            return "Growth Factors"
+        elif any(term in name_lower for term in ["tissue engineering", "scaffold", "biomaterial"]):
+            return "Tissue Engineering"
+        else:
+            return "Other Regenerative"
+
+    async def _store_clinical_trials(self, trials: List[Dict], condition: str, intervention: str = None):
+        """Store clinical trials in database"""
+        
+        try:
+            for trial in trials:
+                # Check if trial already exists
+                existing = await self.db.clinical_trials.find_one({"nct_id": trial["nct_id"]})
+                
+                if not existing:
+                    trial_doc = {
+                        **trial,
+                        "search_conditions": [condition],
+                        "search_interventions": [intervention] if intervention else [],
+                        "created_at": datetime.utcnow(),
+                        "last_accessed": datetime.utcnow()
+                    }
+                    await self.db.clinical_trials.insert_one(trial_doc)
+                else:
+                    # Update search conditions and last accessed
+                    update_data = {
+                        "$addToSet": {"search_conditions": condition},
+                        "$set": {"last_accessed": datetime.utcnow()}
+                    }
+                    if intervention:
+                        update_data["$addToSet"]["search_interventions"] = intervention
+                    
+                    await self.db.clinical_trials.update_one(
+                        {"nct_id": trial["nct_id"]},
+                        update_data
+                    )
+                    
+        except Exception as e:
+            logging.error(f"Error storing clinical trials: {str(e)}")
+
+    async def find_matching_clinical_trials(self, patient_condition: str, therapy_preferences: List[str] = None, max_matches: int = 10) -> Dict[str, Any]:
+        """Find clinical trials that match patient condition and therapy preferences"""
+        
+        try:
+            # Search for trials
+            trials_result = await self.search_clinical_trials(
+                condition=patient_condition,
+                intervention=therapy_preferences[0] if therapy_preferences else None,
+                max_results=max_matches * 2  # Get more to filter better matches
+            )
+            
+            if not trials_result.get("trials"):
+                return {
+                    "patient_condition": patient_condition,
+                    "therapy_preferences": therapy_preferences,
+                    "matching_trials": [],
+                    "total_matches": 0,
+                    "recommendations": ["Try broadening search criteria", "Consider related conditions"],
+                    "status": "no_matches_found"
+                }
+            
+            # Filter and rank trials
+            all_trials = trials_result["trials"]
+            matching_trials = []
+            
+            for trial in all_trials[:max_matches]:
+                # Calculate match score
+                match_score = self._calculate_patient_trial_match(trial, patient_condition, therapy_preferences)
+                
+                if match_score >= 0.3:  # Minimum match threshold
+                    trial_match = {
+                        **trial,
+                        "match_score": match_score,
+                        "match_reasons": self._generate_match_reasons(trial, patient_condition, therapy_preferences),
+                        "eligibility_considerations": self._extract_eligibility_factors(trial),
+                        "next_steps": self._generate_trial_next_steps(trial)
+                    }
+                    matching_trials.append(trial_match)
+            
+            # Sort by match score
+            matching_trials.sort(key=lambda x: x["match_score"], reverse=True)
+            
+            return {
+                "patient_condition": patient_condition,
+                "therapy_preferences": therapy_preferences,
+                "matching_trials": matching_trials,
+                "total_matches": len(matching_trials),
+                "search_timestamp": datetime.utcnow().isoformat(),
+                "recommendations": self._generate_trial_recommendations(matching_trials, patient_condition),
+                "status": "matches_found" if matching_trials else "no_suitable_matches"
+            }
+            
+        except Exception as e:
+            logging.error(f"Clinical trial matching error: {str(e)}")
+            return {
+                "patient_condition": patient_condition,
+                "matching_trials": [],
+                "total_matches": 0,
+                "error": str(e),
+                "status": "error"
+            }
+
+    def _calculate_patient_trial_match(self, trial: Dict, condition: str, preferences: List[str] = None) -> float:
+        """Calculate how well a trial matches patient condition and preferences"""
+        
+        match_score = 0.0
+        
+        # Condition matching (40% weight)
+        trial_conditions = [c.lower() for c in trial.get("conditions", [])]
+        condition_lower = condition.lower()
+        
+        if any(condition_lower in tc for tc in trial_conditions):
+            match_score += 0.4
+        elif any(tc in condition_lower for tc in trial_conditions):
+            match_score += 0.3
+        
+        # Intervention matching (30% weight)
+        if preferences:
+            trial_interventions = trial.get("interventions", [])
+            for pref in preferences:
+                pref_lower = pref.lower()
+                for intervention in trial_interventions:
+                    intervention_name = intervention.get("name", "").lower()
+                    if pref_lower in intervention_name or any(
+                        keyword in intervention_name 
+                        for keyword in pref_lower.split()
+                    ):
+                        match_score += 0.1
+        
+        # Trial status (20% weight)
+        status = trial.get("overall_status", "").lower()
+        if status in ["recruiting", "not yet recruiting"]:
+            match_score += 0.2
+        elif status in ["active, not recruiting", "enrolling by invitation"]:
+            match_score += 0.1
+        
+        # Relevance score (10% weight)
+        relevance = trial.get("relevance_score", 0)
+        match_score += relevance * 0.1
+        
+        return min(match_score, 1.0)
+
+    def _generate_match_reasons(self, trial: Dict, condition: str, preferences: List[str] = None) -> List[str]:
+        """Generate human-readable reasons for trial match"""
+        
+        reasons = []
+        
+        # Condition match
+        trial_conditions = [c.lower() for c in trial.get("conditions", [])]
+        if any(condition.lower() in tc for tc in trial_conditions):
+            reasons.append(f"Trial specifically targets {condition}")
+        
+        # Intervention match
+        if preferences:
+            for pref in preferences:
+                trial_interventions = trial.get("interventions", [])
+                for intervention in trial_interventions:
+                    if pref.lower() in intervention.get("name", "").lower():
+                        reasons.append(f"Trial tests {pref} therapy")
+        
+        # Status
+        status = trial.get("overall_status", "")
+        if status.lower() == "recruiting":
+            reasons.append("Currently recruiting patients")
+        
+        # Phase
+        phases = trial.get("phases", [])
+        if phases:
+            reasons.append(f"Phase {'/'.join(phases)} study")
+        
+        return reasons if reasons else ["General regenerative medicine relevance"]
+
+    def _extract_eligibility_factors(self, trial: Dict) -> Dict[str, Any]:
+        """Extract key eligibility factors from trial"""
+        
+        return {
+            "age_range": trial.get("eligible_ages", []),
+            "gender": trial.get("gender", "All"),
+            "locations": trial.get("locations", [])[:3],  # Top 3 locations
+            "study_type": trial.get("study_type", ""),
+            "phases": trial.get("phases", [])
+        }
+
+    def _generate_trial_next_steps(self, trial: Dict) -> List[str]:
+        """Generate next steps for interested patients"""
+        
+        next_steps = [
+            f"Review full trial details at {trial.get('trial_url', 'ClinicalTrials.gov')}",
+            "Consult with your physician about trial eligibility",
+            "Contact the study team for screening"
+        ]
+        
+        # Add location-specific guidance
+        locations = trial.get("locations", [])
+        if locations:
+            nearest_location = locations[0]
+            city = nearest_location.get("city", "")
+            country = nearest_location.get("country", "")
+            if city and country:
+                next_steps.append(f"Consider proximity to trial location: {city}, {country}")
+        
+        return next_steps
+
+    def _generate_trial_recommendations(self, matching_trials: List[Dict], condition: str) -> List[str]:
+        """Generate recommendations based on matching trials"""
+        
+        recommendations = []
+        
+        if not matching_trials:
+            return [
+                "No suitable trials found for your specific condition",
+                "Consider expanding search to related conditions",
+                "Check back periodically as new trials are added"
+            ]
+        
+        # Categorize by intervention types
+        intervention_types = {}
+        for trial in matching_trials:
+            for intervention in trial.get("interventions", []):
+                category = intervention.get("category", "other")
+                if category not in intervention_types:
+                    intervention_types[category] = 0
+                intervention_types[category] += 1
+        
+        # Generate recommendations based on available interventions
+        if "PRP" in intervention_types:
+            recommendations.append(f"Found {intervention_types['PRP']} PRP-related trials")
+        if "Stem Cells" in intervention_types:
+            recommendations.append(f"Found {intervention_types['Stem Cells']} stem cell therapy trials")
+        if "BMAC" in intervention_types:
+            recommendations.append(f"Found {intervention_types['BMAC']} BMAC-related trials")
+        
+        # Add general recommendations
+        recruiting_trials = [t for t in matching_trials if t.get("overall_status", "").lower() == "recruiting"]
+        if recruiting_trials:
+            recommendations.append(f"{len(recruiting_trials)} trials are actively recruiting")
+        
+        recommendations.append("Discuss trial participation with your healthcare provider")
+        
+        return recommendations
+
 
 # Advanced DICOM Processing Service
 class DICOMProcessingService:
