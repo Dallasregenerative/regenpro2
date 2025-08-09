@@ -453,10 +453,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Core Medical AI Features Testing Completed"
-  stuck_tasks: []
+    - "File Upload and Processing System"
+    - "Outcome Tracking System"
+    - "Dashboard Analytics Integration"
+  stuck_tasks:
+    - "File Upload and Processing System"
+    - "Outcome Tracking System"
+    - "Dashboard Analytics Integration"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
