@@ -1919,6 +1919,173 @@ You create protocols that are both scientifically rigorous and clinically practi
         similarity = len(intersection) / len(union) if union else 0
         return similarity >= threshold
 
+    # =============== EVIDENCE EXTRACTION HELPER METHODS ===============
+    
+    def _extract_therapy_implications(self, paper: Dict) -> List[str]:
+        """Extract therapy implications from paper"""
+        
+        implications = []
+        title = paper.get("title", "").lower()
+        abstract = paper.get("abstract", "").lower()
+        text = f"{title} {abstract}"
+        
+        # PRP implications
+        if any(term in text for term in ["prp", "platelet rich plasma", "platelet-rich plasma"]):
+            implications.append("PRP therapy effectiveness indicated")
+        
+        # BMAC implications  
+        if any(term in text for term in ["bmac", "bone marrow aspirate", "bone marrow concentrate"]):
+            implications.append("BMAC therapy potential identified")
+        
+        # Stem cell implications
+        if any(term in text for term in ["stem cell", "mesenchymal", "msc"]):
+            implications.append("Stem cell therapy applications noted")
+        
+        # Outcome implications
+        if any(term in text for term in ["improvement", "efficacy", "effective", "success"]):
+            implications.append("Positive therapeutic outcomes reported")
+        
+        return implications if implications else ["General regenerative medicine relevance"]
+    
+    def _extract_outcome_data(self, paper: Dict) -> Dict[str, Any]:
+        """Extract outcome data from paper"""
+        
+        title = paper.get("title", "").lower()
+        abstract = paper.get("abstract", "").lower()
+        text = f"{title} {abstract}"
+        
+        outcome_data = {
+            "primary_outcomes": [],
+            "secondary_outcomes": [],
+            "adverse_events": [],
+            "follow_up_duration": "not specified"
+        }
+        
+        # Look for outcome measures
+        if any(term in text for term in ["pain", "vas", "visual analog"]):
+            outcome_data["primary_outcomes"].append("Pain reduction")
+        
+        if any(term in text for term in ["function", "functional", "disability", "womac", "dash"]):
+            outcome_data["primary_outcomes"].append("Functional improvement")
+        
+        if any(term in text for term in ["quality of life", "qol"]):
+            outcome_data["secondary_outcomes"].append("Quality of life")
+        
+        # Look for adverse events
+        if any(term in text for term in ["adverse", "complication", "side effect"]):
+            outcome_data["adverse_events"].append("Adverse events reported")
+        
+        # Look for follow-up duration
+        import re
+        duration_match = re.search(r'(\d+)\s*(week|month|year)', text)
+        if duration_match:
+            outcome_data["follow_up_duration"] = f"{duration_match.group(1)} {duration_match.group(2)}s"
+        
+        return outcome_data
+    
+    def _extract_dosage_info(self, paper: Dict) -> Dict[str, Any]:
+        """Extract dosage information from paper"""
+        
+        title = paper.get("title", "").lower()
+        abstract = paper.get("abstract", "").lower()
+        text = f"{title} {abstract}"
+        
+        dosage_info = {
+            "dosage_specified": False,
+            "therapy_type": "not specified",
+            "dosage_details": [],
+            "administration_route": "not specified"
+        }
+        
+        import re
+        
+        # Look for PRP dosage
+        prp_dosage = re.search(r'(\d+)\s*ml.*prp|prp.*(\d+)\s*ml', text, re.IGNORECASE)
+        if prp_dosage:
+            dosage_info["dosage_specified"] = True
+            dosage_info["therapy_type"] = "PRP"
+            dosage_info["dosage_details"].append(f"PRP volume: {prp_dosage.group(1) or prp_dosage.group(2)}ml")
+        
+        # Look for cell count
+        cell_count = re.search(r'(\d+(?:\.\d+)?)\s*(?:x|×|\*)\s*10\^?(\d+)\s*cells?', text, re.IGNORECASE)
+        if cell_count:
+            dosage_info["dosage_specified"] = True
+            dosage_info["dosage_details"].append(f"Cell count: {cell_count.group(1)}x10^{cell_count.group(2)} cells")
+        
+        # Look for administration route
+        if any(term in text for term in ["injection", "inject", "intraarticular", "intra-articular"]):
+            dosage_info["administration_route"] = "injection"
+        
+        if any(term in text for term in ["intravenous", "iv", "systemic"]):
+            dosage_info["administration_route"] = "intravenous"
+        
+        return dosage_info
+    
+    def _extract_safety_info(self, paper: Dict) -> Dict[str, Any]:
+        """Extract safety information from paper"""
+        
+        title = paper.get("title", "").lower()
+        abstract = paper.get("abstract", "").lower()
+        text = f"{title} {abstract}"
+        
+        safety_info = {
+            "safety_profile": "not assessed",
+            "adverse_events": [],
+            "contraindications": [],
+            "safety_recommendations": []
+        }
+        
+        # Look for safety mentions
+        if any(term in text for term in ["safe", "safety", "well tolerated"]):
+            safety_info["safety_profile"] = "favorable"
+        
+        if any(term in text for term in ["adverse", "complication", "side effect"]):
+            safety_info["safety_profile"] = "some concerns"
+            safety_info["adverse_events"].append("Adverse events reported in study")
+        
+        # Look for specific complications
+        if any(term in text for term in ["infection", "bleeding", "hematoma"]):
+            safety_info["adverse_events"].append("Local complications possible")
+        
+        # Look for contraindications
+        if any(term in text for term in ["contraindication", "not recommended", "avoid"]):
+            safety_info["contraindications"].append("Specific contraindications mentioned")
+        
+        if not safety_info["adverse_events"] and "safe" in text:
+            safety_info["safety_recommendations"].append("Generally considered safe based on study")
+        
+        return safety_info
+    
+    def _assess_evidence_level(self, paper: Dict) -> str:
+        """Assess evidence level of the paper"""
+        
+        title = paper.get("title", "").lower()
+        abstract = paper.get("abstract", "").lower()
+        text = f"{title} {abstract}"
+        
+        # Level I: Systematic reviews and meta-analyses
+        if any(term in text for term in ["systematic review", "meta-analysis", "cochrane"]):
+            return "Level I"
+        
+        # Level II: Randomized controlled trials
+        if any(term in text for term in ["randomized", "randomised", "rct", "controlled trial", "double blind", "placebo"]):
+            return "Level II"
+        
+        # Level III: Cohort studies, case-control studies
+        if any(term in text for term in ["cohort", "case-control", "prospective", "retrospective"]):
+            return "Level III"
+        
+        # Level IV: Case series, case reports
+        if any(term in text for term in ["case series", "case report", "case study"]):
+            return "Level IV"
+        
+        # Default based on journal/publication type
+        journal = paper.get("journal", "").lower()
+        if any(term in journal for term in ["review", "cochrane", "systematic"]):
+            return "Level I"
+        
+        return "Level IV"  # Default to lowest level if unclear
+
 
 # Advanced DICOM Processing Service
 class DICOMProcessingService:
