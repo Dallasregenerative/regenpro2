@@ -1523,6 +1523,402 @@ You create protocols that are both scientifically rigorous and clinically practi
         
         return insights
 
+    # =============== GOOGLE SCHOLAR INTEGRATION ===============
+    
+    async def perform_google_scholar_search(self, search_terms: str, max_results: int = 20, year_filter: int = None) -> Dict[str, Any]:
+        """Perform Google Scholar search for broader literature coverage"""
+        
+        try:
+            import requests
+            from bs4 import BeautifulSoup
+            import re
+            from urllib.parse import quote, urlencode
+            import time
+            import random
+            
+            # Add regenerative medicine context to query
+            enhanced_query = f'"{search_terms}" regenerative medicine OR "stem cell" OR "PRP" OR "tissue engineering"'
+            
+            # Build Google Scholar search URL
+            params = {
+                'q': enhanced_query,
+                'hl': 'en',
+                'num': max_results,
+            }
+            
+            if year_filter:
+                params['as_ylo'] = year_filter
+            
+            search_url = f"{self.google_scholar_base_url}?" + urlencode(params)
+            
+            # Headers to mimic browser request
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1'
+            }
+            
+            # Add random delay to avoid rate limiting
+            await asyncio.sleep(random.uniform(1, 3))
+            
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(search_url, headers=headers)
+                
+                if response.status_code != 200:
+                    return {
+                        "error": f"Google Scholar search failed with status {response.status_code}",
+                        "papers": [],
+                        "total_count": 0
+                    }
+                
+                # Parse HTML response
+                soup = BeautifulSoup(response.content, 'html.parser')
+                papers = self._parse_google_scholar_results(soup, search_terms)
+                
+                # Store papers in database for future use
+                await self._store_google_scholar_papers(papers, search_terms)
+                
+                return {
+                    "search_query": search_terms,
+                    "papers": papers,
+                    "total_count": len(papers),
+                    "search_timestamp": datetime.utcnow().isoformat(),
+                    "source": "google_scholar",
+                    "status": "success"
+                }
+                
+        except Exception as e:
+            logging.error(f"Google Scholar search error: {str(e)}")
+            return {
+                "error": f"Google Scholar search failed: {str(e)}",
+                "papers": [],
+                "total_count": 0,
+                "fallback_suggestion": "Try PubMed search instead"
+            }
+
+    def _parse_google_scholar_results(self, soup, search_terms: str) -> List[Dict]:
+        """Parse Google Scholar HTML results"""
+        
+        papers = []
+        
+        try:
+            # Find all result divs
+            results = soup.find_all('div', class_='gs_r gs_or gs_scl')
+            
+            for i, result in enumerate(results):
+                try:
+                    # Extract title
+                    title_elem = result.find('h3', class_='gs_rt')
+                    title = title_elem.get_text(strip=True) if title_elem else "Title not available"
+                    
+                    # Remove [HTML] or [PDF] tags
+                    title = re.sub(r'\[(?:HTML|PDF|CITATION)\]\s*', '', title)
+                    
+                    # Extract authors and publication info
+                    author_elem = result.find('div', class_='gs_a')
+                    author_text = author_elem.get_text(strip=True) if author_elem else ""
+                    
+                    # Parse author and year info
+                    authors, journal, year = self._parse_google_scholar_authors(author_text)
+                    
+                    # Extract abstract/snippet
+                    snippet_elem = result.find('div', class_='gs_rs')
+                    abstract = snippet_elem.get_text(strip=True) if snippet_elem else ""
+                    
+                    # Extract citation count
+                    cited_elem = result.find('div', class_='gs_fl')
+                    citation_count = self._extract_citation_count(cited_elem) if cited_elem else 0
+                    
+                    # Extract URL
+                    url = ""
+                    link_elem = title_elem.find('a') if title_elem else None
+                    if link_elem and link_elem.get('href'):
+                        url = link_elem.get('href')
+                    
+                    # Calculate relevance score
+                    relevance_score = self._calculate_google_scholar_relevance(
+                        title, abstract, search_terms, citation_count, year
+                    )
+                    
+                    paper_data = {
+                        "gs_id": f"gs_{hashlib.md5(title.encode()).hexdigest()[:12]}",
+                        "title": title,
+                        "authors": authors,
+                        "journal": journal,
+                        "year": year,
+                        "abstract": abstract[:1000],  # Limit length
+                        "citation_count": citation_count,
+                        "url": url,
+                        "relevance_score": relevance_score,
+                        "source": "google_scholar",
+                        "search_query": search_terms,
+                        "extracted_at": datetime.utcnow()
+                    }
+                    
+                    papers.append(paper_data)
+                    
+                except Exception as e:
+                    logging.warning(f"Error parsing Google Scholar result {i}: {str(e)}")
+                    continue
+                    
+        except Exception as e:
+            logging.error(f"Error parsing Google Scholar results: {str(e)}")
+        
+        return papers
+
+    def _parse_google_scholar_authors(self, author_text: str) -> tuple:
+        """Parse author information from Google Scholar"""
+        
+        authors = []
+        journal = "Unknown"
+        year = "Unknown"
+        
+        try:
+            # Split by common delimiters
+            parts = re.split(r' - | — |,', author_text)
+            
+            if parts:
+                # First part usually contains authors
+                author_part = parts[0].strip()
+                if author_part:
+                    # Extract individual authors (simple heuristic)
+                    author_names = re.split(r',(?=\s[A-Z])|&|\sand\s', author_part)
+                    authors = [name.strip() for name in author_names[:5]]  # Limit to 5 authors
+                
+                # Look for year in the text
+                year_match = re.search(r'\b(19|20)\d{2}\b', author_text)
+                if year_match:
+                    year = year_match.group()
+                
+                # Try to identify journal/venue (usually after the authors)
+                if len(parts) > 1:
+                    potential_journal = parts[1].strip()
+                    # Remove year if present
+                    potential_journal = re.sub(r'\b(19|20)\d{2}\b', '', potential_journal).strip()
+                    if potential_journal:
+                        journal = potential_journal
+                        
+        except Exception as e:
+            logging.warning(f"Error parsing authors: {str(e)}")
+        
+        return authors, journal, year
+
+    def _extract_citation_count(self, cited_elem) -> int:
+        """Extract citation count from Google Scholar result"""
+        
+        try:
+            # Look for "Cited by X" pattern
+            cited_text = cited_elem.get_text()
+            cited_match = re.search(r'Cited by (\d+)', cited_text)
+            
+            if cited_match:
+                return int(cited_match.group(1))
+                
+        except Exception:
+            pass
+        
+        return 0
+
+    def _calculate_google_scholar_relevance(self, title: str, abstract: str, search_terms: str, citations: int, year: str) -> float:
+        """Calculate relevance score for Google Scholar results"""
+        
+        score = 0.0
+        text = f"{title} {abstract}".lower()
+        search_terms_lower = search_terms.lower()
+        
+        # Title match (highest weight)
+        if search_terms_lower in title.lower():
+            score += 0.4
+        
+        # Abstract match
+        if search_terms_lower in abstract.lower():
+            score += 0.2
+        
+        # Regenerative medicine keywords
+        regen_keywords = [
+            "regenerative medicine", "stem cell", "prp", "platelet rich plasma",
+            "bmac", "bone marrow", "tissue engineering", "growth factor",
+            "mesenchymal", "exosome", "therapy", "treatment"
+        ]
+        
+        keyword_matches = sum(1 for keyword in regen_keywords if keyword in text)
+        score += min(keyword_matches * 0.05, 0.3)
+        
+        # Citation boost (indicates impact)
+        if citations > 100:
+            score += 0.2
+        elif citations > 50:
+            score += 0.15
+        elif citations > 10:
+            score += 0.1
+        
+        # Recent publication boost
+        try:
+            if year and year.isdigit():
+                pub_year = int(year)
+                current_year = datetime.now().year
+                if current_year - pub_year <= 2:
+                    score += 0.1
+                elif current_year - pub_year <= 5:
+                    score += 0.05
+        except:
+            pass
+        
+        return min(score, 1.0)
+
+    async def _store_google_scholar_papers(self, papers: List[Dict], search_query: str):
+        """Store Google Scholar papers in database"""
+        
+        try:
+            for paper in papers:
+                # Check if paper already exists (by title similarity)
+                existing = await self.db.literature_papers.find_one({
+                    "$or": [
+                        {"gs_id": paper.get("gs_id")},
+                        {"title": {"$regex": re.escape(paper["title"][:50]), "$options": "i"}}
+                    ]
+                })
+                
+                if not existing:
+                    paper_doc = {
+                        **paper,
+                        "search_queries": [search_query],
+                        "created_at": datetime.utcnow(),
+                        "last_accessed": datetime.utcnow()
+                    }
+                    await self.db.literature_papers.insert_one(paper_doc)
+                else:
+                    # Update search queries and last accessed
+                    await self.db.literature_papers.update_one(
+                        {"_id": existing["_id"]},
+                        {
+                            "$addToSet": {"search_queries": search_query},
+                            "$set": {"last_accessed": datetime.utcnow()}
+                        }
+                    )
+                    
+        except Exception as e:
+            logging.error(f"Error storing Google Scholar papers: {str(e)}")
+
+    async def perform_multi_source_search(self, search_terms: str, max_results_per_source: int = 10) -> Dict[str, Any]:
+        """Perform comprehensive search across both PubMed and Google Scholar"""
+        
+        try:
+            # Search both sources concurrently
+            pubmed_task = self.perform_pubmed_search(search_terms, max_results_per_source)
+            scholar_task = self.perform_google_scholar_search(search_terms, max_results_per_source)
+            
+            pubmed_result, scholar_result = await asyncio.gather(
+                pubmed_task, 
+                scholar_task, 
+                return_exceptions=True
+            )
+            
+            # Handle results
+            all_papers = []
+            source_stats = {}
+            
+            # Process PubMed results
+            if isinstance(pubmed_result, dict) and pubmed_result.get("papers"):
+                pubmed_papers = pubmed_result["papers"]
+                all_papers.extend(pubmed_papers)
+                source_stats["pubmed"] = {
+                    "papers_found": len(pubmed_papers),
+                    "status": "success"
+                }
+            else:
+                source_stats["pubmed"] = {
+                    "papers_found": 0,
+                    "status": "error" if isinstance(pubmed_result, Exception) else "no_results"
+                }
+            
+            # Process Google Scholar results
+            if isinstance(scholar_result, dict) and scholar_result.get("papers"):
+                scholar_papers = scholar_result["papers"]
+                all_papers.extend(scholar_papers)
+                source_stats["google_scholar"] = {
+                    "papers_found": len(scholar_papers),
+                    "status": "success"
+                }
+            else:
+                source_stats["google_scholar"] = {
+                    "papers_found": 0,
+                    "status": "error" if isinstance(scholar_result, Exception) else "no_results"
+                }
+            
+            # Remove duplicates (by title similarity)
+            unique_papers = self._deduplicate_papers(all_papers)
+            
+            # Sort by relevance score
+            unique_papers.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
+            
+            return {
+                "search_query": search_terms,
+                "total_unique_papers": len(unique_papers),
+                "papers": unique_papers,
+                "source_statistics": source_stats,
+                "search_timestamp": datetime.utcnow().isoformat(),
+                "multi_source_search": True,
+                "status": "completed"
+            }
+            
+        except Exception as e:
+            logging.error(f"Multi-source search error: {str(e)}")
+            return {
+                "search_query": search_terms,
+                "total_unique_papers": 0,
+                "papers": [],
+                "error": str(e),
+                "status": "failed"
+            }
+
+    def _deduplicate_papers(self, papers: List[Dict]) -> List[Dict]:
+        """Remove duplicate papers based on title similarity"""
+        
+        unique_papers = []
+        seen_titles = set()
+        
+        for paper in papers:
+            title = paper.get("title", "").lower().strip()
+            
+            # Create a normalized title for comparison
+            normalized_title = re.sub(r'[^\w\s]', '', title)
+            normalized_title = ' '.join(normalized_title.split())
+            
+            # Check for similar titles (simple approach)
+            is_duplicate = False
+            for seen_title in seen_titles:
+                if self._titles_similar(normalized_title, seen_title):
+                    is_duplicate = True
+                    break
+            
+            if not is_duplicate and normalized_title:
+                seen_titles.add(normalized_title)
+                unique_papers.append(paper)
+        
+        return unique_papers
+
+    def _titles_similar(self, title1: str, title2: str, threshold: float = 0.8) -> bool:
+        """Check if two titles are similar (simple word overlap method)"""
+        
+        if not title1 or not title2:
+            return False
+        
+        words1 = set(title1.lower().split())
+        words2 = set(title2.lower().split())
+        
+        if not words1 or not words2:
+            return False
+        
+        intersection = words1.intersection(words2)
+        union = words1.union(words2)
+        
+        similarity = len(intersection) / len(union) if union else 0
+        return similarity >= threshold
+
 
 # Advanced DICOM Processing Service
 class DICOMProcessingService:
