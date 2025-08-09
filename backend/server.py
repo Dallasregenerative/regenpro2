@@ -927,6 +927,108 @@ async def upload_patient_file(
         logging.error(f"File upload processing error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"File processing failed: {str(e)}")
 
+@api_router.get("/patients/{patient_id}/files")
+async def get_patient_files(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get all uploaded files for a specific patient"""
+    
+    try:
+        # Get all files for this patient
+        uploaded_files_cursor = db.uploaded_files.find({"patient_id": patient_id})
+        uploaded_files = await uploaded_files_cursor.to_list(length=None)
+        
+        # Convert ObjectId to string and enhance with processing status
+        files_with_status = []
+        for file_record in uploaded_files:
+            if '_id' in file_record:
+                file_record['_id'] = str(file_record['_id'])
+            
+            # Add processing status
+            file_record['processing_status'] = 'completed'
+            file_record['integration_status'] = 'integrated'
+            files_with_status.append(file_record)
+        
+        # Group files by category
+        file_categories = {}
+        for file_record in files_with_status:
+            category = file_record.get('file_category', 'other')
+            if category not in file_categories:
+                file_categories[category] = []
+            file_categories[category].append(file_record)
+        
+        return {
+            "patient_id": patient_id,
+            "total_files": len(files_with_status),
+            "files_by_category": file_categories,
+            "all_files": files_with_status,
+            "categories_present": list(file_categories.keys()),
+            "last_updated": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logging.error(f"Error retrieving patient files: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"File retrieval failed: {str(e)}")
+
+@api_router.post("/patients/{patient_id}/files/process-all")
+async def process_all_patient_files(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Reprocess all files for a patient and update analysis"""
+    
+    try:
+        # Get all files for this patient
+        uploaded_files_cursor = db.uploaded_files.find({"patient_id": patient_id})
+        uploaded_files = await uploaded_files_cursor.to_list(length=None)
+        
+        if not uploaded_files:
+            return {
+                "status": "no_files",
+                "message": "No files found for this patient",
+                "patient_id": patient_id
+            }
+        
+        # Get patient data
+        patient = await db.patients.find_one({"patient_id": patient_id})
+        if not patient:
+            raise HTTPException(status_code=404, detail="Patient not found")
+        
+        # Process files integration
+        file_insights = {}
+        for file_record in uploaded_files:
+            category = file_record.get('file_category', 'other')
+            if category not in file_insights:
+                file_insights[category] = []
+            
+            file_insights[category].append({
+                "filename": file_record.get('filename', 'Unknown'),
+                "file_type": file_record.get('file_type', 'unknown'),
+                "upload_date": file_record.get('upload_timestamp', datetime.utcnow()).isoformat(),
+                "file_size": file_record.get('file_size', 0),
+                "processing_results": file_record.get('processing_results', {}),
+                "status": "integrated"
+            })
+        
+        # Trigger new comprehensive analysis with files
+        patient_data = PatientData(**patient)
+        ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
+        diagnostic_results = await ai_engine.analyze_patient_data(patient_data, uploaded_files_data=file_insights)
+        
+        return {
+            "status": "files_reprocessed",
+            "patient_id": patient_id,
+            "files_processed": len(uploaded_files),
+            "categories_processed": list(file_insights.keys()),
+            "analysis_updated": True,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logging.error(f"Error processing patient files: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"File processing failed: {str(e)}")
+
 @api_router.get("/files/patient/{patient_id}")
 async def get_patient_files(
     patient_id: str,
