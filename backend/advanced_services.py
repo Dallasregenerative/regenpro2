@@ -239,7 +239,7 @@ class PubMedIntegrationService:
         self.db = db_client
         self.pubmed_base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
         self.google_scholar_base_url = "https://scholar.google.com/scholar"
-        self.clinicaltrials_base_url = "https://clinicaltrials.gov/api"
+        self.clinicaltrials_base_url = "https://clinicaltrials.gov/api/v2"
         self.monitoring_queries = [
             "regenerative medicine",
             "mesenchymal stem cells",
