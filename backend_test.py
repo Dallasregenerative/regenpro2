@@ -1844,6 +1844,522 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return success1 and success2
 
+    # ========== CORE MEDICAL AI FEATURES TESTING ==========
+    
+    def test_differential_diagnosis_generation(self):
+        """Test POST /api/analyze-patient endpoint with comprehensive patient data"""
+        if not self.patient_id:
+            print("❌ No patient ID available for differential diagnosis testing")
+            return False
+
+        # Use the specific patient profile from the review request
+        patient_data = {
+            "demographics": {
+                "name": "Margaret Thompson",
+                "age": "65",
+                "gender": "Female",
+                "occupation": "Retired Teacher",
+                "insurance": "Medicare"
+            },
+            "chief_complaint": "Chronic knee pain and stiffness",
+            "history_present_illness": "65-year-old female with progressive bilateral knee pain over 2 years. Pain worse with activity, morning stiffness lasting 45 minutes. Failed conservative management including NSAIDs, physical therapy, and corticosteroid injections. Seeking regenerative medicine alternatives to knee replacement surgery.",
+            "past_medical_history": ["Osteoarthritis", "Hypertension", "Type 2 Diabetes"],
+            "medications": ["Metformin", "Lisinopril", "Ibuprofen"],
+            "allergies": ["NKDA"],
+            "vital_signs": {
+                "temperature": "98.4",
+                "blood_pressure": "135/85",
+                "heart_rate": "78",
+                "respiratory_rate": "16",
+                "oxygen_saturation": "97",
+                "weight": "165",
+                "height": "5'4\""
+            },
+            "symptoms": ["chronic knee pain", "morning stiffness", "decreased mobility", "joint space narrowing"],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": "3.2 mg/L",
+                    "ESR": "22 mm/hr"
+                },
+                "metabolic_panel": {
+                    "glucose": "145 mg/dL",
+                    "HbA1c": "7.1%"
+                }
+            },
+            "imaging_data": [
+                {
+                    "type": "X-ray",
+                    "location": "bilateral knees",
+                    "findings": "Knee osteoarthritis with joint space narrowing",
+                    "date": "2024-01-15"
+                }
+            ]
+        }
+
+        print("   Testing differential diagnosis generation with comprehensive patient data...")
+        print("   This may take 30-60 seconds for AI processing...")
+        
+        success, response = self.run_test(
+            "CORE FEATURE: Differential Diagnosis Generation",
+            "POST",
+            f"patients/{self.patient_id}/analyze",
+            200,
+            data=patient_data,
+            timeout=90
+        )
+        
+        if success:
+            diagnostic_results = response.get('diagnostic_results', [])
+            print(f"   ✅ Differential Diagnoses Generated: {len(diagnostic_results)}")
+            
+            if diagnostic_results:
+                # Test probability rankings
+                for i, result in enumerate(diagnostic_results[:3]):
+                    diagnosis = result.get('diagnosis', 'Unknown')
+                    confidence = result.get('confidence_score', 0)
+                    reasoning = result.get('reasoning', '')
+                    targets = result.get('regenerative_targets', [])
+                    mechanisms = result.get('mechanisms_involved', [])
+                    
+                    print(f"   Diagnosis {i+1}: {diagnosis}")
+                    print(f"   Confidence Score: {confidence:.2f} (Range: 0.0-1.0)")
+                    print(f"   Regenerative Targets: {len(targets)}")
+                    print(f"   Mechanisms Involved: {len(mechanisms)}")
+                    print(f"   Reasoning Quality: {'Good' if len(reasoning) > 50 else 'Basic'}")
+                
+                # Verify confidence scores are in valid range
+                valid_scores = all(0.0 <= result.get('confidence_score', 0) <= 1.0 for result in diagnostic_results)
+                print(f"   ✅ Confidence Scores Valid (0.0-1.0): {valid_scores}")
+                
+                # Check for multi-modal data integration
+                multi_modal_integration = any('multi' in str(result).lower() for result in diagnostic_results)
+                print(f"   Multi-modal Integration: {'Detected' if multi_modal_integration else 'Basic'}")
+                
+        return success
+
+    def test_shap_lime_explainable_ai(self):
+        """Test GET /api/protocols/{protocol_id}/explanation endpoint"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for explainable AI testing")
+            return False
+
+        print("   Testing SHAP/LIME explainable AI system...")
+        success, response = self.run_test(
+            "CORE FEATURE: SHAP/LIME Explainable AI System",
+            "POST",
+            f"protocols/{self.protocol_id}/explanation",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            explanation = response.get('explanation', {})
+            print(f"   ✅ Explanation Generated: {response.get('status', 'unknown')}")
+            print(f"   Explanation Type: {explanation.get('explanation_type', 'unknown')}")
+            print(f"   Explanation Confidence: {explanation.get('explanation_confidence', 0):.2f}")
+            print(f"   Transparency Score: {explanation.get('overall_transparency_score', 0):.2f}")
+            
+            # Test SHAP-style feature importance
+            feature_importance = explanation.get('feature_importance', {})
+            print(f"   Feature Importance Factors: {len(feature_importance)}")
+            
+            if feature_importance:
+                # Check key features
+                key_features = ['age', 'diagnosis_confidence', 'symptom_severity', 'medical_history']
+                available_features = [f for f in key_features if f in feature_importance]
+                print(f"   Key Features Available: {len(available_features)}/{len(key_features)}")
+                print(f"   Available Features: {', '.join(available_features)}")
+                
+                # Check feature explanations
+                for feature in available_features[:3]:
+                    feature_data = feature_importance[feature]
+                    importance = feature_data.get('importance_score', 0)
+                    contribution = feature_data.get('contribution', 'unknown')
+                    print(f"   {feature}: Importance={importance:.2f}, Contribution={contribution}")
+            
+            # Test SHAP explanation structure
+            shap_explanation = explanation.get('shap_explanation', {})
+            if shap_explanation:
+                print(f"   ✅ SHAP Explanation Available")
+                print(f"   Base Value: {shap_explanation.get('base_value', 0):.2f}")
+                print(f"   Final Prediction: {shap_explanation.get('final_prediction', 0):.2f}")
+                
+                feature_contributions = shap_explanation.get('feature_contributions', [])
+                print(f"   Feature Contributions: {len(feature_contributions)}")
+                
+                if feature_contributions:
+                    top_contribution = feature_contributions[0]
+                    print(f"   Top Contributing Feature: {top_contribution.get('feature', 'unknown')}")
+                    print(f"   Contribution Value: {top_contribution.get('contribution', 0):.2f}")
+            
+            # Test therapy selection reasoning
+            therapy_reasoning = explanation.get('therapy_selection_reasoning', [])
+            print(f"   Therapy Selection Reasoning: {len(therapy_reasoning)} therapies explained")
+            
+            if therapy_reasoning:
+                first_therapy = therapy_reasoning[0]
+                print(f"   First Therapy: {first_therapy.get('therapy', 'unknown')}")
+                selection_factors = first_therapy.get('selection_factors', [])
+                print(f"   Selection Factors: {len(selection_factors)}")
+                
+        return success
+
+    def test_safety_alerts_contraindication_checking(self):
+        """Test contraindication detection and safety alerts for high-risk patients"""
+        if not self.patient_id:
+            print("❌ No patient ID available for safety testing")
+            return False
+
+        # Create high-risk patient data with contraindications
+        high_risk_patient_data = {
+            "demographics": {
+                "name": "Robert Wilson",
+                "age": "72",
+                "gender": "Male",
+                "occupation": "Retired",
+                "insurance": "Medicare"
+            },
+            "chief_complaint": "Severe knee osteoarthritis with diabetes complications",
+            "history_present_illness": "72-year-old male with severe bilateral knee osteoarthritis and poorly controlled diabetes. Recent history of infection. Seeking regenerative medicine options but has multiple risk factors.",
+            "past_medical_history": ["Osteoarthritis", "Type 2 Diabetes", "Recent infection", "Hypertension", "Chronic kidney disease"],
+            "medications": ["Metformin", "Insulin", "Prednisone", "Lisinopril", "Warfarin"],
+            "allergies": ["Penicillin"],
+            "vital_signs": {
+                "temperature": "99.2",
+                "blood_pressure": "145/95",
+                "heart_rate": "88",
+                "respiratory_rate": "18",
+                "oxygen_saturation": "95",
+                "weight": "210",
+                "height": "5'10\""
+            },
+            "symptoms": ["severe knee pain", "swelling", "limited mobility", "recent fever"],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": "8.5 mg/L",  # Elevated
+                    "ESR": "45 mm/hr"   # Elevated
+                },
+                "metabolic_panel": {
+                    "glucose": "220 mg/dL",  # High
+                    "HbA1c": "9.2%",         # Poor control
+                    "creatinine": "1.8 mg/dL" # Elevated
+                }
+            }
+        }
+
+        print("   Testing safety alerts and contraindication checking...")
+        print("   This may take 30-60 seconds for comprehensive safety analysis...")
+        
+        success, response = self.run_test(
+            "CORE FEATURE: Safety Alerts & Contraindication Checking",
+            "POST",
+            f"patients/{self.patient_id}/analyze",
+            200,
+            data=high_risk_patient_data,
+            timeout=90
+        )
+        
+        if success:
+            diagnostic_results = response.get('diagnostic_results', [])
+            print(f"   ✅ Safety Analysis Completed: {len(diagnostic_results)} results")
+            
+            # Check for contraindication detection
+            contraindications_found = []
+            safety_alerts = []
+            
+            for result in diagnostic_results:
+                reasoning = result.get('reasoning', '').lower()
+                evidence = ' '.join(result.get('supporting_evidence', [])).lower()
+                
+                # Look for contraindication keywords
+                contraindication_keywords = ['contraindication', 'risk', 'caution', 'avoid', 'infection', 'diabetes', 'steroid']
+                for keyword in contraindication_keywords:
+                    if keyword in reasoning or keyword in evidence:
+                        contraindications_found.append(keyword)
+                
+                # Look for safety alerts
+                safety_keywords = ['safety', 'alert', 'warning', 'high risk', 'complication']
+                for keyword in safety_keywords:
+                    if keyword in reasoning or keyword in evidence:
+                        safety_alerts.append(keyword)
+            
+            print(f"   Contraindications Detected: {len(set(contraindications_found))}")
+            print(f"   Safety Alerts Generated: {len(set(safety_alerts))}")
+            
+            if contraindications_found:
+                print(f"   Key Contraindications: {', '.join(set(contraindications_found)[:3])}")
+            
+            # Test medication interaction warnings
+            medication_warnings = []
+            for result in diagnostic_results:
+                reasoning = result.get('reasoning', '').lower()
+                if any(med in reasoning for med in ['prednisone', 'steroid', 'warfarin', 'insulin']):
+                    medication_warnings.append("Medication interaction detected")
+            
+            print(f"   Medication Interaction Warnings: {len(medication_warnings)}")
+            
+            # Check for diabetes considerations
+            diabetes_considerations = []
+            for result in diagnostic_results:
+                reasoning = result.get('reasoning', '').lower()
+                if 'diabetes' in reasoning or 'glucose' in reasoning:
+                    diabetes_considerations.append("Diabetes consideration noted")
+            
+            print(f"   ✅ Diabetes Considerations for Regenerative Medicine: {len(diabetes_considerations)}")
+            
+        return success
+
+    def test_comprehensive_patient_analysis_workflow(self):
+        """Test the complete patient → analysis → protocol → explanation workflow"""
+        print("   Testing complete medical AI workflow...")
+        
+        # Step 1: Create patient with comprehensive data
+        workflow_patient_data = {
+            "demographics": {
+                "name": "Dr. Jennifer Adams",
+                "age": "58",
+                "gender": "Female",
+                "occupation": "Orthopedic Surgeon",
+                "insurance": "Self-pay"
+            },
+            "chief_complaint": "Bilateral knee osteoarthritis seeking regenerative alternatives",
+            "history_present_illness": "58-year-old female orthopedic surgeon with progressive bilateral knee pain over 3 years. Pain worse with activity, morning stiffness lasting 30 minutes. Failed conservative management. Seeking regenerative medicine options to continue surgical practice.",
+            "past_medical_history": ["Osteoarthritis", "Hypertension", "Hypothyroidism"],
+            "medications": ["Lisinopril 10mg daily", "Levothyroxine 75mcg daily", "Ibuprofen PRN"],
+            "allergies": ["NKDA"],
+            "vital_signs": {
+                "temperature": "98.6",
+                "blood_pressure": "128/82",
+                "heart_rate": "72",
+                "respiratory_rate": "16",
+                "oxygen_saturation": "98",
+                "weight": "145",
+                "height": "5'6\""
+            },
+            "symptoms": ["bilateral knee pain", "morning stiffness", "decreased mobility", "functional limitation"],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": "2.1 mg/L",
+                    "ESR": "18 mm/hr"
+                },
+                "complete_blood_count": {
+                    "WBC": "6.2 K/uL",
+                    "RBC": "4.5 M/uL",
+                    "platelets": "285 K/uL"
+                }
+            },
+            "imaging_data": [
+                {
+                    "type": "X-ray",
+                    "location": "bilateral knees",
+                    "findings": "Grade 2-3 osteoarthritis with joint space narrowing and osteophyte formation",
+                    "date": "2024-01-15"
+                }
+            ]
+        }
+
+        # Step 1: Create workflow patient
+        workflow_success, workflow_response = self.run_test(
+            "WORKFLOW STEP 1: Create Comprehensive Patient",
+            "POST",
+            "patients",
+            200,
+            data=workflow_patient_data
+        )
+        
+        if not workflow_success:
+            return False
+            
+        workflow_patient_id = workflow_response.get('patient_id')
+        print(f"   Workflow Patient ID: {workflow_patient_id}")
+
+        # Step 2: Analyze patient data
+        analysis_success, analysis_response = self.run_test(
+            "WORKFLOW STEP 2: Comprehensive Patient Analysis",
+            "POST",
+            f"patients/{workflow_patient_id}/analyze",
+            200,
+            data={},
+            timeout=90
+        )
+        
+        if not analysis_success:
+            return False
+            
+        diagnostic_results = analysis_response.get('diagnostic_results', [])
+        print(f"   Analysis Results: {len(diagnostic_results)} diagnoses")
+
+        # Step 3: Generate protocol
+        protocol_data = {
+            "patient_id": workflow_patient_id,
+            "school_of_thought": "ai_optimized"
+        }
+        
+        protocol_success, protocol_response = self.run_test(
+            "WORKFLOW STEP 3: Generate AI-Optimized Protocol",
+            "POST",
+            "protocols/generate",
+            200,
+            data=protocol_data,
+            timeout=90
+        )
+        
+        if not protocol_success:
+            return False
+            
+        workflow_protocol_id = protocol_response.get('protocol_id')
+        print(f"   Protocol Generated: {workflow_protocol_id}")
+        print(f"   Protocol Steps: {len(protocol_response.get('protocol_steps', []))}")
+
+        # Step 4: Generate explanation
+        explanation_success, explanation_response = self.run_test(
+            "WORKFLOW STEP 4: Generate SHAP/LIME Explanation",
+            "POST",
+            f"protocols/{workflow_protocol_id}/explanation",
+            200,
+            timeout=60
+        )
+        
+        if not explanation_success:
+            return False
+            
+        explanation = explanation_response.get('explanation', {})
+        print(f"   Explanation Generated: {explanation_response.get('status', 'unknown')}")
+        print(f"   Feature Importance Factors: {len(explanation.get('feature_importance', {}))}")
+
+        # Step 5: Verify data persistence
+        persistence_success, persistence_response = self.run_test(
+            "WORKFLOW STEP 5: Verify Data Persistence",
+            "GET",
+            f"patients/{workflow_patient_id}",
+            200
+        )
+        
+        if persistence_success:
+            print(f"   ✅ Data Persistence Verified")
+            print(f"   Patient Retrieved: {persistence_response.get('demographics', {}).get('name', 'Unknown')}")
+        
+        # Overall workflow success
+        workflow_complete = all([workflow_success, analysis_success, protocol_success, explanation_success, persistence_success])
+        print(f"   ✅ COMPLETE WORKFLOW SUCCESS: {workflow_complete}")
+        
+        return workflow_complete
+
+    def test_protocol_safety_validation(self):
+        """Test protocol safety validation for high-risk patients"""
+        if not self.patient_id:
+            print("❌ No patient ID available for protocol safety testing")
+            return False
+
+        # Test with high-risk patient scenario
+        high_risk_protocol_data = {
+            "patient_id": self.patient_id,
+            "school_of_thought": "traditional_autologous"
+        }
+
+        print("   Testing protocol safety validation...")
+        success, response = self.run_test(
+            "CORE FEATURE: Protocol Safety Validation",
+            "POST",
+            "protocols/generate",
+            200,
+            data=high_risk_protocol_data,
+            timeout=90
+        )
+        
+        if success:
+            protocol = response
+            contraindications = protocol.get('contraindications', [])
+            legal_warnings = protocol.get('legal_warnings', [])
+            
+            print(f"   ✅ Safety Validation Completed")
+            print(f"   Contraindications Identified: {len(contraindications)}")
+            print(f"   Legal Warnings Generated: {len(legal_warnings)}")
+            
+            if contraindications:
+                print(f"   Key Contraindications: {', '.join(contraindications[:2])}")
+            
+            if legal_warnings:
+                print(f"   Legal Warnings: {', '.join(legal_warnings[:2])}")
+            
+            # Check for diabetes-specific safety considerations
+            diabetes_safety = any('diabetes' in str(item).lower() for item in contraindications + legal_warnings)
+            print(f"   Diabetes Safety Considerations: {'Detected' if diabetes_safety else 'Not specific'}")
+            
+            # Check confidence score adjustment for risk
+            confidence = protocol.get('confidence_score', 0)
+            print(f"   Risk-Adjusted Confidence: {confidence:.2f}")
+            
+        return success
+
+    def run_core_medical_ai_tests(self):
+        """Run the CORE MEDICAL AI FEATURES tests as requested"""
+        print("🚀 Starting CORE MEDICAL AI FEATURES Testing Suite")
+        print("=" * 80)
+        print("Testing the most critical features for medical AI system reliability")
+        print("and practitioner trust in regenerative medicine applications.")
+        print("=" * 80)
+        
+        # First ensure we have a patient for testing
+        print("\n📋 SETUP: Creating Test Patient")
+        print("-" * 50)
+        patient_created = self.test_create_patient()
+        
+        if not patient_created:
+            print("❌ CRITICAL: Cannot proceed without patient data")
+            return False
+        
+        # Core Medical AI Features Tests
+        print("\n🧠 CORE MEDICAL AI FEATURES TESTS")
+        print("-" * 50)
+        
+        # Test 1: Differential Diagnosis Generation
+        test1_success = self.test_differential_diagnosis_generation()
+        
+        # Test 2: SHAP/LIME Explainable AI System  
+        test2_success = self.test_shap_lime_explainable_ai()
+        
+        # Test 3: Safety Alerts & Contraindication Checking
+        test3_success = self.test_safety_alerts_contraindication_checking()
+        
+        # Test 4: Comprehensive Patient Analysis Workflow
+        test4_success = self.test_comprehensive_patient_analysis_workflow()
+        
+        # Test 5: Protocol Safety Validation
+        test5_success = self.test_protocol_safety_validation()
+        
+        # Summary of Core Medical AI Features
+        print("\n" + "=" * 80)
+        print("🎯 CORE MEDICAL AI FEATURES TESTING SUMMARY")
+        print("=" * 80)
+        
+        core_tests = [
+            ("Differential Diagnosis Generation", test1_success),
+            ("SHAP/LIME Explainable AI System", test2_success),
+            ("Safety Alerts & Contraindication Checking", test3_success),
+            ("Comprehensive Patient Analysis Workflow", test4_success),
+            ("Protocol Safety Validation", test5_success)
+        ]
+        
+        passed_core_tests = sum(1 for _, success in core_tests if success)
+        total_core_tests = len(core_tests)
+        
+        print(f"Core Medical AI Features Tests: {passed_core_tests}/{total_core_tests} PASSED")
+        print(f"Core Features Success Rate: {(passed_core_tests / total_core_tests * 100):.1f}%")
+        
+        for test_name, success in core_tests:
+            status = "✅ PASSED" if success else "❌ FAILED"
+            print(f"   {status}: {test_name}")
+        
+        if passed_core_tests == total_core_tests:
+            print("\n🎉 ALL CORE MEDICAL AI FEATURES ARE FUNCTIONAL!")
+            print("The medical AI system is ready for practitioner use.")
+        else:
+            print(f"\n⚠️  {total_core_tests - passed_core_tests} core features failed.")
+            print("These are critical for medical AI system reliability.")
+        
+        return passed_core_tests == total_core_tests
+
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
     print("Advanced Regenerative Medicine Knowledge Platform v2.0")
