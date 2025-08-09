@@ -1624,6 +1624,309 @@ async def find_matching_clinical_trials_for_patient(
     
     return {"status": "service_unavailable", "message": "Clinical trial matching service not available"}
 
+@api_router.post("/patients/{patient_id}/outcomes")
+async def record_patient_outcome(
+    patient_id: str,
+    outcome_data: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Record patient outcome data for tracking and analytics"""
+    
+    try:
+        # Validate patient exists
+        patient = await db.patients.find_one({"patient_id": patient_id})
+        if not patient:
+            raise HTTPException(status_code=404, detail="Patient not found")
+        
+        # Get patient's protocols to link outcome
+        protocols = await db.protocols.find({"patient_id": patient_id}).sort("generation_timestamp", -1).to_list(3)
+        
+        # Create outcome record
+        outcome_record = {
+            "outcome_id": f"outcome_{uuid.uuid4().hex[:12]}",
+            "patient_id": patient_id,
+            "protocol_ids": [p.get("protocol_id") for p in protocols],
+            "assessment_date": outcome_data.get("assessment_date", datetime.utcnow().isoformat()),
+            "timepoint": outcome_data.get("timepoint", "unknown"),  # e.g., "2_weeks", "3_months", "6_months"
+            
+            # Clinical measurements
+            "pain_scale_before": outcome_data.get("pain_scale_before", None),
+            "pain_scale_current": outcome_data.get("pain_scale_current", None),
+            "functional_score_before": outcome_data.get("functional_score_before", None),
+            "functional_score_current": outcome_data.get("functional_score_current", None),
+            "range_of_motion_before": outcome_data.get("range_of_motion_before", None),
+            "range_of_motion_current": outcome_data.get("range_of_motion_current", None),
+            
+            # Patient reported outcomes
+            "patient_satisfaction": outcome_data.get("patient_satisfaction", None),  # 1-10 scale
+            "quality_of_life_improvement": outcome_data.get("quality_of_life_improvement", None),
+            "return_to_activities": outcome_data.get("return_to_activities", False),
+            "medication_reduction": outcome_data.get("medication_reduction", False),
+            
+            # Clinical observations
+            "adverse_events": outcome_data.get("adverse_events", []),
+            "complications": outcome_data.get("complications", []),
+            "additional_treatments_needed": outcome_data.get("additional_treatments_needed", False),
+            "notes": outcome_data.get("notes", ""),
+            
+            # Calculated metrics
+            "pain_reduction_percentage": None,
+            "functional_improvement_percentage": None,
+            "overall_success_score": None,
+            
+            # Metadata
+            "recorded_by": practitioner.id,
+            "created_at": datetime.utcnow(),
+            "last_updated": datetime.utcnow()
+        }
+        
+        # Calculate improvement percentages
+        if outcome_record["pain_scale_before"] and outcome_record["pain_scale_current"]:
+            pain_before = float(outcome_record["pain_scale_before"])
+            pain_current = float(outcome_record["pain_scale_current"])
+            outcome_record["pain_reduction_percentage"] = max(0, ((pain_before - pain_current) / pain_before) * 100)
+        
+        if outcome_record["functional_score_current"] and outcome_record["functional_score_before"]:
+            func_before = float(outcome_record["functional_score_before"])
+            func_current = float(outcome_record["functional_score_current"])
+            outcome_record["functional_improvement_percentage"] = ((func_current - func_before) / func_before) * 100
+        
+        # Calculate overall success score (composite metric)
+        success_factors = []
+        if outcome_record["pain_reduction_percentage"]:
+            success_factors.append(min(100, outcome_record["pain_reduction_percentage"]) / 100)
+        if outcome_record["functional_improvement_percentage"]:
+            success_factors.append(min(100, max(0, outcome_record["functional_improvement_percentage"])) / 100)
+        if outcome_record["patient_satisfaction"]:
+            success_factors.append(float(outcome_record["patient_satisfaction"]) / 10)
+        if outcome_record["return_to_activities"]:
+            success_factors.append(1.0)
+        
+        if success_factors:
+            outcome_record["overall_success_score"] = sum(success_factors) / len(success_factors)
+        
+        # Store outcome record
+        await db.patient_outcomes.insert_one(outcome_record)
+        
+        # Update protocol success tracking
+        for protocol_id in outcome_record["protocol_ids"]:
+            if protocol_id:
+                await db.protocols.update_one(
+                    {"protocol_id": protocol_id},
+                    {
+                        "$set": {
+                            "last_outcome_date": datetime.utcnow(),
+                            "outcome_tracking_active": True
+                        },
+                        "$push": {
+                            "outcome_ids": outcome_record["outcome_id"]
+                        }
+                    }
+                )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "outcome_recorded",
+            "patient_id": patient_id,
+            "outcome_id": outcome_record["outcome_id"],
+            "timepoint": outcome_record["timepoint"],
+            "success_score": outcome_record["overall_success_score"]
+        })
+        
+        return {
+            "status": "outcome_recorded",
+            "outcome_id": outcome_record["outcome_id"],
+            "patient_id": patient_id,
+            "overall_success_score": outcome_record["overall_success_score"],
+            "pain_reduction_percentage": outcome_record["pain_reduction_percentage"],
+            "functional_improvement_percentage": outcome_record["functional_improvement_percentage"],
+            "recorded_at": outcome_record["created_at"].isoformat()
+        }
+        
+    except Exception as e:
+        logging.error(f"Outcome recording error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Outcome recording failed: {str(e)}")
+
+@api_router.get("/patients/{patient_id}/outcomes")
+async def get_patient_outcomes(
+    patient_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get all outcome records for a specific patient"""
+    
+    try:
+        # Get all outcomes for this patient
+        outcomes_cursor = db.patient_outcomes.find({"patient_id": patient_id}).sort("assessment_date", -1)
+        outcomes = await outcomes_cursor.to_list(length=None)
+        
+        # Convert ObjectId to string for JSON serialization
+        for outcome in outcomes:
+            if '_id' in outcome:
+                outcome['_id'] = str(outcome['_id'])
+            if 'created_at' in outcome and hasattr(outcome['created_at'], 'isoformat'):
+                outcome['created_at'] = outcome['created_at'].isoformat()
+            if 'last_updated' in outcome and hasattr(outcome['last_updated'], 'isoformat'):
+                outcome['last_updated'] = outcome['last_updated'].isoformat()
+        
+        # Calculate summary statistics
+        if outcomes:
+            pain_reductions = [o.get("pain_reduction_percentage") for o in outcomes if o.get("pain_reduction_percentage")]
+            functional_improvements = [o.get("functional_improvement_percentage") for o in outcomes if o.get("functional_improvement_percentage")]
+            success_scores = [o.get("overall_success_score") for o in outcomes if o.get("overall_success_score")]
+            
+            summary_stats = {
+                "total_assessments": len(outcomes),
+                "average_pain_reduction": sum(pain_reductions) / len(pain_reductions) if pain_reductions else None,
+                "average_functional_improvement": sum(functional_improvements) / len(functional_improvements) if functional_improvements else None,
+                "average_success_score": sum(success_scores) / len(success_scores) if success_scores else None,
+                "latest_assessment_date": outcomes[0].get("assessment_date") if outcomes else None,
+                "timepoints_assessed": list(set([o.get("timepoint") for o in outcomes if o.get("timepoint")]))
+            }
+        else:
+            summary_stats = {
+                "total_assessments": 0,
+                "average_pain_reduction": None,
+                "average_functional_improvement": None,
+                "average_success_score": None,
+                "latest_assessment_date": None,
+                "timepoints_assessed": []
+            }
+        
+        return {
+            "patient_id": patient_id,
+            "outcomes": outcomes,
+            "summary_statistics": summary_stats,
+            "tracking_status": "active" if outcomes else "no_data"
+        }
+        
+    except Exception as e:
+        logging.error(f"Error retrieving patient outcomes: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Outcome retrieval failed: {str(e)}")
+
+@api_router.get("/analytics/outcomes")
+async def get_outcomes_analytics(
+    timeframe: str = "all",  # "30_days", "90_days", "6_months", "1_year", "all"
+    school_of_thought: str = None,
+    condition: str = None
+):
+    """Get comprehensive outcomes analytics across all patients"""
+    
+    try:
+        # Build query filters
+        query_filter = {}
+        
+        # Time filter
+        if timeframe != "all":
+            days_map = {
+                "30_days": 30,
+                "90_days": 90,
+                "6_months": 180,
+                "1_year": 365
+            }
+            
+            if timeframe in days_map:
+                cutoff_date = datetime.utcnow() - timedelta(days=days_map[timeframe])
+                query_filter["created_at"] = {"$gte": cutoff_date}
+        
+        # Get all outcomes matching filters
+        outcomes_cursor = db.patient_outcomes.find(query_filter)
+        outcomes = await outcomes_cursor.to_list(length=None)
+        
+        if not outcomes:
+            return {
+                "analytics_summary": {
+                    "total_outcomes": 0,
+                    "average_success_rate": None,
+                    "average_pain_reduction": None,
+                    "average_functional_improvement": None
+                },
+                "protocol_performance": {},
+                "condition_outcomes": {},
+                "timepoint_analysis": {},
+                "trend_analysis": "insufficient_data"
+            }
+        
+        # Calculate overall analytics
+        pain_reductions = [o.get("pain_reduction_percentage", 0) for o in outcomes if o.get("pain_reduction_percentage") is not None]
+        functional_improvements = [o.get("functional_improvement_percentage", 0) for o in outcomes if o.get("functional_improvement_percentage") is not None]
+        success_scores = [o.get("overall_success_score", 0) for o in outcomes if o.get("overall_success_score") is not None]
+        patient_satisfaction = [o.get("patient_satisfaction", 0) for o in outcomes if o.get("patient_satisfaction") is not None]
+        
+        analytics_summary = {
+            "total_outcomes": len(outcomes),
+            "unique_patients": len(set([o.get("patient_id") for o in outcomes])),
+            "average_success_rate": (sum(success_scores) / len(success_scores)) * 100 if success_scores else 0,
+            "average_pain_reduction": sum(pain_reductions) / len(pain_reductions) if pain_reductions else 0,
+            "average_functional_improvement": sum(functional_improvements) / len(functional_improvements) if functional_improvements else 0,
+            "average_patient_satisfaction": sum(patient_satisfaction) / len(patient_satisfaction) if patient_satisfaction else 0,
+            "return_to_activities_rate": (sum(1 for o in outcomes if o.get("return_to_activities")) / len(outcomes)) * 100,
+            "adverse_events_rate": (sum(1 for o in outcomes if o.get("adverse_events")) / len(outcomes)) * 100
+        }
+        
+        # Protocol performance analysis
+        protocol_performance = {}
+        for outcome in outcomes:
+            for protocol_id in outcome.get("protocol_ids", []):
+                if protocol_id and protocol_id not in protocol_performance:
+                    protocol_performance[protocol_id] = {
+                        "outcome_count": 0,
+                        "success_scores": [],
+                        "pain_reductions": [],
+                        "complications": 0
+                    }
+                
+                if protocol_id:
+                    protocol_performance[protocol_id]["outcome_count"] += 1
+                    if outcome.get("overall_success_score"):
+                        protocol_performance[protocol_id]["success_scores"].append(outcome["overall_success_score"])
+                    if outcome.get("pain_reduction_percentage"):
+                        protocol_performance[protocol_id]["pain_reductions"].append(outcome["pain_reduction_percentage"])
+                    if outcome.get("complications"):
+                        protocol_performance[protocol_id]["complications"] += 1
+        
+        # Calculate averages for each protocol
+        for protocol_id, data in protocol_performance.items():
+            data["average_success_score"] = sum(data["success_scores"]) / len(data["success_scores"]) if data["success_scores"] else 0
+            data["average_pain_reduction"] = sum(data["pain_reductions"]) / len(data["pain_reductions"]) if data["pain_reductions"] else 0
+            data["complication_rate"] = (data["complications"] / data["outcome_count"]) * 100 if data["outcome_count"] > 0 else 0
+        
+        # Timepoint analysis
+        timepoint_analysis = {}
+        for outcome in outcomes:
+            timepoint = outcome.get("timepoint", "unknown")
+            if timepoint not in timepoint_analysis:
+                timepoint_analysis[timepoint] = {
+                    "count": 0,
+                    "success_scores": [],
+                    "pain_reductions": []
+                }
+            
+            timepoint_analysis[timepoint]["count"] += 1
+            if outcome.get("overall_success_score"):
+                timepoint_analysis[timepoint]["success_scores"].append(outcome["overall_success_score"])
+            if outcome.get("pain_reduction_percentage"):
+                timepoint_analysis[timepoint]["pain_reductions"].append(outcome["pain_reduction_percentage"])
+        
+        # Calculate timepoint averages
+        for timepoint, data in timepoint_analysis.items():
+            data["average_success"] = sum(data["success_scores"]) / len(data["success_scores"]) if data["success_scores"] else 0
+            data["average_pain_reduction"] = sum(data["pain_reductions"]) / len(data["pain_reductions"]) if data["pain_reductions"] else 0
+        
+        return {
+            "analytics_summary": analytics_summary,
+            "protocol_performance": protocol_performance,
+            "timepoint_analysis": timepoint_analysis,
+            "total_protocols_analyzed": len(protocol_performance),
+            "data_quality_score": min(100, (len(success_scores) / len(outcomes)) * 100) if outcomes else 0,
+            "generated_at": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logging.error(f"Outcomes analytics error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analytics generation failed: {str(e)}")
+
 @api_router.post("/imaging/analyze-dicom")
 async def analyze_dicom_image(
     image_data: Dict[str, Any],
