@@ -2098,33 +2098,23 @@ You create protocols that are both scientifically rigorous and clinically practi
             
             # Build search parameters for API v2.0
             params = {
-                "format": "json",
                 "pageSize": max_results,
                 "countTotal": "true"
             }
             
-            # Build query string for v2.0 API
-            query_parts = []
-            
             # Add condition filter
             if condition:
-                query_parts.append(f"AREA[ConditionSearch]{condition}")
+                params["query.cond"] = condition
             
-            # Add regenerative medicine terms
-            regen_terms = "regenerative medicine OR stem cell OR PRP OR platelet rich plasma OR BMAC OR tissue engineering"
-            query_parts.append(f"AREA[InterventionSearch]{regen_terms}")
-            
-            # Add intervention filter if provided
+            # Add intervention filter - combine regenerative medicine terms with specific intervention
+            intervention_terms = ["regenerative medicine", "stem cell", "PRP", "platelet rich plasma", "BMAC", "tissue engineering"]
             if intervention:
-                query_parts.append(f"AREA[InterventionSearch]{intervention}")
+                intervention_terms.append(intervention)
+            params["query.intr"] = " OR ".join(intervention_terms)
             
             # Add recruitment status filter
             if recruitment_status:
-                query_parts.append(f"AREA[RecruitmentStatus]{recruitment_status}")
-            
-            # Combine query parts
-            if query_parts:
-                params["query.cond"] = " AND ".join(query_parts)
+                params["filter.overallStatus"] = recruitment_status
             
             # Build API URL for v2.0
             api_url = f"{self.clinicaltrials_base_url}/studies?" + urlencode(params)
