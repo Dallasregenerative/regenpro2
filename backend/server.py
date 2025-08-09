@@ -1435,6 +1435,93 @@ async def search_multi_source_literature(
     
     return {"status": "service_unavailable", "message": "Multi-source search service not available"}
 
+@api_router.get("/clinical-trials/search")
+async def search_clinical_trials(
+    condition: str,
+    intervention: str = None,
+    recruitment_status: str = "RECRUITING",
+    max_results: int = 20
+):
+    """Search ClinicalTrials.gov for relevant regenerative medicine trials"""
+    
+    if pubmed_service:
+        try:
+            result = await pubmed_service.search_clinical_trials(
+                condition=condition,
+                intervention=intervention,
+                recruitment_status=recruitment_status,
+                max_results=max_results
+            )
+            
+            return {
+                "search_type": "clinical_trials",
+                "condition": condition,
+                "intervention_filter": intervention,
+                "recruitment_status": recruitment_status,
+                "trials": result.get("trials", []),
+                "total_count": result.get("total_count", 0),
+                "search_timestamp": result.get("search_timestamp"),
+                "status": result.get("status", "completed")
+            }
+            
+        except Exception as e:
+            logging.error(f"Clinical trials search error: {str(e)}")
+            return {
+                "search_type": "clinical_trials",
+                "condition": condition,
+                "trials": [],
+                "total_count": 0,
+                "error": str(e),
+                "status": "error"
+            }
+    
+    return {"status": "service_unavailable", "message": "Clinical trials search service not available"}
+
+@api_router.get("/clinical-trials/patient-matching")
+async def find_matching_clinical_trials_for_patient(
+    condition: str,
+    therapy_preferences: str = None,  # Comma-separated list
+    max_matches: int = 10
+):
+    """Find clinical trials that match specific patient condition and therapy preferences"""
+    
+    if pubmed_service:
+        try:
+            # Parse therapy preferences
+            preferences_list = []
+            if therapy_preferences:
+                preferences_list = [pref.strip() for pref in therapy_preferences.split(",")]
+            
+            result = await pubmed_service.find_matching_clinical_trials(
+                patient_condition=condition,
+                therapy_preferences=preferences_list,
+                max_matches=max_matches
+            )
+            
+            return {
+                "matching_type": "patient_specific",
+                "patient_condition": condition,
+                "therapy_preferences": preferences_list,
+                "matching_trials": result.get("matching_trials", []),
+                "total_matches": result.get("total_matches", 0),
+                "recommendations": result.get("recommendations", []),
+                "search_timestamp": datetime.utcnow().isoformat(),
+                "status": result.get("status", "completed")
+            }
+            
+        except Exception as e:
+            logging.error(f"Clinical trial patient matching error: {str(e)}")
+            return {
+                "matching_type": "patient_specific",
+                "patient_condition": condition,
+                "matching_trials": [],
+                "total_matches": 0,
+                "error": str(e),
+                "status": "error"
+            }
+    
+    return {"status": "service_unavailable", "message": "Clinical trial matching service not available"}
+
 @api_router.post("/imaging/analyze-dicom")
 async def analyze_dicom_image(
     image_data: Dict[str, Any],
