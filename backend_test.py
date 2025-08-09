@@ -1,7 +1,7 @@
 import requests
 import sys
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class RegenMedAIProTester:
     def __init__(self, base_url="https://e39019a0-74aa-4828-80fe-b1e4b1fed539.preview.emergentagent.com"):
