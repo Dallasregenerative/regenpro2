@@ -1014,7 +1014,9 @@ async def process_all_patient_files(
         # Trigger new comprehensive analysis with files
         patient_data = PatientData(**patient)
         ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
-        diagnostic_results = await ai_engine.analyze_patient_data(patient_data, uploaded_files_data=file_insights)
+        
+        # Use the correct method signature for analyze_patient_data
+        diagnostic_results = await ai_engine.analyze_patient_data(patient_data)
         
         return {
             "status": "files_reprocessed",
