@@ -197,11 +197,11 @@ backend:
 
   - task: "File Upload and Processing System"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/file_processing.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -209,6 +209,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - All file upload endpoints working correctly. Successfully uploaded and processed patient charts, genetic data, DICOM imaging, and lab results. File processing confidence scores: Chart (0.00), Genetic (0.88), DICOM (processing results: 4), Labs (processing results: 2). File retrieval endpoint fixed and working."
+      - working: false
+        agent: "testing"
+        comment: "❌ GAP FIX TESTING RESULTS: File processing workflow partially functional (3/4 tests passed). ✅ File retrieval & categorization working (45 files across 4 categories), File upload→analysis→protocol workflow functional (45 files integrated), Multi-modal integration operational. ❌ CRITICAL ISSUE: File reprocessing AI integration failed with 500 error: 'RegenerativeMedicineAI.analyze_patient_data() got an unexpected keyword argument uploaded_files_data'. The POST /api/patients/{patient_id}/files/process-all endpoint has a parameter mismatch error that prevents comprehensive file reprocessing and AI integration. This breaks the complete file processing workflow despite individual components working."
 
   - task: "Advanced Services Initialization"
     implemented: true
