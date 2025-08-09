@@ -1385,6 +1385,16 @@ def main():
         ("Literature - Latest Updates", tester.test_literature_latest_updates),
         ("Literature - Search Database", tester.test_literature_search),
         
+        # Phase 6.1: Google Scholar Integration System (NEW)
+        ("Google Scholar - Basic Search", tester.test_google_scholar_search_basic),
+        ("Google Scholar - Stem Cell Therapy", tester.test_google_scholar_search_stem_cell),
+        ("Google Scholar - Year Filter", tester.test_google_scholar_search_with_year_filter),
+        ("Google Scholar - Error Handling", tester.test_google_scholar_error_handling),
+        ("Multi-Source - Comprehensive Search", tester.test_multi_source_search_comprehensive),
+        ("Multi-Source - BMAC Rotator Cuff", tester.test_multi_source_search_bmac),
+        ("Multi-Source - Deduplication Test", tester.test_multi_source_deduplication),
+        ("Literature - Evidence Extraction", tester.test_literature_integration_evidence_extraction),
+        
         # Phase 6.5: Evidence Synthesis System (NEW)
         ("Evidence Synthesis - System Status", tester.test_evidence_synthesis_status),
         ("Evidence Synthesis - Osteoarthritis Protocol", tester.test_evidence_synthesis_osteoarthritis),
