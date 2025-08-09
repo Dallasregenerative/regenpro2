@@ -426,7 +426,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "ClinicalTrials.gov API Integration"
+    - "Core Medical AI Features Testing Completed"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
