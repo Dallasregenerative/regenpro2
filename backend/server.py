@@ -1906,8 +1906,9 @@ async def get_comprehensive_patient_analysis_v2(
             return {
                 "patient_id": patient_id,
                 "analysis": analysis.get("comprehensive_analysis", {}),
-                "multi_modal_files_used": analysis.get("multi_modal_files_used", 0),
-                "file_categories": analysis.get("file_categories", []),
+                "multi_modal_files_used": len(uploaded_files),
+                "file_categories": list(set([f.get('file_category', 'other') for f in uploaded_files])),
+                "uploaded_files": uploaded_files,
                 "analysis_timestamp": analysis.get("analysis_timestamp"),
                 "status": "completed"
             }
@@ -1915,8 +1916,9 @@ async def get_comprehensive_patient_analysis_v2(
             return {
                 "patient_id": patient_id,
                 "analysis": {"status": "Analysis in progress"},
-                "multi_modal_files_used": 0,
-                "file_categories": [],
+                "multi_modal_files_used": len(uploaded_files),
+                "file_categories": list(set([f.get('file_category', 'other') for f in uploaded_files])),
+                "uploaded_files": uploaded_files,
                 "analysis_timestamp": datetime.utcnow().isoformat(),
                 "status": "generating"
             }
