@@ -2087,7 +2087,7 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print(f"   Safety Alerts Generated: {len(set(safety_alerts))}")
             
             if contraindications_found:
-                print(f"   Key Contraindications: {', '.join(set(contraindications_found)[:3])}")
+                print(f"   Key Contraindications: {', '.join(list(set(contraindications_found))[:3])}")
             
             # Test medication interaction warnings
             medication_warnings = []
