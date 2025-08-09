@@ -233,11 +233,12 @@ class FederatedLearningService:
 
 # Real-time PubMed Integration Service
 class PubMedIntegrationService:
-    """Real-time literature monitoring and evidence synthesis"""
+    """Enhanced Literature Integration Service - PubMed + Google Scholar + Multi-source Analysis"""
     
     def __init__(self, db_client):
         self.db = db_client
         self.pubmed_base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+        self.google_scholar_base_url = "https://scholar.google.com/scholar"
         self.monitoring_queries = [
             "regenerative medicine",
             "mesenchymal stem cells",
