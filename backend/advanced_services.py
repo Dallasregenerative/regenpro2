@@ -2096,26 +2096,38 @@ You create protocols that are both scientifically rigorous and clinically practi
             import requests
             from urllib.parse import urlencode
             
-            # Build search parameters
+            # Build search parameters for API v2.0
             params = {
                 "format": "json",
-                "markupFormat": "markdown",
-                "query.cond": condition,
-                "query.term": "regenerative medicine OR stem cell OR PRP OR platelet rich plasma OR BMAC OR tissue engineering",
                 "pageSize": max_results,
                 "countTotal": "true"
             }
             
+            # Build query string for v2.0 API
+            query_parts = []
+            
+            # Add condition filter
+            if condition:
+                query_parts.append(f"AREA[ConditionSearch]{condition}")
+            
+            # Add regenerative medicine terms
+            regen_terms = "regenerative medicine OR stem cell OR PRP OR platelet rich plasma OR BMAC OR tissue engineering"
+            query_parts.append(f"AREA[InterventionSearch]{regen_terms}")
+            
             # Add intervention filter if provided
             if intervention:
-                params["query.intr"] = intervention
+                query_parts.append(f"AREA[InterventionSearch]{intervention}")
             
             # Add recruitment status filter
             if recruitment_status:
-                params["query.recr"] = recruitment_status
+                query_parts.append(f"AREA[RecruitmentStatus]{recruitment_status}")
             
-            # Build API URL
-            api_url = f"{self.clinicaltrials_base_url}/query/full_studies?" + urlencode(params)
+            # Combine query parts
+            if query_parts:
+                params["query.cond"] = " AND ".join(query_parts)
+            
+            # Build API URL for v2.0
+            api_url = f"{self.clinicaltrials_base_url}/studies?" + urlencode(params)
             
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.get(api_url)
