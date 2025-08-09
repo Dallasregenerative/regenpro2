@@ -366,9 +366,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Evidence Synthesis System API Endpoints"
-    - "Literature Integration Testing"
-    - "Protocol Generation Enhancement Testing"
+    - "ClinicalTrials.gov API Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
