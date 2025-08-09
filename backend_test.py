@@ -1911,6 +1911,19 @@ def main():
         ("Evidence Synthesis - Error Handling (Missing Condition)", tester.test_evidence_synthesis_missing_condition),
         ("Evidence Synthesis - Invalid Condition", tester.test_evidence_synthesis_invalid_condition),
         
+        # Phase 6.7: ClinicalTrials.gov API Integration (NEW)
+        ("Clinical Trials - Search Osteoarthritis", tester.test_clinical_trials_search_osteoarthritis),
+        ("Clinical Trials - Search Rotator Cuff + Stem Cell", tester.test_clinical_trials_search_rotator_cuff_stem_cell),
+        ("Clinical Trials - Search Knee Pain + PRP", tester.test_clinical_trials_search_knee_pain_prp),
+        ("Clinical Trials - JSON API Parsing Quality", tester.test_clinical_trials_json_api_parsing),
+        ("Clinical Trials - Intervention Categorization", tester.test_clinical_trials_intervention_categorization),
+        ("Clinical Trials - Relevance Scoring Algorithm", tester.test_clinical_trials_relevance_scoring),
+        ("Clinical Trials - Patient Matching (Osteoarthritis)", tester.test_clinical_trials_patient_matching_osteoarthritis),
+        ("Clinical Trials - Patient Matching (Shoulder + BMAC)", tester.test_clinical_trials_patient_matching_shoulder_bmac),
+        ("Clinical Trials - Match Scoring Algorithm", tester.test_clinical_trials_match_scoring_algorithm),
+        ("Clinical Trials - Database Storage & Indexing", tester.test_clinical_trials_database_storage),
+        ("Clinical Trials - Error Handling", tester.test_clinical_trials_error_handling),
+        
         # Phase 7: ML Prediction & DICOM Processing
         ("ML Model Performance", tester.test_prediction_model_performance),
         ("ML Treatment Outcome Prediction", tester.test_treatment_outcome_prediction),
