@@ -2297,7 +2297,8 @@ async def get_comprehensive_patient_analysis_v2(
                         "status": "processed"
                     })
             
-            diagnostic_results = await ai_engine.analyze_patient_data(patient_data, uploaded_files_data=file_insights)
+            # Use the correct method signature
+            diagnostic_results = await ai_engine.analyze_patient_data(patient_data)
             
             # Try to get the analysis that was just created
             analysis = await db.comprehensive_analyses.find_one(
