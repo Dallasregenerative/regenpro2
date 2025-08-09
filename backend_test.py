@@ -1335,6 +1335,515 @@ IGF-1,180,109-284,ng/mL,Normal"""
                     print(f"   Fallback Available: {response.get('fallback_available')}")
         return success
 
+    # ========== CLINICAL TRIALS.GOV INTEGRATION TESTING ==========
+
+    def test_clinical_trials_search_osteoarthritis(self):
+        """Test clinical trials search for osteoarthritis with default recruitment status"""
+        success, response = self.run_test(
+            "Clinical Trials Search - Osteoarthritis (RECRUITING)",
+            "GET",
+            "clinical-trials/search?condition=osteoarthritis&recruitment_status=RECRUITING",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            trials = response.get('trials', [])
+            print(f"   Search Condition: {response.get('search_condition', 'unknown')}")
+            print(f"   Recruitment Status: {response.get('recruitment_status', 'unknown')}")
+            print(f"   Trials Found: {response.get('total_count', 0)}")
+            print(f"   Source: {response.get('source', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            if trials:
+                top_trial = trials[0]
+                print(f"   Top Trial: {top_trial.get('title', 'Unknown')[:60]}...")
+                print(f"   NCT ID: {top_trial.get('nct_id', 'Unknown')}")
+                print(f"   Overall Status: {top_trial.get('overall_status', 'Unknown')}")
+                print(f"   Relevance Score: {top_trial.get('relevance_score', 0):.2f}")
+                
+                # Check for regenerative medicine interventions
+                interventions = top_trial.get('interventions', [])
+                regen_interventions = [i for i in interventions if i.get('regenerative_medicine', False)]
+                print(f"   Regenerative Interventions: {len(regen_interventions)}")
+                
+                if regen_interventions:
+                    categories = [i.get('category', 'Unknown') for i in regen_interventions]
+                    print(f"   Intervention Categories: {', '.join(set(categories))}")
+        return success
+
+    def test_clinical_trials_search_rotator_cuff_stem_cell(self):
+        """Test clinical trials search for rotator cuff injury with stem cell therapy intervention"""
+        success, response = self.run_test(
+            "Clinical Trials Search - Rotator Cuff + Stem Cell",
+            "GET",
+            "clinical-trials/search?condition=rotator%20cuff%20injury&intervention=stem%20cell%20therapy&max_results=15",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            trials = response.get('trials', [])
+            print(f"   Search Condition: {response.get('search_condition', 'unknown')}")
+            print(f"   Intervention Filter: {response.get('intervention_filter', 'unknown')}")
+            print(f"   Trials Found: {len(trials)}")
+            print(f"   Search Timestamp: {response.get('search_timestamp', 'unknown')}")
+            
+            if trials:
+                # Check for stem cell interventions
+                stem_cell_trials = []
+                for trial in trials:
+                    interventions = trial.get('interventions', [])
+                    for intervention in interventions:
+                        if intervention.get('category') == 'Stem Cells':
+                            stem_cell_trials.append(trial)
+                            break
+                
+                print(f"   Stem Cell Trials: {len(stem_cell_trials)}")
+                
+                if stem_cell_trials:
+                    top_stem_trial = stem_cell_trials[0]
+                    print(f"   Top Stem Cell Trial: {top_stem_trial.get('title', 'Unknown')[:50]}...")
+                    print(f"   Study Type: {top_stem_trial.get('study_type', 'Unknown')}")
+                    print(f"   Phases: {', '.join(top_stem_trial.get('phases', []))}")
+                    
+                    # Check locations
+                    locations = top_stem_trial.get('locations', [])
+                    if locations:
+                        print(f"   Locations Available: {len(locations)}")
+                        first_location = locations[0]
+                        print(f"   Sample Location: {first_location.get('city', 'Unknown')}, {first_location.get('country', 'Unknown')}")
+        return success
+
+    def test_clinical_trials_search_knee_pain_prp(self):
+        """Test clinical trials search for knee pain with PRP intervention"""
+        success, response = self.run_test(
+            "Clinical Trials Search - Knee Pain + PRP",
+            "GET",
+            "clinical-trials/search?condition=knee%20pain&intervention=PRP&max_results=12",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            trials = response.get('trials', [])
+            print(f"   Search Condition: knee pain")
+            print(f"   Intervention Filter: PRP")
+            print(f"   Trials Found: {len(trials)}")
+            
+            if trials:
+                # Check for PRP interventions
+                prp_trials = []
+                for trial in trials:
+                    interventions = trial.get('interventions', [])
+                    for intervention in interventions:
+                        if intervention.get('category') == 'PRP' or 'prp' in intervention.get('name', '').lower():
+                            prp_trials.append(trial)
+                            break
+                
+                print(f"   PRP-Related Trials: {len(prp_trials)}")
+                
+                if prp_trials:
+                    top_prp_trial = prp_trials[0]
+                    print(f"   Top PRP Trial: {top_prp_trial.get('title', 'Unknown')[:50]}...")
+                    print(f"   Brief Summary: {top_prp_trial.get('brief_summary', 'No summary')[:100]}...")
+                    
+                    # Check eligibility
+                    print(f"   Eligible Ages: {', '.join(top_prp_trial.get('eligible_ages', []))}")
+                    print(f"   Gender: {top_prp_trial.get('gender', 'Unknown')}")
+        return success
+
+    def test_clinical_trials_json_api_parsing(self):
+        """Test JSON API parsing and trial data extraction quality"""
+        success, response = self.run_test(
+            "Clinical Trials - JSON API Parsing Quality",
+            "GET",
+            "clinical-trials/search?condition=osteoarthritis&max_results=5",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            trials = response.get('trials', [])
+            print(f"   Trials for Parsing Test: {len(trials)}")
+            
+            if trials:
+                sample_trial = trials[0]
+                
+                # Check required fields are present
+                required_fields = ['nct_id', 'title', 'overall_status', 'brief_summary', 'conditions', 'interventions']
+                available_fields = [field for field in required_fields if field in sample_trial and sample_trial[field]]
+                
+                print(f"   Required Fields Present: {len(available_fields)}/{len(required_fields)}")
+                print(f"   Available Fields: {', '.join(available_fields)}")
+                
+                # Check data quality
+                nct_id = sample_trial.get('nct_id', '')
+                print(f"   NCT ID Format Valid: {nct_id.startswith('NCT') and len(nct_id) >= 8}")
+                
+                title_length = len(sample_trial.get('title', ''))
+                print(f"   Title Length: {title_length} characters")
+                
+                summary_length = len(sample_trial.get('brief_summary', ''))
+                print(f"   Summary Length: {summary_length} characters")
+                
+                # Check intervention categorization
+                interventions = sample_trial.get('interventions', [])
+                categorized_interventions = [i for i in interventions if i.get('category') != 'other']
+                print(f"   Categorized Interventions: {len(categorized_interventions)}/{len(interventions)}")
+                
+                # Check relevance scoring
+                relevance_score = sample_trial.get('relevance_score', 0)
+                print(f"   Relevance Score: {relevance_score:.3f} (0.0-1.0 range)")
+                print(f"   Relevance Score Valid: {0.0 <= relevance_score <= 1.0}")
+                
+                # Check trial URL
+                trial_url = sample_trial.get('trial_url', '')
+                print(f"   Trial URL Valid: {trial_url.startswith('https://clinicaltrials.gov/')}")
+        return success
+
+    def test_clinical_trials_intervention_categorization(self):
+        """Test intervention categorization for regenerative medicine"""
+        success, response = self.run_test(
+            "Clinical Trials - Intervention Categorization",
+            "GET",
+            "clinical-trials/search?condition=cartilage%20repair&max_results=10",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            trials = response.get('trials', [])
+            print(f"   Trials for Categorization Test: {len(trials)}")
+            
+            # Collect all intervention categories
+            all_categories = {}
+            regen_intervention_count = 0
+            total_intervention_count = 0
+            
+            for trial in trials:
+                interventions = trial.get('interventions', [])
+                for intervention in interventions:
+                    total_intervention_count += 1
+                    category = intervention.get('category', 'unknown')
+                    all_categories[category] = all_categories.get(category, 0) + 1
+                    
+                    if intervention.get('regenerative_medicine', False):
+                        regen_intervention_count += 1
+            
+            print(f"   Total Interventions: {total_intervention_count}")
+            print(f"   Regenerative Medicine Interventions: {regen_intervention_count}")
+            print(f"   Categories Found: {len(all_categories)}")
+            
+            # Show category distribution
+            for category, count in sorted(all_categories.items(), key=lambda x: x[1], reverse=True):
+                print(f"   {category}: {count} interventions")
+            
+            # Check for expected regenerative categories
+            expected_categories = ['PRP', 'BMAC', 'Stem Cells', 'Exosomes']
+            found_categories = [cat for cat in expected_categories if cat in all_categories]
+            print(f"   Expected Regen Categories Found: {len(found_categories)}/{len(expected_categories)}")
+            print(f"   Found Categories: {', '.join(found_categories)}")
+        return success
+
+    def test_clinical_trials_relevance_scoring(self):
+        """Test relevance scoring algorithm for different conditions and interventions"""
+        conditions_to_test = [
+            ("osteoarthritis", "Expected high relevance for joint conditions"),
+            ("rotator cuff", "Expected high relevance for shoulder conditions"),
+            ("cartilage defect", "Expected high relevance for cartilage repair")
+        ]
+        
+        all_passed = True
+        
+        for condition, description in conditions_to_test:
+            success, response = self.run_test(
+                f"Clinical Trials - Relevance Scoring ({condition})",
+                "GET",
+                f"clinical-trials/search?condition={condition.replace(' ', '%20')}&max_results=8",
+                200,
+                timeout=30
+            )
+            
+            if success:
+                trials = response.get('trials', [])
+                print(f"   Condition: {condition}")
+                print(f"   Trials Found: {len(trials)}")
+                
+                if trials:
+                    # Check relevance score distribution
+                    relevance_scores = [trial.get('relevance_score', 0) for trial in trials]
+                    avg_relevance = sum(relevance_scores) / len(relevance_scores)
+                    max_relevance = max(relevance_scores)
+                    min_relevance = min(relevance_scores)
+                    
+                    print(f"   Average Relevance: {avg_relevance:.3f}")
+                    print(f"   Max Relevance: {max_relevance:.3f}")
+                    print(f"   Min Relevance: {min_relevance:.3f}")
+                    print(f"   Score Range Valid: {0.0 <= min_relevance <= max_relevance <= 1.0}")
+                    
+                    # Check if trials are sorted by relevance (descending)
+                    is_sorted = all(relevance_scores[i] >= relevance_scores[i+1] for i in range(len(relevance_scores)-1))
+                    print(f"   Trials Sorted by Relevance: {is_sorted}")
+                    
+                    # Show top trial details
+                    top_trial = trials[0]
+                    print(f"   Top Trial: {top_trial.get('title', 'Unknown')[:40]}...")
+                    print(f"   Top Relevance: {top_trial.get('relevance_score', 0):.3f}")
+                else:
+                    print(f"   No trials found for {condition}")
+            else:
+                all_passed = False
+                print(f"   Failed to test relevance scoring for {condition}")
+        
+        return all_passed
+
+    def test_clinical_trials_patient_matching_osteoarthritis(self):
+        """Test patient-specific trial matching for osteoarthritis with PRP and stem cell preferences"""
+        success, response = self.run_test(
+            "Clinical Trials - Patient Matching (Osteoarthritis + PRP/Stem Cell)",
+            "GET",
+            "clinical-trials/patient-matching?condition=osteoarthritis&therapy_preferences=PRP,stem%20cell",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            matching_trials = response.get('matching_trials', [])
+            print(f"   Patient Condition: {response.get('patient_condition', 'unknown')}")
+            print(f"   Therapy Preferences: {response.get('therapy_preferences', [])}")
+            print(f"   Total Matches: {response.get('total_matches', 0)}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            if matching_trials:
+                top_match = matching_trials[0]
+                print(f"   Top Match: {top_match.get('title', 'Unknown')[:50]}...")
+                print(f"   Match Score: {top_match.get('match_score', 0):.3f}")
+                
+                # Check match reasons
+                match_reasons = top_match.get('match_reasons', [])
+                print(f"   Match Reasons: {len(match_reasons)}")
+                if match_reasons:
+                    print(f"   Top Reason: {match_reasons[0]}")
+                
+                # Check eligibility considerations
+                eligibility = top_match.get('eligibility_considerations', {})
+                print(f"   Age Range: {', '.join(eligibility.get('age_range', []))}")
+                print(f"   Gender: {eligibility.get('gender', 'Unknown')}")
+                print(f"   Study Type: {eligibility.get('study_type', 'Unknown')}")
+                
+                # Check next steps
+                next_steps = top_match.get('next_steps', [])
+                print(f"   Next Steps Provided: {len(next_steps)}")
+                if next_steps:
+                    print(f"   First Step: {next_steps[0][:60]}...")
+            
+            # Check recommendations
+            recommendations = response.get('recommendations', [])
+            print(f"   Recommendations: {len(recommendations)}")
+            if recommendations:
+                print(f"   Top Recommendation: {recommendations[0]}")
+        return success
+
+    def test_clinical_trials_patient_matching_shoulder_bmac(self):
+        """Test patient-specific trial matching for shoulder injury with BMAC preference"""
+        success, response = self.run_test(
+            "Clinical Trials - Patient Matching (Shoulder + BMAC)",
+            "GET",
+            "clinical-trials/patient-matching?condition=shoulder%20injury&therapy_preferences=BMAC",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            matching_trials = response.get('matching_trials', [])
+            print(f"   Patient Condition: shoulder injury")
+            print(f"   Therapy Preferences: BMAC")
+            print(f"   Total Matches: {len(matching_trials)}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            if matching_trials:
+                # Check match score distribution
+                match_scores = [trial.get('match_score', 0) for trial in matching_trials]
+                avg_match_score = sum(match_scores) / len(match_scores)
+                print(f"   Average Match Score: {avg_match_score:.3f}")
+                print(f"   Match Score Range: {min(match_scores):.3f} - {max(match_scores):.3f}")
+                
+                # Check if matches are sorted by score
+                is_sorted = all(match_scores[i] >= match_scores[i+1] for i in range(len(match_scores)-1))
+                print(f"   Matches Sorted by Score: {is_sorted}")
+                
+                # Check for BMAC-specific matches
+                bmac_matches = []
+                for trial in matching_trials:
+                    interventions = trial.get('interventions', [])
+                    for intervention in interventions:
+                        if intervention.get('category') == 'BMAC' or 'bmac' in intervention.get('name', '').lower():
+                            bmac_matches.append(trial)
+                            break
+                
+                print(f"   BMAC-Specific Matches: {len(bmac_matches)}")
+                
+                if bmac_matches:
+                    top_bmac_match = bmac_matches[0]
+                    print(f"   Top BMAC Match: {top_bmac_match.get('title', 'Unknown')[:40]}...")
+                    print(f"   BMAC Match Score: {top_bmac_match.get('match_score', 0):.3f}")
+            else:
+                print(f"   No matches found - checking recommendations")
+                recommendations = response.get('recommendations', [])
+                if recommendations:
+                    print(f"   Fallback Recommendations: {len(recommendations)}")
+                    print(f"   Top Recommendation: {recommendations[0]}")
+        return success
+
+    def test_clinical_trials_match_scoring_algorithm(self):
+        """Test patient-trial match scoring algorithm and compatibility assessment"""
+        success, response = self.run_test(
+            "Clinical Trials - Match Scoring Algorithm",
+            "GET",
+            "clinical-trials/patient-matching?condition=knee%20osteoarthritis&therapy_preferences=PRP,stem%20cell,BMAC",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            matching_trials = response.get('matching_trials', [])
+            print(f"   Condition: knee osteoarthritis")
+            print(f"   Preferences: PRP, stem cell, BMAC")
+            print(f"   Total Matches: {len(matching_trials)}")
+            
+            if matching_trials:
+                # Analyze match score distribution
+                match_scores = [trial.get('match_score', 0) for trial in matching_trials]
+                
+                # Check score validity (0.0-1.0 range)
+                valid_scores = all(0.0 <= score <= 1.0 for score in match_scores)
+                print(f"   All Match Scores Valid (0.0-1.0): {valid_scores}")
+                
+                # Check minimum threshold (should be >= 0.3 based on implementation)
+                min_threshold_met = all(score >= 0.3 for score in match_scores)
+                print(f"   All Scores Meet Minimum Threshold (≥0.3): {min_threshold_met}")
+                
+                # Show score distribution
+                high_scores = [s for s in match_scores if s >= 0.7]
+                medium_scores = [s for s in match_scores if 0.5 <= s < 0.7]
+                low_scores = [s for s in match_scores if 0.3 <= s < 0.5]
+                
+                print(f"   High Scores (≥0.7): {len(high_scores)}")
+                print(f"   Medium Scores (0.5-0.7): {len(medium_scores)}")
+                print(f"   Low Scores (0.3-0.5): {len(low_scores)}")
+                
+                # Check top match details
+                top_match = matching_trials[0]
+                print(f"   Top Match Score: {top_match.get('match_score', 0):.3f}")
+                
+                # Verify match reasons are provided
+                match_reasons = top_match.get('match_reasons', [])
+                print(f"   Match Reasons Provided: {len(match_reasons) > 0}")
+                
+                # Verify eligibility considerations
+                eligibility = top_match.get('eligibility_considerations', {})
+                eligibility_fields = ['age_range', 'gender', 'locations', 'study_type']
+                provided_fields = [field for field in eligibility_fields if field in eligibility]
+                print(f"   Eligibility Fields Provided: {len(provided_fields)}/{len(eligibility_fields)}")
+                
+                # Verify next steps are generated
+                next_steps = top_match.get('next_steps', [])
+                print(f"   Next Steps Generated: {len(next_steps) > 0}")
+                if next_steps:
+                    print(f"   Next Steps Count: {len(next_steps)}")
+        return success
+
+    def test_clinical_trials_database_storage(self):
+        """Test database storage of trial data with proper indexing"""
+        # First, perform a search to populate database
+        success1, response1 = self.run_test(
+            "Clinical Trials - Database Storage (Search First)",
+            "GET",
+            "clinical-trials/search?condition=regenerative%20medicine&max_results=5",
+            200,
+            timeout=30
+        )
+        
+        if not success1:
+            return False
+        
+        # Then perform another search to test database retrieval
+        success2, response2 = self.run_test(
+            "Clinical Trials - Database Storage (Verify Storage)",
+            "GET",
+            "clinical-trials/search?condition=regenerative%20medicine&max_results=5",
+            200,
+            timeout=20  # Should be faster due to caching
+        )
+        
+        if success2:
+            trials = response2.get('trials', [])
+            print(f"   Trials Retrieved: {len(trials)}")
+            print(f"   Search Timestamp: {response2.get('search_timestamp', 'unknown')}")
+            
+            if trials:
+                sample_trial = trials[0]
+                
+                # Check database-specific fields
+                db_fields = ['search_condition', 'extracted_at', 'trial_url']
+                available_db_fields = [field for field in db_fields if field in sample_trial]
+                print(f"   Database Fields Present: {len(available_db_fields)}/{len(db_fields)}")
+                
+                # Check NCT ID format (should be indexed)
+                nct_id = sample_trial.get('nct_id', '')
+                print(f"   NCT ID (Index Key): {nct_id}")
+                print(f"   NCT ID Format Valid: {nct_id.startswith('NCT')}")
+                
+                # Check search condition tracking
+                search_condition = sample_trial.get('search_condition', '')
+                print(f"   Search Condition Tracked: {len(search_condition) > 0}")
+                
+                # Check extraction timestamp
+                extracted_at = sample_trial.get('extracted_at')
+                print(f"   Extraction Timestamp Present: {extracted_at is not None}")
+        
+        return success1 and success2
+
+    def test_clinical_trials_error_handling(self):
+        """Test error handling for API issues and invalid queries"""
+        # Test with empty condition
+        success1, response1 = self.run_test(
+            "Clinical Trials - Error Handling (Empty Condition)",
+            "GET",
+            "clinical-trials/search?condition=&max_results=5",
+            200,  # Should handle gracefully
+            timeout=20
+        )
+        
+        if success1:
+            print(f"   Empty Condition Status: {response1.get('status', 'unknown')}")
+            if 'error' in response1:
+                print(f"   Error Handled: {response1.get('error', 'No error')[:50]}...")
+            print(f"   Trials Returned: {len(response1.get('trials', []))}")
+            print(f"   Fallback Suggestion: {'fallback_suggestion' in response1}")
+        
+        # Test with very specific/rare condition
+        success2, response2 = self.run_test(
+            "Clinical Trials - Error Handling (Rare Condition)",
+            "GET",
+            "clinical-trials/search?condition=extremely_rare_condition_xyz123&max_results=5",
+            200,
+            timeout=30
+        )
+        
+        if success2:
+            print(f"   Rare Condition Status: {response2.get('status', 'unknown')}")
+            trials = response2.get('trials', [])
+            print(f"   Trials Found: {len(trials)}")
+            
+            if len(trials) == 0:
+                print(f"   No Results Handled Gracefully: True")
+                if 'fallback_suggestion' in response2:
+                    print(f"   Fallback Suggestion: {response2.get('fallback_suggestion', 'None')}")
+        
+        return success1 and success2
+
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
     print("Advanced Regenerative Medicine Knowledge Platform v2.0")
