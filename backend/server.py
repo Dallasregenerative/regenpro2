@@ -1849,6 +1849,15 @@ async def get_comprehensive_patient_analysis_v2(
     """Get comprehensive patient analysis including differential diagnosis and multi-modal insights"""
     
     try:
+        # Get uploaded files for this patient
+        uploaded_files_cursor = db.uploaded_files.find({"patient_id": patient_id})
+        uploaded_files = await uploaded_files_cursor.to_list(length=None)
+        
+        # Convert ObjectId to string for JSON serialization
+        for file_record in uploaded_files:
+            if '_id' in file_record:
+                file_record['_id'] = str(file_record['_id'])
+        
         # Get the most recent comprehensive analysis
         analysis = await db.comprehensive_analyses.find_one(
             {"patient_id": patient_id},
@@ -1856,15 +1865,32 @@ async def get_comprehensive_patient_analysis_v2(
         )
         
         if not analysis:
-            # If no analysis exists, generate one
+            # If no analysis exists, generate one with uploaded files
             patient = await db.patients.find_one({"patient_id": patient_id})
             if not patient:
                 raise HTTPException(status_code=404, detail="Patient not found")
             
-            # Convert to PatientData object and analyze
+            # Convert to PatientData object and analyze with files
             patient_data = PatientData(**patient)
             ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
-            diagnostic_results = await ai_engine.analyze_patient_data(patient_data)
+            
+            # Include uploaded files in analysis
+            file_insights = {}
+            if uploaded_files:
+                for file_record in uploaded_files:
+                    category = file_record.get('file_category', 'other')
+                    if category not in file_insights:
+                        file_insights[category] = []
+                    
+                    file_insights[category].append({
+                        "filename": file_record.get('filename', 'Unknown'),
+                        "file_type": file_record.get('file_type', 'unknown'),
+                        "upload_date": file_record.get('upload_timestamp', datetime.utcnow()).isoformat(),
+                        "file_size": file_record.get('file_size', 0),
+                        "status": "processed"
+                    })
+            
+            diagnostic_results = await ai_engine.analyze_patient_data(patient_data, uploaded_files_data=file_insights)
             
             # Try to get the analysis that was just created
             analysis = await db.comprehensive_analyses.find_one(
