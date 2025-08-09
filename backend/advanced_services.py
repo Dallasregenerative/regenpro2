@@ -2177,45 +2177,41 @@ You create protocols that are both scientifically rigorous and clinically practi
             for study in studies:
                 
                 try:
-                    # Extract protocol section
-                    protocol_section = study.get("ProtocolSection", {})
+                    # Extract basic information (API v2.0 structure)
+                    nct_id = study.get("protocolSection", {}).get("identificationModule", {}).get("nctId", "")
+                    title = study.get("protocolSection", {}).get("identificationModule", {}).get("briefTitle", "")
                     
-                    # Identification module
-                    identification = protocol_section.get("IdentificationModule", {})
-                    nct_id = identification.get("NCTId", "")
-                    title = identification.get("BriefTitle", "")
+                    # Status information
+                    status_module = study.get("protocolSection", {}).get("statusModule", {})
+                    overall_status = status_module.get("overallStatus", "")
+                    start_date = status_module.get("startDateStruct", {}).get("date", "")
                     
-                    # Status module
-                    status_module = protocol_section.get("StatusModule", {})
-                    overall_status = status_module.get("OverallStatus", "")
-                    start_date = status_module.get("StartDateStruct", {}).get("StartDate", "")
+                    # Description
+                    description_module = study.get("protocolSection", {}).get("descriptionModule", {})
+                    brief_summary = description_module.get("briefSummary", "")
+                    detailed_description = description_module.get("detailedDescription", "")
                     
-                    # Description module
-                    description = protocol_section.get("DescriptionModule", {})
-                    brief_summary = description.get("BriefSummary", "")
-                    detailed_description = description.get("DetailedDescription", "")
+                    # Conditions
+                    conditions_module = study.get("protocolSection", {}).get("conditionsModule", {})
+                    conditions = conditions_module.get("conditions", [])
                     
-                    # Conditions module
-                    conditions_module = protocol_section.get("ConditionsModule", {})
-                    conditions = conditions_module.get("ConditionList", [])
+                    # Interventions
+                    arms_module = study.get("protocolSection", {}).get("armsInterventionsModule", {})
+                    interventions = arms_module.get("interventions", [])
                     
-                    # Arms/interventions module
-                    arms_module = protocol_section.get("ArmsInterventionsModule", {})
-                    interventions = arms_module.get("InterventionList", [])
+                    # Design
+                    design_module = study.get("protocolSection", {}).get("designModule", {})
+                    study_type = design_module.get("studyType", "")
+                    phases = design_module.get("phases", [])
                     
-                    # Design module
-                    design_module = protocol_section.get("DesignModule", {})
-                    study_type = design_module.get("StudyType", "")
-                    phases = design_module.get("PhaseList", [])
+                    # Eligibility
+                    eligibility_module = study.get("protocolSection", {}).get("eligibilityModule", {})
+                    eligible_ages = eligibility_module.get("stdAges", [])
+                    gender = eligibility_module.get("gender", "")
                     
-                    # Eligibility module
-                    eligibility = protocol_section.get("EligibilityModule", {})
-                    eligible_ages = eligibility.get("StdAgeList", [])
-                    gender = eligibility.get("Gender", "")
-                    
-                    # Contacts module
-                    contacts = protocol_section.get("ContactsLocationsModule", {})
-                    locations = contacts.get("LocationList", [])
+                    # Locations
+                    contacts_module = study.get("protocolSection", {}).get("contactsLocationsModule", {})
+                    locations = contacts_module.get("locations", [])
                     
                     # Calculate relevance score
                     relevance_score = self._calculate_trial_relevance(
