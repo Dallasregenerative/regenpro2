@@ -2172,10 +2172,9 @@ You create protocols that are both scientifically rigorous and clinically practi
         trials = []
         
         try:
-            studies = data.get("FullStudiesResponse", {}).get("FullStudies", [])
+            studies = data.get("studies", [])
             
-            for study_wrapper in studies:
-                study = study_wrapper.get("Study", {})
+            for study in studies:
                 
                 try:
                     # Extract protocol section
