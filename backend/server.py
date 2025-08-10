@@ -4067,7 +4067,10 @@ async def get_treatment_comparison(
         if '_id' in comparison:
             comparison['_id'] = str(comparison['_id'])
         
-        return comparison
+        # Clean the result to ensure JSON serialization compatibility
+        cleaned_comparison = clean_json_data(comparison)
+        
+        return cleaned_comparison
         
     except HTTPException:
         raise
