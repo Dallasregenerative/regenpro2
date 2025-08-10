@@ -10327,7 +10327,20 @@ class AdvancedDifferentialDiagnosisEngine:
         
         # Extract different data modalities
         demographics = patient_data.get("demographics", {})
-        clinical_history = patient_data.get("medical_history", {})
+        
+        # Handle medical_history as either list (simple format) or dict (complex format)
+        raw_medical_history = patient_data.get("medical_history", {})
+        if isinstance(raw_medical_history, list):
+            # Convert simple list format to complex dict format
+            clinical_history = {
+                "past_medical_history": raw_medical_history,
+                "medications": patient_data.get("medications", []),
+                "family_history": [],
+                "social_history": {}
+            }
+        else:
+            clinical_history = raw_medical_history
+        
         clinical_presentation = patient_data.get("clinical_presentation", {})
         lab_results = patient_data.get("lab_results", {})
         imaging_data = patient_data.get("imaging_files", [])
