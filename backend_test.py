@@ -1079,7 +1079,7 @@ IGF-1,180,109-284,ng/mL,Normal"""
     # ========== CRITICAL PRIORITY FEATURES TESTING ==========
     # Testing the three newly implemented "Critical Priority" features
 
-    def test_living_evidence_engine_living_map(self):
+    def test_living_evidence_engine_protocol_evidence_mapping(self):
         """Test POST /api/evidence/protocol-evidence-mapping - Living Evidence Engine System"""
         if not self.protocol_id:
             print("❌ No protocol ID available for living evidence mapping testing")
@@ -1128,7 +1128,7 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Evidence-Based Recommendations: {len(protocol_justification.get('recommendations', []))}")
         return success
 
-    def test_living_evidence_engine_freshness_analysis(self):
+    def test_living_evidence_engine_living_reviews(self):
         """Test GET /api/evidence/living-reviews/{condition} - Living Evidence Engine System"""
         success, response = self.run_test(
             "CRITICAL FEATURE: Living Evidence Engine - Living Systematic Review",
@@ -1155,7 +1155,7 @@ IGF-1,180,109-284,ng/mL,Normal"""
                     print(f"   {therapy} Evidence Quality: {data.get('evidence_quality', 0):.2f}")
         return success
 
-    def test_living_evidence_engine_update_mapping(self):
+    def test_living_evidence_engine_protocol_mapping_retrieval(self):
         """Test GET /api/evidence/protocol/{protocol_id}/evidence-mapping - Living Evidence Engine System"""
         if not self.protocol_id:
             print("❌ No protocol ID available for evidence mapping retrieval testing")
@@ -1181,7 +1181,7 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Last Updated: {evidence_mapping.get('last_updated', 'Unknown')}")
         return success
 
-    def test_living_evidence_engine_validate_links(self):
+    def test_living_evidence_engine_alerts(self):
         """Test GET /api/evidence/alerts/{protocol_id} - Living Evidence Engine System"""
         if not self.protocol_id:
             print("❌ No protocol ID available for evidence alerts testing")
@@ -1284,77 +1284,67 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Clinical Decision Support: {diagnostic_reasoning.get('decision_support_level', 'Unknown')}")
         return success
 
-    def test_advanced_differential_diagnosis_confidence_analysis(self):
-        """Test POST /api/diagnosis/confidence-analysis - Advanced Differential Diagnosis System"""
+    def test_advanced_differential_diagnosis_retrieval(self):
+        """Test GET /api/diagnosis/{diagnosis_id} - Advanced Differential Diagnosis System"""
+        # First create a diagnosis to get an ID
         if not self.patient_id:
-            print("❌ No patient ID available for confidence analysis testing")
+            print("❌ No patient ID available for diagnosis retrieval testing")
             return False
 
-        confidence_data = {
+        # Create a diagnosis first
+        differential_data = {
             "patient_id": self.patient_id,
-            "diagnosis": "M17.0 - Bilateral primary osteoarthritis of knee",
-            "confidence_score": 0.85,
-            "analysis_type": "bayesian_credible_intervals",
-            "monte_carlo_samples": 1000,
-            "uncertainty_quantification": True
+            "clinical_presentation": {
+                "chief_complaint": "Bilateral knee pain and stiffness",
+                "symptom_duration": "3 years"
+            },
+            "analysis_parameters": {
+                "differential_count": 3,
+                "regenerative_focus": True
+            }
         }
 
-        success, response = self.run_test(
-            "CRITICAL FEATURE: Advanced Differential Diagnosis - Confidence Analysis",
+        create_success, create_response = self.run_test(
+            "Setup: Create Diagnosis for Retrieval",
             "POST",
-            "diagnosis/confidence-analysis",
+            "diagnosis/comprehensive-differential",
             200,
-            data=confidence_data,
+            data=differential_data,
+            timeout=90
+        )
+        
+        if not create_success:
+            print("❌ Could not create diagnosis for retrieval testing")
+            return False
+        
+        diagnosis_id = create_response.get('diagnosis_id')
+        if not diagnosis_id:
+            print("❌ No diagnosis ID returned for retrieval testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Advanced Differential Diagnosis - Get Diagnosis",
+            "GET",
+            f"diagnosis/{diagnosis_id}",
+            200,
             timeout=45
         )
         
         if success:
-            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Diagnosis ID: {response.get('diagnosis_id', 'Unknown')}")
             print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
             
-            confidence_metrics = response.get('confidence_metrics', {})
-            if confidence_metrics:
-                print(f"   Overall Diagnostic Confidence: {confidence_metrics.get('overall_confidence', 0):.2f}")
-                print(f"   Data Completeness Score: {confidence_metrics.get('data_completeness', 0):.2f}")
-                print(f"   Evidence Quality Score: {confidence_metrics.get('evidence_quality', 0):.2f}")
-                print(f"   Clinical Complexity Level: {confidence_metrics.get('complexity_level', 'Unknown')}")
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            print(f"   Retrieved Diagnoses: {len(differential_diagnoses)}")
             
-            uncertainty_analysis = response.get('uncertainty_analysis', {})
-            if uncertainty_analysis:
-                print(f"   Uncertainty Sources: {len(uncertainty_analysis.get('uncertainty_sources', []))}")
-                print(f"   Recommended Additional Tests: {len(uncertainty_analysis.get('recommended_tests', []))}")
+            if differential_diagnoses:
+                top_diagnosis = differential_diagnoses[0]
+                print(f"   Top Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
+                print(f"   Confidence: {top_diagnosis.get('confidence_score', 0):.2f}")
         return success
 
-    def test_advanced_differential_diagnosis_tree(self):
-        """Test GET /api/diagnosis/mechanism-insights/{diagnosis_name} - Advanced Differential Diagnosis System"""
-        success, response = self.run_test(
-            "CRITICAL FEATURE: Advanced Differential Diagnosis - Mechanism Insights",
-            "GET",
-            "diagnosis/mechanism-insights/Osteoarthritis?include_pathways=true&include_targets=true&detail_level=comprehensive",
-            200,
-            timeout=60
-        )
-        
-        if success:
-            print(f"   Mechanism Analysis Status: {response.get('status', 'Unknown')}")
-            print(f"   Diagnosis: {response.get('diagnosis', 'Unknown')}")
-            
-            cellular_mechanisms = response.get('cellular_mechanisms', {})
-            if cellular_mechanisms:
-                pathways = cellular_mechanisms.get('pathways', [])
-                print(f"   Cellular Pathways: {len(pathways)}")
-                
-                for i, pathway in enumerate(pathways[:2], 1):
-                    print(f"     Pathway {i}: {pathway.get('pathway_name', 'Unknown')}")
-                    print(f"       Therapeutic Relevance: {pathway.get('therapeutic_relevance', 'Unknown')}")
-            
-            molecular_targets = response.get('molecular_targets', {})
-            if molecular_targets:
-                regenerative_targets = molecular_targets.get('regenerative_targets', [])
-                print(f"   Regenerative Targets: {len(regenerative_targets)}")
-        return success
-
-    def test_advanced_differential_diagnosis_precision_assessment(self):
+    def test_advanced_differential_diagnosis_engine_status(self):
         """Test GET /api/diagnosis/engine-status - Advanced Differential Diagnosis System"""
         success, response = self.run_test(
             "CRITICAL FEATURE: Advanced Differential Diagnosis - Engine Status",
@@ -1381,8 +1371,8 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Average Analysis Time: {performance_metrics.get('avg_analysis_time', 0):.2f}s")
         return success
 
-    def test_enhanced_explainable_ai_explanation(self):
-        """Test POST /api/ai/visual-explanation - Enhanced Explainable AI System"""
+    def test_enhanced_explainable_ai_enhanced_explanation(self):
+        """Test POST /api/ai/enhanced-explanation - Enhanced Explainable AI System"""
         if not self.patient_id:
             print("❌ No patient ID available for enhanced AI explanation testing")
             return False
@@ -1420,9 +1410,9 @@ IGF-1,180,109-284,ng/mL,Normal"""
 
         print("   This may take 45-60 seconds for enhanced AI explanation generation...")
         success, response = self.run_test(
-            "CRITICAL FEATURE: Enhanced Explainable AI - Visual Explanation",
+            "CRITICAL FEATURE: Enhanced Explainable AI - Generate Enhanced Explanation",
             "POST",
-            "ai/visual-explanation",
+            "ai/enhanced-explanation",
             200,
             data=explanation_data,
             timeout=90
@@ -1432,11 +1422,11 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print(f"   Explanation Status: {response.get('status', 'Unknown')}")
             print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
             
-            visual_explanation = response.get('visual_explanation', {})
-            if visual_explanation:
-                print(f"   Explanation ID: {visual_explanation.get('explanation_id', 'Unknown')}")
-                print(f"   Transparency Score: {visual_explanation.get('transparency_score', 0):.2f}")
-                print(f"   Feature Importance Count: {len(visual_explanation.get('feature_importance', []))}")
+            enhanced_explanation = response.get('enhanced_explanation', {})
+            if enhanced_explanation:
+                print(f"   Explanation ID: {enhanced_explanation.get('explanation_id', 'Unknown')}")
+                print(f"   Transparency Score: {enhanced_explanation.get('transparency_score', 0):.2f}")
+                print(f"   Feature Importance Count: {len(enhanced_explanation.get('feature_importance', []))}")
             
             explanation_result = response.get('explanation_result', {})
             if explanation_result:
@@ -1444,9 +1434,13 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Interactive Elements: {explanation_result.get('interactive_elements', 0)}")
         return success
 
-    def test_enhanced_explainable_ai_visual_breakdown(self):
-        """Test GET /api/ai/visual-explanation/{explanation_id} - Enhanced Explainable AI System"""
+    def test_enhanced_explainable_ai_explanation_retrieval(self):
+        """Test GET /api/ai/enhanced-explanation/{explanation_id} - Enhanced Explainable AI System"""
         # First create an explanation to get an ID
+        if not self.patient_id:
+            print("❌ No patient ID available for explanation retrieval testing")
+            return False
+
         explanation_data = {
             "patient_id": self.patient_id,
             "demographics": {"age": 58, "gender": "Female"},
@@ -1454,9 +1448,60 @@ IGF-1,180,109-284,ng/mL,Normal"""
         }
 
         create_success, create_response = self.run_test(
-            "Setup: Create Visual Explanation",
+            "Setup: Create Enhanced Explanation",
             "POST",
-            "ai/visual-explanation",
+            "ai/enhanced-explanation",
+            200,
+            data=explanation_data,
+            timeout=60
+        )
+        
+        if not create_success:
+            print("❌ Could not create explanation for retrieval testing")
+            return False
+        
+        explanation_id = create_response.get('enhanced_explanation', {}).get('explanation_id')
+        if not explanation_id:
+            print("❌ No explanation ID returned for retrieval testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Enhanced Explainable AI - Get Enhanced Explanation",
+            "GET",
+            f"ai/enhanced-explanation/{explanation_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Type: {response.get('analysis_type', 'Unknown')}")
+            print(f"   Generated At: {response.get('generated_at', 'Unknown')}")
+            
+            enhanced_explanation = response.get('enhanced_explanation', {})
+            if enhanced_explanation:
+                print(f"   Transparency Score: {enhanced_explanation.get('transparency_score', 0):.2f}")
+                print(f"   Feature Count: {len(enhanced_explanation.get('feature_importance', []))}")
+        return success
+
+    def test_enhanced_explainable_ai_visual_breakdown(self):
+        """Test GET /api/ai/visual-breakdown/{explanation_id} - Enhanced Explainable AI System"""
+        # First create an explanation to get an ID
+        if not self.patient_id:
+            print("❌ No patient ID available for visual breakdown testing")
+            return False
+
+        explanation_data = {
+            "patient_id": self.patient_id,
+            "demographics": {"age": 58, "gender": "Female"},
+            "medical_history": ["Osteoarthritis bilateral knees"]
+        }
+
+        create_success, create_response = self.run_test(
+            "Setup: Create Explanation for Visual Breakdown",
+            "POST",
+            "ai/enhanced-explanation",
             200,
             data=explanation_data,
             timeout=60
@@ -1466,7 +1511,7 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print("❌ Could not create explanation for visual breakdown testing")
             return False
         
-        explanation_id = create_response.get('visual_explanation', {}).get('explanation_id')
+        explanation_id = create_response.get('enhanced_explanation', {}).get('explanation_id')
         if not explanation_id:
             print("❌ No explanation ID returned for visual breakdown testing")
             return False
