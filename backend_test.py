@@ -6568,5 +6568,5 @@ def main():
 
 if __name__ == "__main__":
     tester = RegenMedAIProTester()
-    # Run Phase 3 focused tests as requested
-    tester.run_phase3_focused_tests()
+    # Run Phase 3 focused tests as requested - use existing method
+    tester.run_phase3_global_knowledge_engine_tests()
