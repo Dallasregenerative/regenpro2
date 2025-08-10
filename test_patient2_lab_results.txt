@@ -1,0 +1,77 @@
+LABORATORY RESULTS REPORT
+
+Patient: David Chen
+DOB: August 22, 1996
+Patient ID: DC-2025-002  
+Collection Date: January 10, 2025
+Report Date: January 11, 2025
+
+SPORTS MEDICINE PANEL
+
+INFLAMMATORY MARKERS:
+ESR (Erythrocyte Sedimentation Rate):
+Result: 8 mm/hr
+Reference Range: 0-15 mm/hr (Male)
+Status: NORMAL
+
+CRP (C-Reactive Protein):
+Result: 1.2 mg/L
+Reference Range: <3.0 mg/L
+Status: NORMAL
+
+MUSCLE/TENDON INJURY MARKERS:
+Creatine Kinase (CK):
+Result: 420 U/L [H]
+Reference Range: 30-200 U/L
+Status: ELEVATED
+
+Lactate Dehydrogenase (LDH):
+Result: 285 U/L [H] 
+Reference Range: 140-280 U/L
+Status: MILDLY ELEVATED
+
+NUTRITIONAL STATUS:
+Vitamin D, 25-Hydroxy:
+Result: 35 ng/mL
+Reference Range: 30-100 ng/mL
+Status: ADEQUATE
+
+Vitamin B12:
+Result: 485 pg/mL
+Reference Range: 200-900 pg/mL
+Status: NORMAL
+
+Magnesium:
+Result: 1.9 mg/dL
+Reference Range: 1.7-2.2 mg/dL
+Status: NORMAL
+
+PERFORMANCE MARKERS:
+Testosterone, Total:
+Result: 650 ng/dL
+Reference Range: 300-1000 ng/dL
+Status: NORMAL
+
+Cortisol, AM:
+Result: 18 μg/dL
+Reference Range: 6-23 μg/dL
+Status: NORMAL
+
+COMPLETE METABOLIC PANEL:
+- Glucose: 88 mg/dL (Normal)
+- BUN: 18 mg/dL (Normal)
+- Creatinine: 1.1 mg/dL (Normal)
+- Electrolytes: Within normal limits
+
+INTERPRETATION:
+Elevated muscle enzymes (CK, LDH) consistent with muscle stress/microtrauma likely related to intensive training. No systemic inflammation detected. Nutritional parameters adequate for athletic performance.
+
+RECOMMENDATIONS:
+- Modify training intensity temporarily
+- Consider sports medicine consultation
+- Repeat muscle enzymes in 2-3 weeks
+- Ensure adequate rest and recovery
+
+Lab Director: Dr. Robert Kim, MD
+Sports Medicine Lab: Dr. Amanda Foster, MD
+Reviewed: January 11, 2025
