@@ -3995,6 +3995,27 @@ async def get_visual_explanation(
         logger.error(f"Error retrieving visual explanation: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to retrieve explanation: {str(e)}")
 
+def clean_json_data(obj):
+    """Clean data for JSON serialization by handling NaN and infinity values"""
+    import math
+    
+    if isinstance(obj, dict):
+        return {k: clean_json_data(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_json_data(item) for item in obj]
+    elif isinstance(obj, np.ndarray):
+        return clean_json_data(obj.tolist())
+    elif isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+        return obj
+    elif hasattr(obj, 'item'):  # numpy scalar
+        val = obj.item()
+        if isinstance(val, float) and (math.isnan(val) or math.isinf(val)):
+            return None
+        return val
+    return obj
+
 @api_router.post("/analytics/treatment-comparison")
 async def perform_treatment_comparison(
     comparison_request: Dict[str, Any],
@@ -4011,16 +4032,19 @@ async def perform_treatment_comparison(
         # Perform comparison
         comparison_result = await comparison_analytics.perform_treatment_comparison(comparison_request)
         
+        # Clean the result to ensure JSON serialization compatibility
+        cleaned_result = clean_json_data(comparison_result)
+        
         # Audit log
         await db.audit_log.insert_one({
             "timestamp": datetime.utcnow(),
             "practitioner_id": practitioner.id,
             "action": "treatment_comparison_performed",
-            "comparison_id": comparison_result.get("comparison_report", {}).get("comparison_id"),
+            "comparison_id": cleaned_result.get("comparison_report", {}).get("comparison_id"),
             "treatments": comparison_request.get("treatments", [])
         })
         
-        return comparison_result
+        return cleaned_result
         
     except Exception as e:
         logger.error(f"Treatment comparison error: {str(e)}")
