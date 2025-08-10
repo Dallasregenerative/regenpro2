@@ -7746,6 +7746,30 @@ def main():
         return success
 
 if __name__ == "__main__":
+    print("🚀 RegenMed AI Pro - Critical Priority Features Testing")
+    print("=" * 80)
+    
     tester = RegenMedAIProTester()
-    # Run Phase 3 focused tests as requested - use existing method
-    tester.run_phase3_global_knowledge_engine_tests()
+    
+    # Run only the critical priority features tests
+    tester.run_critical_priority_features_tests()
+    
+    print("\n" + "=" * 80)
+    print("🎯 CRITICAL PRIORITY FEATURES TESTING RESULTS")
+    print("=" * 80)
+    print(f"✅ Tests Passed: {tester.tests_passed}")
+    print(f"❌ Tests Failed: {tester.tests_run - tester.tests_passed}")
+    print(f"📊 Total Tests Run: {tester.tests_run}")
+    print(f"🎯 Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
+    
+    if tester.tests_passed == tester.tests_run:
+        print("\n🎉 ALL CRITICAL FEATURES TESTS PASSED!")
+        print("Living Evidence Engine, Advanced Differential Diagnosis, and Enhanced Explainable AI systems are fully functional!")
+    elif tester.tests_passed / tester.tests_run >= 0.8:
+        print("\n✅ EXCELLENT! Most critical features tests passed.")
+    elif tester.tests_passed / tester.tests_run >= 0.6:
+        print("\n⚠️  GOOD! Majority of critical features tests passed. Some issues need attention.")
+    else:
+        print("\n🚨 ATTENTION NEEDED! Multiple critical features test failures detected.")
+    
+    print("\n" + "=" * 80)
