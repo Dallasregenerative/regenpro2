@@ -8639,6 +8639,7 @@ def main():
         # Enhanced Explainable AI System Tests
         print("\n🤖 ENHANCED EXPLAINABLE AI SYSTEM TESTS")
         print("-" * 60)
+        self.test_enhanced_explainable_ai_generation()  # ObjectId fix verification test
         self.test_enhanced_explainable_ai_explanation()
         self.test_enhanced_explainable_ai_visual_breakdown()
         self.test_enhanced_explainable_ai_feature_interactions()
