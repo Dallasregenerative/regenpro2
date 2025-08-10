@@ -5340,6 +5340,7 @@ async def startup_advanced_services():
     global federated_service, pubmed_service, dicom_service, prediction_service, file_processor
     global visual_explainable_ai, comparative_analytics, personalized_risk_assessment
     global regulatory_intelligence, protocol_library, collaboration_platform
+    global living_evidence_engine, advanced_differential_diagnosis, enhanced_explainable_ai
     
     try:
         # Initialize existing advanced services
@@ -5361,6 +5362,12 @@ async def startup_advanced_services():
         protocol_library = InternationalProtocolLibrary(db)
         collaboration_platform = CommunityCollaborationPlatform(db)
         
+        # Initialize Critical Priority Features
+        from advanced_services import LivingEvidenceEngine, AdvancedDifferentialDiagnosisEngine, EnhancedExplainableAI
+        living_evidence_engine = LivingEvidenceEngine(db)
+        advanced_differential_diagnosis = AdvancedDifferentialDiagnosisEngine(db)
+        enhanced_explainable_ai = EnhancedExplainableAI(db)
+        
         # Initialize services
         await initialize_advanced_services(db)
         
@@ -5374,7 +5381,12 @@ async def startup_advanced_services():
         await protocol_library.initialize_protocol_library()
         await collaboration_platform.initialize_collaboration_platform()
         
-        logger.info("Advanced AI services, Phase 2 Clinical Intelligence, and Phase 3 Global Knowledge Engine initialized successfully")
+        # Initialize Critical Priority Features
+        await living_evidence_engine.initialize_living_evidence_engine()
+        await advanced_differential_diagnosis.initialize_differential_diagnosis_engine()
+        await enhanced_explainable_ai.initialize_enhanced_explainable_ai()
+        
+        logger.info("Advanced AI services, Phase 2 Clinical Intelligence, Phase 3 Global Knowledge Engine, and Critical Priority Features initialized successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize advanced services: {str(e)}")
