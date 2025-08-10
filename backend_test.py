@@ -1250,7 +1250,70 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print(f"   ❌ FAILED: GET /api/diagnosis/{self.diagnosis_id} returned error (should be 200)")
             return False
 
-    def test_advanced_differential_diagnosis_chronic_pain_case(self):
+    def run_focused_differential_diagnosis_tests(self):
+        """Run the FOCUSED TEST SEQUENCE for Advanced Differential Diagnosis System"""
+        print("\n" + "="*80)
+        print("🎯 FOCUSED DIFFERENTIAL DIAGNOSIS FIX VERIFICATION")
+        print("="*80)
+        print("Testing the diagnosis storage and retrieval system")
+        print("Expected Impact: Advanced Differential Diagnosis should go from 33% to 100% functional")
+        print("\nFOCUSED TEST SEQUENCE:")
+        print("1. POST /api/diagnosis/comprehensive-differential - Generate and store diagnosis")
+        print("2. Extract diagnosis_id from the response")
+        print("3. GET /api/diagnosis/{diagnosis_id} - Should now retrieve stored diagnosis (not 404)")
+        print("4. GET /api/diagnosis/engine-status - Should return engine status (not 404)")
+        print("\n" + "="*80)
+        
+        # Initialize test counters
+        focused_tests_run = 0
+        focused_tests_passed = 0
+        
+        # Test 1: POST comprehensive differential diagnosis
+        print(f"\n🔍 FOCUSED TEST 1/4: POST /api/diagnosis/comprehensive-differential")
+        if self.test_advanced_differential_diagnosis_comprehensive_differential():
+            focused_tests_passed += 1
+        focused_tests_run += 1
+        
+        # Test 2: GET diagnosis by ID (retrieval test)
+        print(f"\n🔍 FOCUSED TEST 2/4: GET /api/diagnosis/{{diagnosis_id}}")
+        if self.test_advanced_differential_diagnosis_retrieval():
+            focused_tests_passed += 1
+        focused_tests_run += 1
+        
+        # Test 3: GET engine status
+        print(f"\n🔍 FOCUSED TEST 3/4: GET /api/diagnosis/engine-status")
+        if self.test_advanced_differential_diagnosis_engine_status():
+            focused_tests_passed += 1
+        focused_tests_run += 1
+        
+        # Summary
+        print("\n" + "="*80)
+        print("🎯 FOCUSED DIFFERENTIAL DIAGNOSIS TEST RESULTS")
+        print("="*80)
+        success_rate = (focused_tests_passed / focused_tests_run) * 100 if focused_tests_run > 0 else 0
+        
+        print(f"Focused Tests Run: {focused_tests_run}")
+        print(f"Focused Tests Passed: {focused_tests_passed}")
+        print(f"Success Rate: {success_rate:.1f}%")
+        
+        if success_rate == 100:
+            print("✅ SUCCESS CRITERIA MET:")
+            print("✅ POST should return 200 with diagnosis_id")
+            print("✅ GET {diagnosis_id} should return 200 (not 404)")
+            print("✅ GET engine-status should return 200 (not 404)")
+            print("\n🎉 Advanced Differential Diagnosis System: 33% → 100% functional!")
+        else:
+            print("❌ SUCCESS CRITERIA NOT MET:")
+            if focused_tests_passed < 1:
+                print("❌ POST /api/diagnosis/comprehensive-differential failed")
+            if focused_tests_passed < 2:
+                print("❌ GET /api/diagnosis/{diagnosis_id} failed (still 404?)")
+            if focused_tests_passed < 3:
+                print("❌ GET /api/diagnosis/engine-status failed (still 404?)")
+            print(f"\n⚠️  Advanced Differential Diagnosis System: Still at {success_rate:.0f}% functional")
+        
+        print("="*80)
+        return success_rate == 100
         """Test Advanced Differential Diagnosis with chronic pain case"""
         if not self.patient_id:
             print("❌ No patient ID available for chronic pain diagnosis testing")
