@@ -1335,6 +1335,435 @@ IGF-1,180,109-284,ng/mL,Normal"""
                     print(f"   Fallback Available: {response.get('fallback_available')}")
         return success
 
+    # ========== PHASE 2: AI CLINICAL INTELLIGENCE TESTING ==========
+
+    def test_phase2_clinical_intelligence_status(self):
+        """Test Phase 2 AI Clinical Intelligence system status"""
+        success, response = self.run_test(
+            "Phase 2: AI Clinical Intelligence Status",
+            "GET",
+            "ai/clinical-intelligence-status",
+            200
+        )
+        
+        if success:
+            print(f"   System Status: {response.get('status', 'unknown')}")
+            
+            components = response.get('components', {})
+            if components:
+                print(f"   Visual Explainable AI: {components.get('visual_explainable_ai', {}).get('status', 'unknown')}")
+                print(f"   Comparative Analytics: {components.get('comparative_effectiveness_analytics', {}).get('status', 'unknown')}")
+                print(f"   Risk Assessment: {components.get('personalized_risk_assessment', {}).get('status', 'unknown')}")
+            
+            usage_stats = response.get('usage_statistics', {})
+            if usage_stats:
+                print(f"   Explanations Generated: {usage_stats.get('explanations_generated', 0)}")
+                print(f"   Comparisons Performed: {usage_stats.get('comparisons_performed', 0)}")
+                print(f"   Risk Assessments: {usage_stats.get('risk_assessments_performed', 0)}")
+        return success
+
+    def test_visual_explainable_ai_generation(self):
+        """Test Visual Explainable AI with SHAP/LIME explanation generation"""
+        if not self.patient_id:
+            print("❌ No patient ID available for visual explanation testing")
+            return False
+
+        # Create realistic regenerative medicine patient data for explanation
+        patient_data = {
+            "patient_id": self.patient_id,
+            "demographics": {
+                "age": 58,
+                "gender": "Female",
+                "occupation": "Physician"
+            },
+            "medical_history": [
+                "Osteoarthritis bilateral knees",
+                "Hypertension controlled",
+                "Previous corticosteroid injections failed"
+            ],
+            "symptoms": [
+                "bilateral knee pain",
+                "morning stiffness",
+                "decreased mobility",
+                "functional limitation"
+            ],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": 2.1,
+                    "ESR": 18
+                }
+            },
+            "treatment_history": [
+                "NSAIDs - partial relief",
+                "Physical therapy - minimal improvement",
+                "Corticosteroid injections - temporary relief"
+            ]
+        }
+
+        print("   This may take 30-60 seconds for SHAP/LIME analysis...")
+        success, response = self.run_test(
+            "Visual Explainable AI - SHAP/LIME Generation",
+            "POST",
+            "ai/visual-explanation",
+            200,
+            data=patient_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Analysis Type: {response.get('analysis_type', 'Unknown')}")
+            
+            feature_importance = response.get('feature_importance', {})
+            if feature_importance:
+                print(f"   Feature Importance Factors: {len(feature_importance)}")
+                # Show top 3 features
+                sorted_features = sorted(feature_importance.items(), key=lambda x: abs(x[1]), reverse=True)
+                for i, (feature, importance) in enumerate(sorted_features[:3]):
+                    print(f"   Top {i+1} Feature: {feature} (importance: {importance:.3f})")
+            
+            shap_analysis = response.get('shap_analysis', {})
+            if shap_analysis:
+                print(f"   SHAP Base Value: {shap_analysis.get('base_value', 0):.2f}")
+                print(f"   SHAP Final Prediction: {shap_analysis.get('final_prediction', 0):.2f}")
+            
+            transparency_score = response.get('transparency_score', 0)
+            print(f"   Transparency Score: {transparency_score:.2f}")
+            
+            # Store explanation ID for retrieval test
+            if response.get('explanation_id'):
+                self.explanation_id = response.get('explanation_id')
+        return success
+
+    def test_visual_explanation_retrieval(self):
+        """Test GET Visual Explanation retrieval"""
+        if not hasattr(self, 'explanation_id') or not self.explanation_id:
+            print("❌ No explanation ID available for retrieval testing")
+            return False
+
+        success, response = self.run_test(
+            "GET Visual Explanation Retrieval",
+            "GET",
+            f"ai/visual-explanation/{self.explanation_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Retrieved Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Type: {response.get('analysis_type', 'Unknown')}")
+            print(f"   Generated At: {response.get('generated_at', 'Unknown')}")
+            
+            feature_importance = response.get('feature_importance', {})
+            print(f"   Feature Importance Factors: {len(feature_importance)}")
+            
+            explanation_confidence = response.get('explanation_confidence', 0)
+            print(f"   Explanation Confidence: {explanation_confidence:.2f}")
+        return success
+
+    def test_comparative_effectiveness_analytics(self):
+        """Test Comparative Effectiveness Analytics with multiple treatments"""
+        # Test data with multiple regenerative medicine treatments
+        comparison_data = {
+            "treatments": ["PRP", "BMAC", "stem_cells"],
+            "condition": "osteoarthritis",
+            "patient_demographics": {
+                "age_range": "50-65",
+                "gender": "mixed",
+                "severity": "moderate"
+            },
+            "outcome_measures": [
+                "pain_reduction",
+                "functional_improvement",
+                "patient_satisfaction",
+                "adverse_events"
+            ],
+            "analysis_type": "head_to_head_comparison"
+        }
+
+        print("   This may take 30-60 seconds for comparative analysis...")
+        success, response = self.run_test(
+            "Comparative Effectiveness Analytics - Treatment Comparison",
+            "POST",
+            "analytics/treatment-comparison",
+            200,
+            data=comparison_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Comparison ID: {response.get('comparison_id', 'Unknown')}")
+            print(f"   Analysis Type: {response.get('analysis_type', 'Unknown')}")
+            
+            head_to_head = response.get('head_to_head_analysis', {})
+            if head_to_head:
+                print(f"   Head-to-Head Comparisons: {len(head_to_head)}")
+                
+            treatment_ranking = response.get('treatment_ranking', [])
+            if treatment_ranking:
+                print(f"   Treatment Rankings: {len(treatment_ranking)}")
+                for i, treatment in enumerate(treatment_ranking[:3]):
+                    rank = i + 1
+                    name = treatment.get('treatment', 'Unknown')
+                    score = treatment.get('overall_score', 0)
+                    print(f"   Rank {rank}: {name} (score: {score:.2f})")
+            
+            cost_effectiveness = response.get('cost_effectiveness', {})
+            if cost_effectiveness:
+                print(f"   Cost-Effectiveness Analysis: Available")
+                print(f"   Most Cost-Effective: {cost_effectiveness.get('most_cost_effective', 'Unknown')}")
+            
+            network_meta = response.get('network_meta_analysis', {})
+            if network_meta:
+                print(f"   Network Meta-Analysis: {network_meta.get('status', 'Unknown')}")
+            
+            # Store comparison ID for retrieval test
+            if response.get('comparison_id'):
+                self.comparison_id = response.get('comparison_id')
+        return success
+
+    def test_treatment_comparison_retrieval(self):
+        """Test GET Treatment Comparison retrieval"""
+        if not hasattr(self, 'comparison_id') or not self.comparison_id:
+            print("❌ No comparison ID available for retrieval testing")
+            return False
+
+        success, response = self.run_test(
+            "GET Treatment Comparison Retrieval",
+            "GET",
+            f"analytics/treatment-comparison/{self.comparison_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Retrieved Comparison ID: {response.get('comparison_id', 'Unknown')}")
+            print(f"   Treatments Compared: {len(response.get('treatments', []))}")
+            print(f"   Analysis Completed: {response.get('analysis_completed_at', 'Unknown')}")
+            
+            treatment_ranking = response.get('treatment_ranking', [])
+            print(f"   Treatment Rankings Available: {len(treatment_ranking)}")
+            
+            statistical_significance = response.get('statistical_significance', {})
+            if statistical_significance:
+                print(f"   Statistical Significance: Available")
+        return success
+
+    def test_treatment_effectiveness_data(self):
+        """Test treatment effectiveness data endpoint"""
+        success, response = self.run_test(
+            "Treatment Effectiveness Data",
+            "GET",
+            "analytics/treatment-effectiveness?condition=osteoarthritis&treatment=PRP",
+            200
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'Unknown')}")
+            print(f"   Treatment: {response.get('treatment', 'Unknown')}")
+            
+            effectiveness_data = response.get('effectiveness_data', {})
+            if effectiveness_data:
+                print(f"   Success Rate: {effectiveness_data.get('success_rate', 0):.1%}")
+                print(f"   Pain Reduction: {effectiveness_data.get('pain_reduction_avg', 0):.1f}%")
+                print(f"   Functional Improvement: {effectiveness_data.get('functional_improvement_avg', 0):.1f}%")
+                print(f"   Patient Satisfaction: {effectiveness_data.get('patient_satisfaction_avg', 0):.1f}/10")
+            
+            sample_size = response.get('sample_size', 0)
+            print(f"   Sample Size: {sample_size} patients")
+            
+            evidence_level = response.get('evidence_level', 'Unknown')
+            print(f"   Evidence Level: {evidence_level}")
+        return success
+
+    def test_personalized_risk_assessment(self):
+        """Test Personalized Risk Assessment system"""
+        if not self.patient_id:
+            print("❌ No patient ID available for risk assessment testing")
+            return False
+
+        # Comprehensive patient data for risk assessment
+        risk_assessment_data = {
+            "patient_id": self.patient_id,
+            "demographics": {
+                "age": 58,
+                "gender": "Female",
+                "bmi": 28.5,
+                "smoking_status": "never"
+            },
+            "medical_history": [
+                "Osteoarthritis bilateral knees",
+                "Hypertension controlled",
+                "Type 2 diabetes controlled"
+            ],
+            "current_medications": [
+                "Lisinopril 10mg daily",
+                "Metformin 1000mg twice daily",
+                "Ibuprofen PRN"
+            ],
+            "lab_results": {
+                "HbA1c": 6.8,
+                "CRP": 2.1,
+                "ESR": 18,
+                "platelet_count": 285000
+            },
+            "proposed_treatment": {
+                "therapy": "PRP",
+                "injection_site": "bilateral knees",
+                "planned_sessions": 3
+            },
+            "risk_factors": [
+                "diabetes",
+                "elevated_BMI",
+                "chronic_NSAID_use"
+            ]
+        }
+
+        print("   This may take 30-60 seconds for comprehensive risk analysis...")
+        success, response = self.run_test(
+            "Personalized Risk Assessment",
+            "POST",
+            "ai/risk-assessment",
+            200,
+            data=risk_assessment_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Assessment ID: {response.get('assessment_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            risk_stratification = response.get('risk_stratification', {})
+            if risk_stratification:
+                print(f"   Overall Risk Level: {risk_stratification.get('overall_risk_level', 'Unknown')}")
+                print(f"   Treatment Success Probability: {risk_stratification.get('treatment_success_probability', 0):.1%}")
+                print(f"   Adverse Event Risk: {risk_stratification.get('adverse_event_risk', 0):.1%}")
+            
+            risk_factors = response.get('risk_factors', {})
+            if risk_factors:
+                high_risk = risk_factors.get('high_risk', [])
+                moderate_risk = risk_factors.get('moderate_risk', [])
+                low_risk = risk_factors.get('low_risk', [])
+                print(f"   High Risk Factors: {len(high_risk)}")
+                print(f"   Moderate Risk Factors: {len(moderate_risk)}")
+                print(f"   Low Risk Factors: {len(low_risk)}")
+            
+            monitoring_plan = response.get('monitoring_plan', {})
+            if monitoring_plan:
+                print(f"   Monitoring Plan: Available")
+                recommendations = monitoring_plan.get('recommendations', [])
+                print(f"   Monitoring Recommendations: {len(recommendations)}")
+            
+            risk_benefit_ratio = response.get('risk_benefit_ratio', {})
+            if risk_benefit_ratio:
+                ratio = risk_benefit_ratio.get('ratio', 0)
+                print(f"   Risk-Benefit Ratio: {ratio:.2f}")
+                recommendation = risk_benefit_ratio.get('recommendation', 'Unknown')
+                print(f"   Clinical Recommendation: {recommendation}")
+            
+            # Store assessment ID for retrieval test
+            if response.get('assessment_id'):
+                self.assessment_id = response.get('assessment_id')
+        return success
+
+    def test_risk_assessment_retrieval(self):
+        """Test GET Risk Assessment retrieval"""
+        if not hasattr(self, 'assessment_id') or not self.assessment_id:
+            print("❌ No assessment ID available for retrieval testing")
+            return False
+
+        success, response = self.run_test(
+            "GET Risk Assessment Retrieval",
+            "GET",
+            f"ai/risk-assessment/{self.assessment_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Retrieved Assessment ID: {response.get('assessment_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Assessment Date: {response.get('assessment_date', 'Unknown')}")
+            
+            risk_stratification = response.get('risk_stratification', {})
+            if risk_stratification:
+                print(f"   Overall Risk Level: {risk_stratification.get('overall_risk_level', 'Unknown')}")
+                print(f"   Success Probability: {risk_stratification.get('treatment_success_probability', 0):.1%}")
+            
+            comprehensive_analysis = response.get('comprehensive_analysis', {})
+            if comprehensive_analysis:
+                print(f"   Comprehensive Analysis: Available")
+        return success
+
+    def test_patient_cohort_risk_stratification(self):
+        """Test Patient Cohort Risk Stratification with proper request structure"""
+        # Use proper JSON structure as mentioned in the review request
+        stratification_data = {
+            "patient_cohort": [
+                {
+                    "patient_id": "patient_001",
+                    "age": 58,
+                    "gender": "Female",
+                    "condition": "osteoarthritis",
+                    "severity": "moderate",
+                    "comorbidities": ["diabetes", "hypertension"]
+                },
+                {
+                    "patient_id": "patient_002", 
+                    "age": 62,
+                    "gender": "Male",
+                    "condition": "osteoarthritis",
+                    "severity": "severe",
+                    "comorbidities": ["obesity"]
+                },
+                {
+                    "patient_id": "patient_003",
+                    "age": 45,
+                    "gender": "Female", 
+                    "condition": "osteoarthritis",
+                    "severity": "mild",
+                    "comorbidities": []
+                }
+            ],
+            "treatment_type": "PRP"
+        }
+
+        print("   This may take 30-60 seconds for cohort risk stratification...")
+        success, response = self.run_test(
+            "Patient Cohort Risk Stratification",
+            "POST",
+            "ai/risk-stratification",
+            200,
+            data=stratification_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Stratification ID: {response.get('stratification_id', 'Unknown')}")
+            print(f"   Cohort Size: {response.get('cohort_size', 0)}")
+            print(f"   Treatment Type: {response.get('treatment_type', 'Unknown')}")
+            
+            risk_groups = response.get('risk_groups', {})
+            if risk_groups:
+                high_risk = risk_groups.get('high_risk', [])
+                moderate_risk = risk_groups.get('moderate_risk', [])
+                low_risk = risk_groups.get('low_risk', [])
+                print(f"   High Risk Patients: {len(high_risk)}")
+                print(f"   Moderate Risk Patients: {len(moderate_risk)}")
+                print(f"   Low Risk Patients: {len(low_risk)}")
+            
+            cohort_statistics = response.get('cohort_statistics', {})
+            if cohort_statistics:
+                avg_success_prob = cohort_statistics.get('average_success_probability', 0)
+                print(f"   Average Success Probability: {avg_success_prob:.1%}")
+                
+                risk_distribution = cohort_statistics.get('risk_distribution', {})
+                if risk_distribution:
+                    print(f"   Risk Distribution: High {risk_distribution.get('high', 0):.1%}, Moderate {risk_distribution.get('moderate', 0):.1%}, Low {risk_distribution.get('low', 0):.1%}")
+            
+            recommendations = response.get('cohort_recommendations', [])
+            if recommendations:
+                print(f"   Cohort Recommendations: {len(recommendations)}")
+        return success
+
     # ========== CLINICAL TRIALS.GOV INTEGRATION TESTING ==========
 
     def test_clinical_trials_search_osteoarthritis(self):
