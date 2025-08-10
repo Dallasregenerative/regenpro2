@@ -8555,6 +8555,107 @@ def main():
         self.test_enhanced_explainable_ai_feature_interactions()
         self.test_enhanced_explainable_ai_transparency_assessment()
 
+    def run_critical_priority_tests(self):
+        """Run CRITICAL PRIORITY FEATURES testing as requested in review"""
+        print("🚀 Starting CRITICAL PRIORITY FEATURES Testing Suite")
+        print("=" * 80)
+        print("Testing three Critical Priority systems after comprehensive fixes:")
+        print("1. Living Evidence Engine System (should be 100% functional)")
+        print("2. Advanced Differential Diagnosis System (recently fixed)")
+        print("3. Enhanced Explainable AI System (comprehensive implementation)")
+        print("=" * 80)
+        
+        # Setup: Create patient for testing
+        print("\n🔧 SETUP: Creating test patient for Critical Priority testing")
+        print("-" * 60)
+        self.test_create_patient()
+        
+        if not self.patient_id:
+            print("❌ CRITICAL ERROR: Cannot proceed without patient ID")
+            return False
+        
+        # Setup: Generate protocol for testing
+        print("\n🔧 SETUP: Generating protocol for Critical Priority testing")
+        print("-" * 60)
+        self.test_generate_protocol_ai_optimized()
+        
+        # CRITICAL PRIORITY SYSTEM 1: Living Evidence Engine System
+        print("\n⭐ CRITICAL PRIORITY SYSTEM 1: LIVING EVIDENCE ENGINE SYSTEM")
+        print("-" * 60)
+        print("Expected: 100% functional (4/4 endpoints working)")
+        
+        living_evidence_tests = [
+            self.test_living_evidence_engine_protocol_mapping,
+            self.test_living_evidence_engine_living_reviews,
+            self.test_living_evidence_engine_protocol_retrieval,
+            self.test_living_evidence_engine_alerts
+        ]
+        
+        living_evidence_passed = 0
+        for test in living_evidence_tests:
+            if test():
+                living_evidence_passed += 1
+        
+        print(f"\n📊 Living Evidence Engine Results: {living_evidence_passed}/{len(living_evidence_tests)} tests passed")
+        
+        # CRITICAL PRIORITY SYSTEM 2: Advanced Differential Diagnosis System
+        print("\n⭐ CRITICAL PRIORITY SYSTEM 2: ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM")
+        print("-" * 60)
+        print("Expected: Fixed AttributeError issues, all 3 endpoints working")
+        
+        differential_diagnosis_tests = [
+            self.test_advanced_differential_diagnosis_comprehensive_differential,
+            self.test_advanced_differential_diagnosis_engine_status,
+            self.test_advanced_differential_diagnosis_retrieval
+        ]
+        
+        differential_diagnosis_passed = 0
+        for test in differential_diagnosis_tests:
+            if test():
+                differential_diagnosis_passed += 1
+        
+        print(f"\n📊 Advanced Differential Diagnosis Results: {differential_diagnosis_passed}/{len(differential_diagnosis_tests)} tests passed")
+        
+        # CRITICAL PRIORITY SYSTEM 3: Enhanced Explainable AI System
+        print("\n⭐ CRITICAL PRIORITY SYSTEM 3: ENHANCED EXPLAINABLE AI SYSTEM")
+        print("-" * 60)
+        print("Expected: All 5 endpoints functional with comprehensive implementation")
+        
+        explainable_ai_tests = [
+            self.test_enhanced_explainable_ai_enhanced_explanation,
+            self.test_enhanced_explainable_ai_explanation_retrieval,
+            self.test_enhanced_explainable_ai_visual_breakdown,
+            self.test_enhanced_explainable_ai_feature_interactions,
+            self.test_enhanced_explainable_ai_transparency_assessment
+        ]
+        
+        explainable_ai_passed = 0
+        for test in explainable_ai_tests:
+            if test():
+                explainable_ai_passed += 1
+        
+        print(f"\n📊 Enhanced Explainable AI Results: {explainable_ai_passed}/{len(explainable_ai_tests)} tests passed")
+        
+        # FINAL CRITICAL PRIORITY RESULTS
+        total_critical_tests = len(living_evidence_tests) + len(differential_diagnosis_tests) + len(explainable_ai_tests)
+        total_critical_passed = living_evidence_passed + differential_diagnosis_passed + explainable_ai_passed
+        
+        print("\n" + "=" * 80)
+        print("🏁 CRITICAL PRIORITY FEATURES TESTING COMPLETE")
+        print("=" * 80)
+        print(f"⭐ Living Evidence Engine: {living_evidence_passed}/{len(living_evidence_tests)} ({'✅ WORKING' if living_evidence_passed == len(living_evidence_tests) else '❌ ISSUES'})")
+        print(f"⭐ Advanced Differential Diagnosis: {differential_diagnosis_passed}/{len(differential_diagnosis_tests)} ({'✅ WORKING' if differential_diagnosis_passed == len(differential_diagnosis_tests) else '❌ ISSUES'})")
+        print(f"⭐ Enhanced Explainable AI: {explainable_ai_passed}/{len(explainable_ai_tests)} ({'✅ WORKING' if explainable_ai_passed == len(explainable_ai_tests) else '❌ ISSUES'})")
+        print("-" * 80)
+        print(f"📊 OVERALL CRITICAL PRIORITY SUCCESS: {total_critical_passed}/{total_critical_tests} ({(total_critical_passed / total_critical_tests * 100):.1f}%)")
+        
+        if total_critical_passed == total_critical_tests:
+            print("🎉 ALL CRITICAL PRIORITY FEATURES WORKING! Step 1 completion confirmed.")
+        else:
+            print("⚠️  Some Critical Priority features have issues. Check output above for details.")
+        
+        return total_critical_passed == total_critical_tests
+
     def run_advanced_differential_diagnosis_tests_only(self):
         """Run ONLY Advanced Differential Diagnosis System tests after troubleshoot agent fixes"""
         print("🚀 Testing ONLY Advanced Differential Diagnosis System After Troubleshoot Agent Fixes")
