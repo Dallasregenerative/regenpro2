@@ -2578,20 +2578,14 @@ function App() {
                   {patients.map((patient) => (
                     <div
                       key={patient.patient_id} 
-                      className={`cursor-pointer hover:shadow-md transition-all border-l-4 rounded-lg p-4 ${
+                      className={`hover:shadow-md transition-all border-l-4 rounded-lg p-4 ${
                         selectedPatient?.patient_id === patient.patient_id 
                           ? 'border-l-blue-600 bg-gradient-to-r from-blue-100 to-indigo-100 shadow-md' 
                           : 'border-l-indigo-500 bg-gradient-to-r from-indigo-50 to-purple-50'
                       }`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log("🔬 Records card clicked for:", patient.demographics?.name);
-                        handlePatientSelection(patient);
-                      }}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex-1">
                           <div className="flex items-center gap-3">
                             <h4 className="font-semibold text-indigo-900">{patient.demographics.name}</h4>
                             <div className="text-xs border border-slate-300 rounded px-2 py-1">
@@ -2604,8 +2598,20 @@ function App() {
                             Last Updated: {new Date(patient.updated_at).toLocaleDateString()}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mb-2">Active</div>
+                        <div className="text-right space-y-2">
+                          <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Active</div>
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log("🔬 Select Patient button clicked for:", patient.demographics?.name);
+                              handlePatientSelection(patient);
+                            }}
+                            size="sm"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white w-full"
+                          >
+                            Select Patient
+                          </Button>
                           <p className="text-xs text-slate-500">ID: {patient.patient_id.slice(0, 8)}...</p>
                         </div>
                       </div>
