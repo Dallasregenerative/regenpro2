@@ -4422,42 +4422,6 @@ async def perform_regulatory_comparison(
         logger.error(f"Regulatory comparison error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to perform regulatory comparison: {str(e)}")
 
-@api_router.get("/protocols/international-search")
-async def search_international_protocols(
-    condition: str,
-    medical_tradition: Optional[str] = None,
-    integration_level: Optional[str] = "moderate",
-    practitioner: Practitioner = Depends(get_current_practitioner)
-):
-    """Search for international protocols across medical traditions"""
-    
-    try:
-        # Initialize International Protocol Library service
-        from advanced_services import InternationalProtocolLibrary
-        protocol_library = InternationalProtocolLibrary(db)
-        await protocol_library.initialize_protocol_library()
-        
-        # Search international protocols
-        search_result = await protocol_library.search_international_protocols(
-            condition, medical_tradition, integration_level
-        )
-        
-        # Audit log
-        await db.audit_log.insert_one({
-            "timestamp": datetime.utcnow(),
-            "practitioner_id": practitioner.id,
-            "action": "international_protocol_search",
-            "condition": condition,
-            "medical_tradition": medical_tradition,
-            "search_id": search_result.get("search_id")
-        })
-        
-        return search_result
-        
-    except Exception as e:
-        logger.error(f"International protocol search error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to search international protocols: {str(e)}")
-
 class PeerConsultationRequest(BaseModel):
     case_summary: Optional[str] = "Case details to be provided"
     specialty: Optional[str] = "Regenerative Medicine"
