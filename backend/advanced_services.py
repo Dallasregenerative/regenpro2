@@ -4527,12 +4527,19 @@ class PersonalizedRiskAssessment:
         else:
             risk_factors["symptom_duration"] = {"score": 0.10, "impact": "positive", "description": "Recent symptom onset favors success"}
         
-        # Medical complexity factor
-        complexity_score = (
-            len(medical_history.get("past_medical_history", [])) +
-            len(medical_history.get("medications", [])) +
-            len(medical_history.get("allergies", []))
-        )
+        # Medical complexity factor - handle both list and dict formats
+        if isinstance(medical_history, list):
+            # Simple format: medical_history is just a list of conditions
+            complexity_score = len(medical_history)
+        elif isinstance(medical_history, dict):
+            # Complex format: medical_history is a dict with nested lists
+            complexity_score = (
+                len(medical_history.get("past_medical_history", [])) +
+                len(medical_history.get("medications", [])) +
+                len(medical_history.get("allergies", []))
+            )
+        else:
+            complexity_score = 0
         
         if complexity_score > 8:
             risk_factors["medical_complexity"] = {"score": -0.15, "impact": "negative", "description": "Complex medical history may impact success"}
