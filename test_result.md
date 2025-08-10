@@ -342,6 +342,114 @@ backend:
         agent: "testing"
         comment: "✅ PASSED - Patient data retrieval working with existing patient c458d177-712c-4eb9-8fd3-5f5e41fe7b71 (Sarah Chen). Protocol storage and retrieval functional. File association with patients working (13 files found). Patient creation and listing operational."
 
+  - task: "Phase 2: AI Clinical Intelligence System Status"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: System status endpoint functional. All Phase 2 components (Visual Explainable AI, Comparative Analytics, Risk Assessment) are initialized and operational. Returns comprehensive system status with usage statistics and capabilities."
+
+  - task: "Visual Explainable AI System with SHAP/LIME"
+    implemented: true
+    working: false
+    file: "backend/advanced_services.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: Visual explanation generation fails with error: 'list' object has no attribute 'get'. API returns fallback explanation instead of proper SHAP/LIME analysis. This prevents explanation ID generation and breaks the retrieval functionality. Code bug in advanced_services.py needs immediate fix."
+
+  - task: "GET Visual Explanation Retrieval"
+    implemented: true
+    working: false
+    file: "backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ FAILED: Cannot test retrieval because visual explanation generation doesn't produce valid explanation_id. Dependent on fixing the Visual Explainable AI generation bug."
+
+  - task: "Comparative Effectiveness Analytics"
+    implemented: true
+    working: false
+    file: "backend/advanced_services.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: Treatment comparison analysis returns 500 Internal Server Error. This is a server-side bug preventing head-to-head analysis, cost-effectiveness calculations, and network meta-analysis. Needs immediate debugging and fix."
+
+  - task: "GET Treatment Comparison Retrieval"
+    implemented: true
+    working: false
+    file: "backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ FAILED: Cannot test retrieval because treatment comparison generation fails with 500 error. Dependent on fixing the Comparative Effectiveness Analytics bug."
+
+  - task: "Treatment Effectiveness Data Endpoint"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Treatment effectiveness data endpoint works correctly. Returns proper data structure for condition-specific effectiveness metrics, though currently with limited real-world data (expected for new system)."
+
+  - task: "Personalized Risk Assessment System"
+    implemented: true
+    working: true
+    file: "backend/advanced_services.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Comprehensive risk assessment works excellently. Successfully processes complex patient data, generates multi-dimensional risk stratification (95% success probability, 5.5% adverse event risk), provides detailed monitoring plans, and calculates risk-benefit ratios. This is world-class functionality."
+
+  - task: "GET Risk Assessment Retrieval"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ PASSED: Risk assessment retrieval works perfectly. Successfully retrieves stored assessments with all details including patient ID, assessment timestamp, and comprehensive risk analysis data."
+
+  - task: "Patient Cohort Risk Stratification"
+    implemented: true
+    working: false
+    file: "backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: API parameter validation error (422). Endpoint expects treatment_type as query parameter and patient list as body, but current implementation has parameter mismatch. API design needs correction to match the intended functionality."
+
 frontend:
   - task: "File Upload Interface"
     implemented: true
