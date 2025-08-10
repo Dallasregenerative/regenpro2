@@ -110,6 +110,10 @@ function App() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patientAnalysis, setPatientAnalysis] = useState(null);
   const [generatedProtocol, setGeneratedProtocol] = useState(null);
+  const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
+  const [protocolGenerationLoading, setProtocolGenerationLoading] = useState(false);
+  const [aiDifferentialDiagnosis, setAiDifferentialDiagnosis] = useState(null);
+  const [explainableAiResults, setExplainableAiResults] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const [therapiesData, setTherapiesData] = useState(null);
   const [selectedSchool, setSelectedSchool] = useState("ai_optimized");
