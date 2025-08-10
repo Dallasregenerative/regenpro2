@@ -4646,6 +4646,7 @@ async def startup_advanced_services():
     """Initialize advanced AI services on startup"""
     global federated_service, pubmed_service, dicom_service, prediction_service, file_processor
     global visual_explainable_ai, comparative_analytics, personalized_risk_assessment
+    global regulatory_intelligence, protocol_library, collaboration_platform
     
     try:
         # Initialize existing advanced services
@@ -4661,6 +4662,12 @@ async def startup_advanced_services():
         comparative_analytics = ComparativeEffectivenessAnalytics(db)
         personalized_risk_assessment = PersonalizedRiskAssessment(db)
         
+        # Initialize Phase 3: Global Knowledge Engine services
+        from advanced_services import GlobalRegulatoryIntelligence, InternationalProtocolLibrary, CommunityCollaborationPlatform
+        regulatory_intelligence = GlobalRegulatoryIntelligence(db)
+        protocol_library = InternationalProtocolLibrary(db)
+        collaboration_platform = CommunityCollaborationPlatform(db)
+        
         # Initialize services
         await initialize_advanced_services(db)
         
@@ -4669,7 +4676,12 @@ async def startup_advanced_services():
         await comparative_analytics.initialize_comparative_analytics()
         await personalized_risk_assessment.initialize_risk_assessment()
         
-        logger.info("Advanced AI services, file processing, and Phase 2 Clinical Intelligence initialized successfully")
+        # Initialize Phase 3 services
+        await regulatory_intelligence.initialize_regulatory_intelligence()
+        await protocol_library.initialize_protocol_library()
+        await collaboration_platform.initialize_collaboration_platform()
+        
+        logger.info("Advanced AI services, Phase 2 Clinical Intelligence, and Phase 3 Global Knowledge Engine initialized successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize advanced services: {str(e)}")
