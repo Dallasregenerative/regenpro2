@@ -645,7 +645,10 @@ test_plan:
     - "Living Evidence Engine System"
     - "Advanced Differential Diagnosis System"
     - "Enhanced Explainable AI System"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Living Evidence Engine System"
+    - "Advanced Differential Diagnosis System"
+    - "Enhanced Explainable AI System"
   test_all: false
   test_priority: "high_first"
 
