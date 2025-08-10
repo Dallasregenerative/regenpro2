@@ -12106,6 +12106,191 @@ class AdvancedDifferentialDiagnosisEngine:
                 "fallback_mechanism": "Standard pathophysiology assessment"
             }
 
+    async def _perform_head_to_head_diagnostic_comparison(
+        self, differential_diagnoses: List[Dict]
+    ) -> Dict[str, Any]:
+        """Perform head-to-head comparative analysis of differential diagnoses"""
+        
+        try:
+            if len(differential_diagnoses) < 2:
+                return {
+                    "comparison_type": "single_diagnosis",
+                    "message": "Insufficient diagnoses for comparative analysis"
+                }
+            
+            comparisons = []
+            
+            # Compare top diagnoses pairwise
+            for i in range(min(3, len(differential_diagnoses))):
+                for j in range(i + 1, min(3, len(differential_diagnoses))):
+                    diagnosis_a = differential_diagnoses[i]
+                    diagnosis_b = differential_diagnoses[j]
+                    
+                    comparison = {
+                        "diagnosis_a": diagnosis_a.get("diagnosis", "Unknown"),
+                        "diagnosis_b": diagnosis_b.get("diagnosis", "Unknown"),
+                        "confidence_a": diagnosis_a.get("confidence_score", 0),
+                        "confidence_b": diagnosis_b.get("confidence_score", 0),
+                        "evidence_strength_a": diagnosis_a.get("evidence_strength", "moderate"),
+                        "evidence_strength_b": diagnosis_b.get("evidence_strength", "moderate"),
+                        "comparative_advantage": "diagnosis_a" if diagnosis_a.get("confidence_score", 0) > diagnosis_b.get("confidence_score", 0) else "diagnosis_b",
+                        "confidence_difference": abs(diagnosis_a.get("confidence_score", 0) - diagnosis_b.get("confidence_score", 0))
+                    }
+                    
+                    comparisons.append(comparison)
+            
+            # Overall comparative analysis
+            top_diagnosis = differential_diagnoses[0]
+            comparative_summary = {
+                "leading_diagnosis": top_diagnosis.get("diagnosis", "Unknown"),
+                "leading_confidence": top_diagnosis.get("confidence_score", 0),
+                "diagnostic_certainty": "high" if top_diagnosis.get("confidence_score", 0) > 0.8 else "moderate" if top_diagnosis.get("confidence_score", 0) > 0.6 else "low",
+                "alternative_considerations": len(differential_diagnoses) - 1,
+                "comparative_strength": "strong" if len(comparisons) > 0 and max(c["confidence_difference"] for c in comparisons) > 0.2 else "moderate"
+            }
+            
+            return {
+                "comparison_id": str(uuid.uuid4()),
+                "comparison_type": "head_to_head_differential",
+                "pairwise_comparisons": comparisons,
+                "comparative_summary": comparative_summary,
+                "clinical_interpretation": f"Leading diagnosis shows {comparative_summary['comparative_strength']} evidence compared to alternatives"
+            }
+            
+        except Exception as e:
+            logger.error(f"Head-to-head diagnostic comparison error: {str(e)}")
+            return {
+                "comparison_id": str(uuid.uuid4()),
+                "error": str(e),
+                "fallback_comparison": "Standard differential diagnosis ranking applied"
+            }
+
+    async def _generate_diagnosis_based_treatment_recommendations(
+        self, differential_diagnoses: List[Dict], patient_data: Dict
+    ) -> Dict[str, Any]:
+        """Generate treatment recommendations based on differential diagnoses"""
+        
+        try:
+            treatment_recommendations = []
+            
+            for diagnosis in differential_diagnoses[:3]:  # Top 3 diagnoses
+                diagnosis_name = diagnosis.get("diagnosis", "")
+                confidence = diagnosis.get("confidence_score", 0)
+                
+                if "osteoarthritis" in diagnosis_name.lower():
+                    recommendations = {
+                        "diagnosis": diagnosis_name,
+                        "confidence": confidence,
+                        "primary_treatments": [
+                            {
+                                "treatment": "Platelet-Rich Plasma (PRP)",
+                                "evidence_level": "Level II",
+                                "success_rate": "70-85%",
+                                "recommendation_strength": "Strong"
+                            },
+                            {
+                                "treatment": "Bone Marrow Aspirate Concentrate (BMAC)",
+                                "evidence_level": "Level II-III",
+                                "success_rate": "65-80%",
+                                "recommendation_strength": "Moderate"
+                            }
+                        ],
+                        "adjunctive_treatments": [
+                            "Physical therapy",
+                            "Weight management",
+                            "Activity modification"
+                        ],
+                        "monitoring_plan": {
+                            "follow_up_timeline": "6 weeks, 3 months, 6 months",
+                            "outcome_measures": ["Pain VAS", "WOMAC score", "Functional assessment"]
+                        }
+                    }
+                elif "rotator cuff" in diagnosis_name.lower():
+                    recommendations = {
+                        "diagnosis": diagnosis_name,
+                        "confidence": confidence,
+                        "primary_treatments": [
+                            {
+                                "treatment": "Platelet-Rich Plasma (PRP)",
+                                "evidence_level": "Level II",
+                                "success_rate": "75-90%",
+                                "recommendation_strength": "Strong"
+                            },
+                            {
+                                "treatment": "Stem Cell Therapy",
+                                "evidence_level": "Level III",
+                                "success_rate": "60-75%",
+                                "recommendation_strength": "Moderate"
+                            }
+                        ],
+                        "adjunctive_treatments": [
+                            "Physical therapy",
+                            "Range of motion exercises",
+                            "Activity modification"
+                        ],
+                        "monitoring_plan": {
+                            "follow_up_timeline": "4 weeks, 8 weeks, 3 months",
+                            "outcome_measures": ["Pain VAS", "Range of motion", "Strength testing"]
+                        }
+                    }
+                else:
+                    recommendations = {
+                        "diagnosis": diagnosis_name,
+                        "confidence": confidence,
+                        "primary_treatments": [
+                            {
+                                "treatment": "Regenerative Medicine Consultation",
+                                "evidence_level": "Clinical judgment",
+                                "success_rate": "Variable",
+                                "recommendation_strength": "Moderate"
+                            }
+                        ],
+                        "adjunctive_treatments": [
+                            "Conservative management",
+                            "Physical therapy",
+                            "Symptom monitoring"
+                        ],
+                        "monitoring_plan": {
+                            "follow_up_timeline": "4-6 weeks",
+                            "outcome_measures": ["Symptom assessment", "Functional evaluation"]
+                        }
+                    }
+                
+                treatment_recommendations.append(recommendations)
+            
+            # Overall treatment strategy
+            top_diagnosis = differential_diagnoses[0] if differential_diagnoses else {}
+            treatment_strategy = {
+                "primary_approach": "Regenerative medicine-focused",
+                "treatment_sequencing": "Conservative to advanced interventions",
+                "expected_timeline": "3-6 months for optimal outcomes",
+                "success_predictors": [
+                    "Patient age and activity level",
+                    "Severity of condition",
+                    "Previous treatment response"
+                ]
+            }
+            
+            return {
+                "recommendation_id": str(uuid.uuid4()),
+                "patient_id": patient_data.get("patient_id", "unknown"),
+                "diagnosis_based_recommendations": treatment_recommendations,
+                "overall_treatment_strategy": treatment_strategy,
+                "evidence_summary": {
+                    "total_recommendations": len(treatment_recommendations),
+                    "high_evidence_treatments": len([r for rec in treatment_recommendations for r in rec.get("primary_treatments", []) if "Level II" in r.get("evidence_level", "")]),
+                    "regenerative_options": len([r for rec in treatment_recommendations for r in rec.get("primary_treatments", []) if any(term in r.get("treatment", "").lower() for term in ["prp", "stem", "bmac"])])
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"Diagnosis-based treatment recommendations error: {str(e)}")
+            return {
+                "recommendation_id": str(uuid.uuid4()),
+                "error": str(e),
+                "fallback_recommendations": "Standard treatment protocols recommended"
+            }
+
 
 # Advanced DICOM Processing Service
 class DICOMProcessingService:
