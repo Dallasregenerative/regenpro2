@@ -2605,6 +2605,7 @@ function App() {
                               e.preventDefault();
                               e.stopPropagation();
                               console.log("🔬 Select Patient button clicked for:", patient.demographics?.name);
+                              alert(`Button clicked for: ${patient.demographics?.name}`);
                               handlePatientSelection(patient);
                             }}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded w-full transition-colors"
