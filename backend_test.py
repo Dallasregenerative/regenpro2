@@ -1394,6 +1394,95 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return success
 
+    # ========== ENHANCED EXPLAINABLE AI TESTING (OBJECTID FIX VERIFICATION) ==========
+    # Testing Enhanced Explainable AI after ObjectId cleaning fix
+    
+    def test_enhanced_explainable_ai_generation(self):
+        """Test POST /api/ai/enhanced-explanation - Enhanced Explainable AI after ObjectId fix"""
+        
+        # Use the exact test data provided in the review request
+        test_data = {
+            "model_prediction": {
+                "diagnosis": "Osteoarthritis",
+                "confidence_score": 0.85,
+                "severity_score": 0.7
+            },
+            "patient_data": {
+                "patient_id": "test_patient_123",
+                "demographics": {
+                    "age": 58,
+                    "gender": "female"
+                },
+                "medical_history": ["Hypertension"]
+            },
+            "explanation_type": "comprehensive"
+        }
+
+        print("   Testing Enhanced Explainable AI generation after ObjectId fix...")
+        print("   This should NOT return 500 Internal Server Error anymore...")
+        success, response = self.run_test(
+            "OBJECTID FIX: Enhanced Explainable AI Generation",
+            "POST",
+            "ai/enhanced-explanation",
+            200,
+            data=test_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   ✅ SUCCESS: No more 500 Internal Server Error!")
+            print(f"   Status: {response.get('status', 'Unknown')}")
+            
+            # Check for explanation_id generation
+            enhanced_explanation = response.get('enhanced_explanation', {})
+            explanation_id = enhanced_explanation.get('explanation_id')
+            
+            if explanation_id:
+                print(f"   ✅ Explanation ID Generated: {explanation_id}")
+                # Store for potential retrieval testing
+                if not hasattr(self, 'explanation_id'):
+                    self.explanation_id = explanation_id
+            else:
+                print(f"   ⚠️  No explanation_id found in response")
+            
+            # Check for advanced features
+            advanced_features = response.get('advanced_features', [])
+            print(f"   Advanced Features Available: {len(advanced_features)}")
+            
+            # Check for SHAP analysis
+            shap_analysis = enhanced_explanation.get('advanced_shap_analysis', {})
+            if shap_analysis:
+                print(f"   ✅ SHAP Analysis Present: {shap_analysis.get('analysis_type', 'Unknown')}")
+                print(f"   Base Value: {shap_analysis.get('base_value', 0)}")
+                print(f"   Prediction Value: {shap_analysis.get('prediction_value', 0)}")
+            
+            # Check for LIME analysis
+            lime_analysis = enhanced_explanation.get('enhanced_lime_analysis', {})
+            if lime_analysis:
+                print(f"   ✅ LIME Analysis Present: {lime_analysis.get('analysis_type', 'Unknown')}")
+            
+            # Check for visual breakdowns
+            visual_breakdowns = enhanced_explanation.get('visual_breakdowns', {})
+            if visual_breakdowns:
+                print(f"   ✅ Visual Breakdowns Generated: {len(visual_breakdowns.get('chart_types', []))}")
+            
+            # Check for transparency assessment
+            transparency = enhanced_explanation.get('transparency_assessment', {})
+            if transparency:
+                print(f"   ✅ Transparency Score: {transparency.get('transparency_score', 0):.2f}")
+            
+            # Check quality metrics
+            quality_metrics = enhanced_explanation.get('quality_metrics', {})
+            if quality_metrics:
+                print(f"   Quality Metrics:")
+                print(f"     Explanation Fidelity: {quality_metrics.get('explanation_fidelity', 0):.2f}")
+                print(f"     Interpretability Score: {quality_metrics.get('interpretability_score', 0):.2f}")
+                print(f"     Clinical Relevance: {quality_metrics.get('clinical_relevance', 0):.2f}")
+        else:
+            print(f"   ❌ FAILED: Still returning errors - ObjectId fix may not be complete")
+        
+        return success
+
     # ========== CRITICAL PRIORITY FEATURES TESTING ==========
     # Testing the three newly implemented "Critical Priority" features
 
