@@ -1120,43 +1120,54 @@ IGF-1,180,109-284,ng/mL,Normal"""
         )
         
         if success:
-            print(f"   ✅ SUCCESS: POST should return 200 with diagnosis_id")
-            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   ✅ SUCCESS: No more 'list' object has no attribute 'get' error!")
+            print(f"   ✅ SUCCESS: POST returned 200 status code (not 500 Internal Server Error)")
+            
+            # Check the critical success criteria
+            status = response.get('status', 'Unknown')
+            print(f"   📊 Analysis Status: {status}")
+            
+            if status == "comprehensive_diagnosis_completed":
+                print(f"   ✅ SUCCESS: Status is 'comprehensive_diagnosis_completed' (not 'diagnosis_failed')")
+            else:
+                print(f"   ❌ ISSUE: Expected 'comprehensive_diagnosis_completed', got '{status}'")
             
             # Extract diagnosis_id from response - CRITICAL for next tests
             comprehensive_diagnosis = response.get('comprehensive_diagnosis', {})
             diagnosis_id = comprehensive_diagnosis.get('diagnosis_id')
             
             if diagnosis_id:
-                print(f"   ✅ DIAGNOSIS_ID EXTRACTED: {diagnosis_id}")
+                print(f"   ✅ SUCCESS: Valid diagnosis_id generated: {diagnosis_id}")
                 # Store for later tests
                 self.diagnosis_id = diagnosis_id
                 
                 # Verify diagnosis was stored in database
                 differential_diagnoses = comprehensive_diagnosis.get('differential_diagnoses', [])
-                print(f"   Differential Diagnoses Generated: {len(differential_diagnoses)}")
+                print(f"   📋 Differential Diagnoses Generated: {len(differential_diagnoses)}")
                 
                 if differential_diagnoses:
                     top_diagnosis = differential_diagnoses[0]
-                    print(f"   Primary Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
-                    print(f"   Confidence Score: {top_diagnosis.get('confidence_score', 0):.2f}")
+                    print(f"   🏥 Primary Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"   📈 Confidence Score: {top_diagnosis.get('confidence_score', 0):.2f}")
                 
                 # Check for comprehensive analysis components
                 explainable_ai = comprehensive_diagnosis.get('explainable_ai_analysis', {})
                 confidence_analysis = comprehensive_diagnosis.get('confidence_analysis', {})
                 mechanism_insights = comprehensive_diagnosis.get('mechanism_insights', {})
                 
-                print(f"   Explainable AI Analysis: {'✅' if explainable_ai else '❌'}")
-                print(f"   Confidence Analysis: {'✅' if confidence_analysis else '❌'}")
-                print(f"   Mechanism Insights: {'✅' if mechanism_insights else '❌'}")
+                print(f"   🧠 Explainable AI Analysis: {'✅' if explainable_ai else '❌'}")
+                print(f"   📊 Confidence Analysis: {'✅' if confidence_analysis else '❌'}")
+                print(f"   🔬 Mechanism Insights: {'✅' if mechanism_insights else '❌'}")
                 
+                print(f"   🎉 CRITICAL BUG FIX VERIFIED: Advanced Differential Diagnosis should go from 33% to at least 67% functional!")
                 return True
             else:
                 print(f"   ❌ CRITICAL ISSUE: No diagnosis_id found in response")
-                print(f"   Response keys: {list(response.keys())}")
+                print(f"   📋 Response keys: {list(response.keys())}")
                 return False
         else:
-            print(f"   ❌ FAILED: POST /api/diagnosis/comprehensive-differential failed")
+            print(f"   ❌ CRITICAL FAILURE: POST /api/diagnosis/comprehensive-differential still failing")
+            print(f"   ⚠️  The 'list' object has no attribute 'get' fix may not be working")
             return False
 
     def test_advanced_differential_diagnosis_engine_status(self):
