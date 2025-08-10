@@ -427,12 +427,14 @@ function App() {
   };
 
   const runIntegratedAiAnalysis = async (patientId) => {
+    console.log("🔬 Starting integrated AI analysis for patient:", patientId);
     setAiAnalysisLoading(true);
     setPatientAnalysis(null);
     setAiDifferentialDiagnosis(null);
     setExplainableAiResults(null);
     
     try {
+      console.log("📊 Running comprehensive patient analysis...");
       // Run comprehensive patient analysis
       const analysisResponse = await axios.post(`${API}/patients/${patientId}/analyze`, {
         analysis_type: "comprehensive",
@@ -442,7 +444,9 @@ function App() {
         headers: { Authorization: `Bearer demo-token` }
       });
       setPatientAnalysis(analysisResponse.data);
+      console.log("✅ Patient analysis completed");
 
+      console.log("🧠 Running advanced differential diagnosis...");
       // Run advanced differential diagnosis
       const diagnosisResponse = await axios.post(`${API}/diagnosis/comprehensive-differential`, {
         patient_id: patientId,
@@ -452,7 +456,9 @@ function App() {
         headers: { Authorization: `Bearer demo-token` }
       });
       setAiDifferentialDiagnosis(diagnosisResponse.data);
+      console.log("✅ Differential diagnosis completed");
 
+      console.log("🔍 Running explainable AI analysis...");
       // Run explainable AI analysis
       const explainableResponse = await axios.post(`${API}/ai/enhanced-explanation`, {
         patient_id: patientId,
@@ -462,12 +468,14 @@ function App() {
         headers: { Authorization: `Bearer demo-token` }
       });
       setExplainableAiResults(explainableResponse.data);
+      console.log("✅ Explainable AI completed");
 
     } catch (error) {
-      console.error("Integrated AI analysis failed:", error);
+      console.error("❌ Integrated AI analysis failed:", error);
       alert("AI analysis failed. Please try again.");
     } finally {
       setAiAnalysisLoading(false);
+      console.log("🏁 AI analysis process completed");
     }
   };
 
