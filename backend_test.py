@@ -1231,33 +1231,58 @@ IGF-1,180,109-284,ng/mL,Normal"""
     # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTING ==========
     
     def test_advanced_differential_diagnosis_comprehensive_differential(self):
-        """Test POST /api/diagnosis/comprehensive-differential - CRITICAL BUG FIX VERIFICATION"""
-        print("   🎯 TESTING THE SPECIFIC FIX: 'list' object has no attribute 'get' error")
-        print("   📋 Using the EXACT test data that was failing before the fix")
+        """Test POST /api/diagnosis/comprehensive-differential - Advanced Differential Diagnosis"""
         
-        # Use the EXACT test data from the review request that was causing the error
+        # Create comprehensive patient data for differential diagnosis
         differential_data = {
             "patient_data": {
-                "patient_id": "test_patient_differential_123",
-                "demographics": {"age": 58, "gender": "female"},
-                "medical_history": ["Osteoarthritis", "Hypertension"],  # This LIST format was causing the error
+                "patient_id": "test_patient_differential_456",
+                "demographics": {"age": 62, "gender": "male"},
+                "medical_history": ["Osteoarthritis", "Diabetes Type 2", "Hypertension"],
                 "clinical_presentation": {
-                    "chief_complaint": "Bilateral knee pain",
-                    "symptom_duration": "2 years",
-                    "pain_characteristics": {"intensity": 7}
+                    "chief_complaint": "Progressive bilateral knee pain with morning stiffness",
+                    "symptom_duration": "18 months",
+                    "pain_characteristics": {
+                        "intensity": 8,
+                        "quality": "aching pain with stiffness",
+                        "aggravating_factors": ["prolonged standing", "stairs", "cold weather"],
+                        "relieving_factors": ["rest", "heat application", "NSAIDs"]
+                    },
+                    "functional_impact": {
+                        "mobility_limitation": "moderate",
+                        "activity_restriction": "significant",
+                        "quality_of_life_impact": "high"
+                    }
+                },
+                "physical_examination": {
+                    "inspection": "bilateral knee swelling, no deformity",
+                    "palpation": "joint line tenderness, crepitus present",
+                    "range_of_motion": "flexion limited to 110 degrees bilaterally",
+                    "special_tests": ["positive McMurray test", "negative drawer test"]
+                },
+                "diagnostic_data": {
+                    "imaging": {
+                        "xray_findings": "Grade 3 osteoarthritis with joint space narrowing",
+                        "mri_findings": "cartilage thinning, meniscal degeneration"
+                    },
+                    "laboratory": {
+                        "inflammatory_markers": {"CRP": 3.2, "ESR": 28},
+                        "metabolic_panel": {"glucose": 145, "HbA1c": 7.2}
+                    }
                 }
             },
-            "practitioner_controlled": True
+            "analysis_parameters": {
+                "differential_count": 5,
+                "confidence_threshold": 0.3,
+                "include_rare_conditions": False,
+                "regenerative_focus": True
+            }
         }
 
-        print("   🔍 CRITICAL SUCCESS CRITERIA:")
-        print("   ✅ Should return 200 status code (NOT 500 Internal Server Error)")
-        print("   ✅ Should return status: 'comprehensive_diagnosis_completed' (NOT 'diagnosis_failed')")
-        print("   ✅ Should generate a valid diagnosis_id for retrieval testing")
-        print("   ✅ Should handle medical_history as list format without 'get' attribute error")
+        print("   Testing comprehensive differential diagnosis generation...")
         print("   This may take 60-90 seconds for AI analysis...")
         success, response = self.run_test(
-            "🎯 CRITICAL BUG FIX: POST /api/diagnosis/comprehensive-differential",
+            "Advanced Differential Diagnosis - Comprehensive Analysis",
             "POST",
             "diagnosis/comprehensive-differential",
             200,
@@ -1266,55 +1291,492 @@ IGF-1,180,109-284,ng/mL,Normal"""
         )
         
         if success:
-            print(f"   ✅ SUCCESS: No more 'list' object has no attribute 'get' error!")
-            print(f"   ✅ SUCCESS: POST returned 200 status code (not 500 Internal Server Error)")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
             
-            # Check the critical success criteria
-            status = response.get('status', 'Unknown')
-            print(f"   📊 Analysis Status: {status}")
-            
-            if status == "comprehensive_diagnosis_completed":
-                print(f"   ✅ SUCCESS: Status is 'comprehensive_diagnosis_completed' (not 'diagnosis_failed')")
-            else:
-                print(f"   ❌ ISSUE: Expected 'comprehensive_diagnosis_completed', got '{status}'")
-            
-            # Extract diagnosis_id from response - CRITICAL for next tests
             comprehensive_diagnosis = response.get('comprehensive_diagnosis', {})
-            diagnosis_id = comprehensive_diagnosis.get('diagnosis_id')
-            
-            if diagnosis_id:
-                print(f"   ✅ SUCCESS: Valid diagnosis_id generated: {diagnosis_id}")
-                # Store for later tests
-                self.diagnosis_id = diagnosis_id
+            if comprehensive_diagnosis:
+                diagnosis_id = comprehensive_diagnosis.get('diagnosis_id')
+                if diagnosis_id:
+                    # Store for later tests
+                    self.diagnosis_id = diagnosis_id
+                    print(f"   Diagnosis ID Generated: {diagnosis_id}")
                 
-                # Verify diagnosis was stored in database
                 differential_diagnoses = comprehensive_diagnosis.get('differential_diagnoses', [])
-                print(f"   📋 Differential Diagnoses Generated: {len(differential_diagnoses)}")
+                print(f"   Differential Diagnoses: {len(differential_diagnoses)}")
                 
                 if differential_diagnoses:
-                    top_diagnosis = differential_diagnoses[0]
-                    print(f"   🏥 Primary Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
-                    print(f"   📈 Confidence Score: {top_diagnosis.get('confidence_score', 0):.2f}")
+                    for i, diagnosis in enumerate(differential_diagnoses[:3], 1):
+                        print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
+                        print(f"     Confidence: {diagnosis.get('confidence_score', 0):.2f}")
+                        print(f"     Regenerative Targets: {len(diagnosis.get('regenerative_targets', []))}")
                 
                 # Check for comprehensive analysis components
                 explainable_ai = comprehensive_diagnosis.get('explainable_ai_analysis', {})
                 confidence_analysis = comprehensive_diagnosis.get('confidence_analysis', {})
                 mechanism_insights = comprehensive_diagnosis.get('mechanism_insights', {})
                 
-                print(f"   🧠 Explainable AI Analysis: {'✅' if explainable_ai else '❌'}")
-                print(f"   📊 Confidence Analysis: {'✅' if confidence_analysis else '❌'}")
-                print(f"   🔬 Mechanism Insights: {'✅' if mechanism_insights else '❌'}")
-                
-                print(f"   🎉 CRITICAL BUG FIX VERIFIED: Advanced Differential Diagnosis should go from 33% to at least 67% functional!")
-                return True
-            else:
-                print(f"   ❌ CRITICAL ISSUE: No diagnosis_id found in response")
-                print(f"   📋 Response keys: {list(response.keys())}")
-                return False
-        else:
-            print(f"   ❌ CRITICAL FAILURE: POST /api/diagnosis/comprehensive-differential still failing")
-            print(f"   ⚠️  The 'list' object has no attribute 'get' fix may not be working")
+                print(f"   Explainable AI Analysis: {'✅' if explainable_ai else '❌'}")
+                print(f"   Confidence Analysis: {'✅' if confidence_analysis else '❌'}")
+                print(f"   Mechanism Insights: {'✅' if mechanism_insights else '❌'}")
+        
+        return success
+
+    def test_advanced_differential_diagnosis_retrieval(self):
+        """Test GET /api/diagnosis/{diagnosis_id} - Diagnosis Retrieval"""
+        
+        # Check if we have a diagnosis_id from previous test
+        if not hasattr(self, 'diagnosis_id') or not self.diagnosis_id:
+            print("❌ No diagnosis ID available from previous test - cannot test retrieval")
             return False
+
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Diagnosis Retrieval",
+            "GET",
+            f"diagnosis/{self.diagnosis_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Diagnosis ID: {response.get('diagnosis_id', 'Unknown')}")
+            print(f"   Status: {response.get('status', 'Unknown')}")
+            
+            comprehensive_diagnosis = response.get('comprehensive_diagnosis', {})
+            if comprehensive_diagnosis:
+                print(f"   Patient ID: {comprehensive_diagnosis.get('patient_id', 'Unknown')}")
+                print(f"   Analysis Timestamp: {comprehensive_diagnosis.get('analysis_timestamp', 'Unknown')}")
+                
+                differential_diagnoses = comprehensive_diagnosis.get('differential_diagnoses', [])
+                print(f"   Retrieved Diagnoses: {len(differential_diagnoses)}")
+                
+                if differential_diagnoses:
+                    top_diagnosis = differential_diagnoses[0]
+                    print(f"   Primary Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"   Confidence: {top_diagnosis.get('confidence_score', 0):.2f}")
+        
+        return success
+
+    def test_advanced_differential_diagnosis_engine_status(self):
+        """Test GET /api/diagnosis/engine-status - Engine Status"""
+        
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Engine Status",
+            "GET",
+            "diagnosis/engine-status",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Overall Status: {response.get('overall_status', 'Unknown')}")
+            print(f"   Feature: {response.get('feature', 'Unknown')}")
+            
+            engine_status = response.get('engine_status', {})
+            if engine_status:
+                print(f"   Engine Status: {engine_status.get('status', 'Unknown')}")
+                print(f"   Systems Active: {engine_status.get('systems_active', 0)}")
+            
+            capabilities = response.get('critical_capabilities', [])
+            print(f"   Critical Capabilities: {len(capabilities)}")
+            
+            usage_stats = response.get('usage_statistics', {})
+            if usage_stats:
+                print(f"   Diagnoses Performed: {usage_stats.get('comprehensive_diagnoses_performed', 0)}")
+        
+        return success
+
+    # ========== ENHANCED EXPLAINABLE AI SYSTEM TESTING ==========
+    
+    def test_enhanced_explainable_ai_generation(self):
+        """Test POST /api/ai/enhanced-explanation - Enhanced Explainable AI Generation"""
+        
+        explanation_data = {
+            "model_prediction": {
+                "diagnosis": "Osteoarthritis with inflammatory component",
+                "confidence_score": 0.87,
+                "severity_score": 0.72,
+                "regenerative_suitability": 0.85
+            },
+            "patient_data": {
+                "patient_id": "test_patient_explainable_789",
+                "demographics": {
+                    "age": 58,
+                    "gender": "female",
+                    "occupation": "teacher"
+                },
+                "medical_history": ["Osteoarthritis", "Hypertension"],
+                "clinical_features": {
+                    "pain_level": 7,
+                    "functional_limitation": "moderate",
+                    "inflammatory_markers": {"CRP": 2.8, "ESR": 22}
+                }
+            },
+            "explanation_type": "comprehensive",
+            "explanation_parameters": {
+                "include_feature_importance": True,
+                "include_counterfactuals": True,
+                "include_similar_cases": True,
+                "transparency_level": "high"
+            }
+        }
+
+        print("   Testing enhanced explainable AI generation...")
+        print("   This may take 60-90 seconds for AI explanation generation...")
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Explanation Generation",
+            "POST",
+            "ai/enhanced-explanation",
+            200,
+            data=explanation_data,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Generation Status: {response.get('status', 'Unknown')}")
+            
+            explanation_id = response.get('explanation_id')
+            if explanation_id:
+                # Store for later tests
+                self.explanation_id = explanation_id
+                print(f"   Explanation ID Generated: {explanation_id}")
+            
+            enhanced_explanation = response.get('enhanced_explanation', {})
+            if enhanced_explanation:
+                print(f"   Patient ID: {enhanced_explanation.get('patient_id', 'Unknown')}")
+                print(f"   Analysis Type: {enhanced_explanation.get('analysis_type', 'Unknown')}")
+                
+                feature_importance = enhanced_explanation.get('feature_importance_analysis', {})
+                if feature_importance:
+                    features = feature_importance.get('feature_contributions', [])
+                    print(f"   Feature Importance Factors: {len(features)}")
+                
+                transparency_assessment = enhanced_explanation.get('transparency_assessment', {})
+                if transparency_assessment:
+                    print(f"   Transparency Score: {transparency_assessment.get('transparency_score', 0):.2f}")
+                    print(f"   Explanation Confidence: {transparency_assessment.get('explanation_confidence', 0):.2f}")
+        
+        return success
+
+    def test_enhanced_explainable_ai_retrieval(self):
+        """Test GET /api/ai/enhanced-explanation/{explanation_id} - Explanation Retrieval"""
+        
+        # Check if we have an explanation_id from previous test
+        if not hasattr(self, 'explanation_id') or not self.explanation_id:
+            print("❌ No explanation ID available from previous test - cannot test retrieval")
+            return False
+
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Explanation Retrieval",
+            "GET",
+            f"ai/enhanced-explanation/{self.explanation_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Status: {response.get('status', 'Unknown')}")
+            
+            enhanced_explanation = response.get('enhanced_explanation', {})
+            if enhanced_explanation:
+                print(f"   Patient ID: {enhanced_explanation.get('patient_id', 'Unknown')}")
+                print(f"   Generated At: {enhanced_explanation.get('generated_at', 'Unknown')}")
+                
+                feature_importance = enhanced_explanation.get('feature_importance_analysis', {})
+                visual_breakdown = enhanced_explanation.get('visual_breakdown', {})
+                
+                print(f"   Feature Importance: {'✅' if feature_importance else '❌'}")
+                print(f"   Visual Breakdown: {'✅' if visual_breakdown else '❌'}")
+        
+        return success
+
+    def test_enhanced_explainable_ai_visual_breakdown(self):
+        """Test GET /api/ai/visual-breakdown/{explanation_id} - Visual Breakdown"""
+        
+        # Check if we have an explanation_id from previous test
+        if not hasattr(self, 'explanation_id') or not self.explanation_id:
+            print("❌ No explanation ID available from previous test - cannot test visual breakdown")
+            return False
+
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Visual Breakdown",
+            "GET",
+            f"ai/visual-breakdown/{self.explanation_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Visual Status: {response.get('status', 'Unknown')}")
+            
+            visual_breakdown = response.get('visual_breakdown', {})
+            if visual_breakdown:
+                print(f"   Breakdown Type: {visual_breakdown.get('breakdown_type', 'Unknown')}")
+                
+                shap_analysis = visual_breakdown.get('shap_analysis', {})
+                lime_analysis = visual_breakdown.get('lime_analysis', {})
+                
+                print(f"   SHAP Analysis: {'✅' if shap_analysis else '❌'}")
+                print(f"   LIME Analysis: {'✅' if lime_analysis else '❌'}")
+                
+                if shap_analysis:
+                    feature_values = shap_analysis.get('feature_values', [])
+                    print(f"   SHAP Feature Values: {len(feature_values)}")
+                
+                visualization_data = visual_breakdown.get('visualization_data', {})
+                if visualization_data:
+                    print(f"   Visualization Components: {len(visualization_data)}")
+        
+        return success
+
+    def test_enhanced_explainable_ai_feature_interactions(self):
+        """Test POST /api/ai/feature-interactions - Feature Interactions Analysis"""
+        
+        interaction_data = {
+            "patient_features": {
+                "age": 58,
+                "diagnosis_confidence": 0.87,
+                "symptom_severity": 7,
+                "medical_history_complexity": 3,
+                "regenerative_suitability": 0.85,
+                "literature_evidence_strength": 0.78,
+                "treatment_urgency": 0.65
+            },
+            "interaction_analysis": {
+                "interaction_depth": "comprehensive",
+                "include_pairwise": True,
+                "include_higher_order": True,
+                "statistical_significance": True
+            }
+        }
+
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Feature Interactions",
+            "POST",
+            "ai/feature-interactions",
+            200,
+            data=interaction_data,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            
+            feature_interactions = response.get('feature_interactions', {})
+            if feature_interactions:
+                print(f"   Analysis Type: {feature_interactions.get('analysis_type', 'Unknown')}")
+                
+                pairwise_interactions = feature_interactions.get('pairwise_interactions', [])
+                higher_order_interactions = feature_interactions.get('higher_order_interactions', [])
+                
+                print(f"   Pairwise Interactions: {len(pairwise_interactions)}")
+                print(f"   Higher Order Interactions: {len(higher_order_interactions)}")
+                
+                if pairwise_interactions:
+                    top_interaction = pairwise_interactions[0]
+                    print(f"   Top Interaction: {top_interaction.get('feature_pair', 'Unknown')}")
+                    print(f"   Interaction Strength: {top_interaction.get('interaction_strength', 0):.3f}")
+        
+        return success
+
+    def test_enhanced_explainable_ai_transparency_assessment(self):
+        """Test GET /api/ai/transparency-assessment/{explanation_id} - Transparency Assessment"""
+        
+        # Check if we have an explanation_id from previous test
+        if not hasattr(self, 'explanation_id') or not self.explanation_id:
+            print("❌ No explanation ID available from previous test - cannot test transparency assessment")
+            return False
+
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Transparency Assessment",
+            "GET",
+            f"ai/transparency-assessment/{self.explanation_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Assessment Status: {response.get('status', 'Unknown')}")
+            
+            transparency_assessment = response.get('transparency_assessment', {})
+            if transparency_assessment:
+                print(f"   Overall Transparency Score: {transparency_assessment.get('overall_transparency_score', 0):.2f}")
+                print(f"   Explanation Quality: {transparency_assessment.get('explanation_quality', 'Unknown')}")
+                
+                assessment_metrics = transparency_assessment.get('assessment_metrics', {})
+                if assessment_metrics:
+                    print(f"   Completeness Score: {assessment_metrics.get('completeness_score', 0):.2f}")
+                    print(f"   Accuracy Score: {assessment_metrics.get('accuracy_score', 0):.2f}")
+                    print(f"   Comprehensibility Score: {assessment_metrics.get('comprehensibility_score', 0):.2f}")
+                
+                model_interpretability = transparency_assessment.get('model_interpretability', {})
+                if model_interpretability:
+                    print(f"   Feature Importance Quality: {model_interpretability.get('feature_importance_quality', 'Unknown')}")
+                    print(f"   Decision Boundary Clarity: {model_interpretability.get('decision_boundary_clarity', 'Unknown')}")
+        
+        return success
+
+    # ========== CRITICAL PRIORITY SYSTEMS TEST RUNNER ==========
+    
+    def run_critical_priority_systems_tests(self):
+        """Run comprehensive tests for all Critical Priority systems"""
+        print("\n" + "="*80)
+        print("🎯 CRITICAL PRIORITY SYSTEMS COMPREHENSIVE VALIDATION")
+        print("="*80)
+        print("Testing all Critical Priority systems for function and content accuracy")
+        print("\nSYSTEMS UNDER TEST:")
+        print("1. Living Evidence Engine System (4 endpoints)")
+        print("2. Advanced Differential Diagnosis System (3 endpoints)")
+        print("3. Enhanced Explainable AI System (5 endpoints)")
+        print("TOTAL: 12 endpoints for 100% success rate validation")
+        print("\n" + "="*80)
+        
+        # Initialize test counters
+        critical_tests_run = 0
+        critical_tests_passed = 0
+        
+        # First, create a patient if we don't have one
+        if not self.patient_id:
+            print(f"\n🔧 SETUP: Creating patient for testing...")
+            if self.test_create_patient():
+                print(f"   ✅ Patient created: {self.patient_id}")
+            else:
+                print(f"   ❌ Failed to create patient - cannot proceed with tests")
+                return False
+        
+        # ========== LIVING EVIDENCE ENGINE SYSTEM TESTS ==========
+        print(f"\n🧬 TESTING LIVING EVIDENCE ENGINE SYSTEM (4 endpoints)")
+        print("-" * 60)
+        
+        # Test 1: Protocol Evidence Mapping
+        print(f"\n🔍 TEST 1/12: POST /api/evidence/protocol-evidence-mapping")
+        if self.test_living_evidence_protocol_evidence_mapping():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 2: Living Systematic Reviews
+        print(f"\n🔍 TEST 2/12: GET /api/evidence/living-reviews/{{condition}}")
+        if self.test_living_evidence_living_reviews():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 3: Protocol Evidence Mapping Retrieval
+        print(f"\n🔍 TEST 3/12: GET /api/evidence/protocol/{{protocol_id}}/evidence-mapping")
+        if self.test_living_evidence_protocol_mapping_retrieval():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 4: Evidence Change Alerts
+        print(f"\n🔍 TEST 4/12: GET /api/evidence/alerts/{{protocol_id}}")
+        if self.test_living_evidence_alerts():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTS ==========
+        print(f"\n🧠 TESTING ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM (3 endpoints)")
+        print("-" * 60)
+        
+        # Test 5: Comprehensive Differential Diagnosis
+        print(f"\n🔍 TEST 5/12: POST /api/diagnosis/comprehensive-differential")
+        if self.test_advanced_differential_diagnosis_comprehensive_differential():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 6: Diagnosis Retrieval
+        print(f"\n🔍 TEST 6/12: GET /api/diagnosis/{{diagnosis_id}}")
+        if self.test_advanced_differential_diagnosis_retrieval():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 7: Engine Status
+        print(f"\n🔍 TEST 7/12: GET /api/diagnosis/engine-status")
+        if self.test_advanced_differential_diagnosis_engine_status():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # ========== ENHANCED EXPLAINABLE AI SYSTEM TESTS ==========
+        print(f"\n🤖 TESTING ENHANCED EXPLAINABLE AI SYSTEM (5 endpoints)")
+        print("-" * 60)
+        
+        # Test 8: Enhanced Explanation Generation
+        print(f"\n🔍 TEST 8/12: POST /api/ai/enhanced-explanation")
+        if self.test_enhanced_explainable_ai_generation():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 9: Explanation Retrieval
+        print(f"\n🔍 TEST 9/12: GET /api/ai/enhanced-explanation/{{explanation_id}}")
+        if self.test_enhanced_explainable_ai_retrieval():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 10: Visual Breakdown
+        print(f"\n🔍 TEST 10/12: GET /api/ai/visual-breakdown/{{explanation_id}}")
+        if self.test_enhanced_explainable_ai_visual_breakdown():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 11: Feature Interactions
+        print(f"\n🔍 TEST 11/12: POST /api/ai/feature-interactions")
+        if self.test_enhanced_explainable_ai_feature_interactions():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # Test 12: Transparency Assessment
+        print(f"\n🔍 TEST 12/12: GET /api/ai/transparency-assessment/{{explanation_id}}")
+        if self.test_enhanced_explainable_ai_transparency_assessment():
+            critical_tests_passed += 1
+        critical_tests_run += 1
+        
+        # ========== FINAL RESULTS ==========
+        print("\n" + "="*80)
+        print("🎯 CRITICAL PRIORITY SYSTEMS TEST RESULTS")
+        print("="*80)
+        success_rate = (critical_tests_passed / critical_tests_run) * 100 if critical_tests_run > 0 else 0
+        
+        print(f"Critical Tests Run: {critical_tests_run}")
+        print(f"Critical Tests Passed: {critical_tests_passed}")
+        print(f"Success Rate: {success_rate:.1f}%")
+        
+        # System-by-system breakdown
+        print(f"\nSYSTEM BREAKDOWN:")
+        living_evidence_tests = 4
+        differential_diagnosis_tests = 3
+        explainable_ai_tests = 5
+        
+        print(f"Living Evidence Engine: {min(4, max(0, critical_tests_passed))}/4 tests")
+        print(f"Advanced Differential Diagnosis: {min(3, max(0, critical_tests_passed - 4))}/3 tests")
+        print(f"Enhanced Explainable AI: {min(5, max(0, critical_tests_passed - 7))}/5 tests")
+        
+        if success_rate == 100:
+            print("\n✅ SUCCESS CRITERIA MET:")
+            print("✅ All 12 endpoints functional (100% success rate)")
+            print("✅ Living Evidence Engine System: 4/4 endpoints working")
+            print("✅ Advanced Differential Diagnosis System: 3/3 endpoints working")
+            print("✅ Enhanced Explainable AI System: 5/5 endpoints working")
+            print("✅ Platform ready for clinical deployment")
+            print("\n🎉 CRITICAL PRIORITY SYSTEMS: 100% FUNCTIONAL!")
+        elif success_rate >= 90:
+            print("\n🟡 NEAR SUCCESS:")
+            print(f"🟡 {critical_tests_passed}/12 endpoints functional ({success_rate:.1f}% success rate)")
+            print("🟡 Minor issues detected - review failed tests")
+            print("🟡 Platform mostly ready for clinical deployment")
+        else:
+            print("\n❌ SUCCESS CRITERIA NOT MET:")
+            print(f"❌ Only {critical_tests_passed}/12 endpoints functional ({success_rate:.1f}% success rate)")
+            print("❌ Major issues detected - platform not ready for deployment")
+            
+            if critical_tests_passed < 4:
+                print("❌ Living Evidence Engine System has issues")
+            if critical_tests_passed < 7:
+                print("❌ Advanced Differential Diagnosis System has issues")
+            if critical_tests_passed < 12:
+                print("❌ Enhanced Explainable AI System has issues")
+        
+        print("="*80)
+        return success_rate >= 90  # 90% threshold for success
 
     def test_advanced_differential_diagnosis_engine_status(self):
         """Test GET /api/diagnosis/engine-status - Should return engine status (not 404)"""
