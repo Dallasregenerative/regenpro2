@@ -1077,7 +1077,12 @@ IGF-1,180,109-284,ng/mL,Normal"""
         return success
 
     # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTING ==========
-    # Testing the Advanced Differential Diagnosis System after troubleshoot agent fixes
+    # Testing the Advanced Differential Diagnosis System after main agent fixes
+    # FOCUSED TEST SEQUENCE as requested in review:
+    # 1. POST /api/diagnosis/comprehensive-differential - Generate and store diagnosis
+    # 2. Extract diagnosis_id from response
+    # 3. GET /api/diagnosis/{diagnosis_id} - Should now retrieve stored diagnosis (not 404)
+    # 4. GET /api/diagnosis/engine-status - Should return engine status (not 404)
 
     def test_advanced_differential_diagnosis_comprehensive_differential(self):
         """Test POST /api/diagnosis/comprehensive-differential - Generate comprehensive differential diagnoses"""
