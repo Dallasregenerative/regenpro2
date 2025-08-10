@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 
 class ClinicalTrialsAPITester:
-    def __init__(self, base_url="https://ed4e4952-b9f5-42dd-8eae-fb43144bcaeb.preview.emergentagent.com"):
+    def __init__(self, base_url="https://7270ea2f-1d23-46a0-9a6e-bef595343dd6.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0

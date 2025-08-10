@@ -10,7 +10,7 @@ import hashlib
 
 def test_literature_reality():
     """Test if literature integration returns real papers or sample data"""
-    api_url = "https://ed4e4952-b9f5-42dd-8eae-fb43144bcaeb.preview.emergentagent.com/api"
+    api_url = "https://7270ea2f-1d23-46a0-9a6e-bef595343dd6.preview.emergentagent.com/api"
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer demo-token'}
     
     print("🔍 LITERATURE INTEGRATION REALITY CHECK")
@@ -58,7 +58,7 @@ def test_literature_reality():
 
 def test_database_reality():
     """Test if database contains real data or mock entries"""
-    api_url = "https://ed4e4952-b9f5-42dd-8eae-fb43144bcaeb.preview.emergentagent.com/api"
+    api_url = "https://7270ea2f-1d23-46a0-9a6e-bef595343dd6.preview.emergentagent.com/api"
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer demo-token'}
     
     print("\n🔍 DATABASE REALITY CHECK")
