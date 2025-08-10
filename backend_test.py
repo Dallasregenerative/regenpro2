@@ -1076,6 +1076,511 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Evidence Level Indicators: {len(evidence_mentions)}")
         return success
 
+    # ========== CRITICAL PRIORITY FEATURES TESTING ==========
+    # Testing the three newly implemented "Critical Priority" features
+
+    def test_living_evidence_engine_living_map(self):
+        """Test POST /api/evidence/living-map - Living Evidence Engine System"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for living evidence mapping testing")
+            return False
+
+        living_map_data = {
+            "protocol_id": self.protocol_id,
+            "condition": "osteoarthritis",
+            "therapies": ["PRP", "BMAC"],
+            "patient_factors": {
+                "age": 58,
+                "severity": "moderate",
+                "previous_treatments": ["NSAIDs", "physical_therapy", "corticosteroid_injections"]
+            },
+            "evidence_requirements": {
+                "minimum_evidence_level": 2,
+                "include_real_world_data": True,
+                "geographic_relevance": ["US", "EU"],
+                "recency_threshold": "2020-01-01"
+            }
+        }
+
+        print("   This may take 30-60 seconds for comprehensive evidence mapping...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Living Evidence Engine - Generate Living Evidence Map",
+            "POST",
+            "evidence/living-map",
+            200,
+            data=living_map_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Evidence Map Status: {response.get('status', 'Unknown')}")
+            
+            evidence_map = response.get('living_evidence_map', {})
+            if evidence_map:
+                print(f"   Total Evidence Sources: {evidence_map.get('total_sources', 0)}")
+                print(f"   High Quality Evidence: {evidence_map.get('high_quality_sources', 0)}")
+                print(f"   Real-time Updates: {evidence_map.get('real_time_updates_enabled', False)}")
+                print(f"   Evidence Freshness Score: {evidence_map.get('freshness_score', 0):.2f}")
+            
+            protocol_mapping = response.get('protocol_evidence_mapping', {})
+            if protocol_mapping:
+                print(f"   Protocol Justification Score: {protocol_mapping.get('justification_score', 0):.2f}")
+                print(f"   Evidence-Based Recommendations: {len(protocol_mapping.get('recommendations', []))}")
+        return success
+
+    def test_living_evidence_engine_freshness_analysis(self):
+        """Test GET /api/evidence/freshness-analysis - Living Evidence Engine System"""
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Living Evidence Engine - Evidence Freshness Analysis",
+            "GET",
+            "evidence/freshness-analysis?condition=osteoarthritis&therapies=PRP,BMAC&time_window=24_months",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Condition Analyzed: {response.get('condition', 'Unknown')}")
+            
+            freshness_analysis = response.get('freshness_analysis', {})
+            if freshness_analysis:
+                print(f"   Overall Freshness Score: {freshness_analysis.get('overall_freshness_score', 0):.2f}")
+                print(f"   Recent Evidence Count: {freshness_analysis.get('recent_evidence_count', 0)}")
+                print(f"   Outdated Evidence Count: {freshness_analysis.get('outdated_evidence_count', 0)}")
+                print(f"   Evidence Quality Trend: {freshness_analysis.get('quality_trend', 'Unknown')}")
+            
+            therapy_freshness = response.get('therapy_specific_freshness', {})
+            if therapy_freshness:
+                for therapy, data in therapy_freshness.items():
+                    print(f"   {therapy} Freshness: {data.get('freshness_score', 0):.2f}")
+        return success
+
+    def test_living_evidence_engine_update_mapping(self):
+        """Test POST /api/evidence/update-mapping - Living Evidence Engine System"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for evidence mapping update testing")
+            return False
+
+        update_data = {
+            "protocol_id": self.protocol_id,
+            "new_evidence": [
+                {
+                    "source": "PubMed",
+                    "pmid": "35123456",
+                    "title": "Latest PRP efficacy study in osteoarthritis",
+                    "evidence_level": 2,
+                    "relevance_score": 0.92
+                }
+            ],
+            "update_triggers": ["new_clinical_trial", "updated_guidelines"],
+            "validation_required": True
+        }
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Living Evidence Engine - Update Protocol Evidence Mapping",
+            "POST",
+            "evidence/update-mapping",
+            200,
+            data=update_data,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Update Status: {response.get('status', 'Unknown')}")
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            
+            update_results = response.get('update_results', {})
+            if update_results:
+                print(f"   Evidence Sources Added: {update_results.get('sources_added', 0)}")
+                print(f"   Evidence Sources Updated: {update_results.get('sources_updated', 0)}")
+                print(f"   Mapping Confidence Change: {update_results.get('confidence_change', 0):.3f}")
+                print(f"   Validation Status: {update_results.get('validation_status', 'Unknown')}")
+        return success
+
+    def test_living_evidence_engine_validate_links(self):
+        """Test GET /api/evidence/validate-links - Living Evidence Engine System"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for evidence link validation testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Living Evidence Engine - Validate Protocol Evidence Links",
+            "GET",
+            f"evidence/validate-links?protocol_id={self.protocol_id}&validation_depth=comprehensive",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Validation Status: {response.get('status', 'Unknown')}")
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            
+            validation_results = response.get('validation_results', {})
+            if validation_results:
+                print(f"   Total Links Validated: {validation_results.get('total_links_validated', 0)}")
+                print(f"   Valid Links: {validation_results.get('valid_links', 0)}")
+                print(f"   Broken Links: {validation_results.get('broken_links', 0)}")
+                print(f"   Link Quality Score: {validation_results.get('overall_link_quality', 0):.2f}")
+            
+            quality_assessment = response.get('quality_assessment', {})
+            if quality_assessment:
+                print(f"   Evidence Strength: {quality_assessment.get('evidence_strength', 'Unknown')}")
+                print(f"   Recommendation Confidence: {quality_assessment.get('recommendation_confidence', 0):.2f}")
+        return success
+
+    def test_advanced_differential_diagnosis_comprehensive(self):
+        """Test POST /api/diagnosis/advanced-differential - Advanced Differential Diagnosis System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for advanced differential diagnosis testing")
+            return False
+
+        differential_data = {
+            "patient_id": self.patient_id,
+            "clinical_presentation": {
+                "chief_complaint": "Bilateral knee pain and stiffness with functional limitation",
+                "symptom_duration": "3 years",
+                "pain_characteristics": {
+                    "intensity": 6,
+                    "quality": "aching with morning stiffness",
+                    "aggravating_factors": ["activity", "weather changes"],
+                    "relieving_factors": ["rest", "heat application"]
+                }
+            },
+            "diagnostic_modalities": {
+                "physical_examination": {
+                    "inspection": "mild bilateral knee swelling",
+                    "palpation": "tenderness over medial joint lines",
+                    "range_of_motion": "flexion limited to 120 degrees",
+                    "special_tests": ["positive McMurray test"]
+                },
+                "imaging": {
+                    "xray": "Grade 2-3 osteoarthritis with joint space narrowing",
+                    "mri": "cartilage thinning, meniscal degeneration"
+                },
+                "laboratory": {
+                    "inflammatory_markers": {"CRP": 2.1, "ESR": 18},
+                    "autoimmune_markers": {"RF": "negative", "anti_CCP": "negative"}
+                }
+            },
+            "analysis_parameters": {
+                "differential_count": 5,
+                "confidence_threshold": 0.1,
+                "include_rare_conditions": False,
+                "regenerative_focus": True
+            }
+        }
+
+        print("   This may take 45-75 seconds for comprehensive differential diagnosis analysis...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Advanced Differential Diagnosis - Generate Comprehensive Analysis",
+            "POST",
+            "diagnosis/advanced-differential",
+            200,
+            data=differential_data,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            print(f"   Differential Diagnoses Generated: {len(differential_diagnoses)}")
+            
+            if differential_diagnoses:
+                for i, diagnosis in enumerate(differential_diagnoses[:3], 1):
+                    print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"     Confidence: {diagnosis.get('confidence_score', 0):.2f}")
+                    print(f"     ICD-10: {diagnosis.get('icd10_code', 'Unknown')}")
+                    print(f"     Regenerative Suitability: {diagnosis.get('regenerative_suitability', 'Unknown')}")
+            
+            diagnostic_reasoning = response.get('diagnostic_reasoning', {})
+            if diagnostic_reasoning:
+                print(f"   Evidence Integration Score: {diagnostic_reasoning.get('evidence_integration_score', 0):.2f}")
+                print(f"   Clinical Decision Support: {diagnostic_reasoning.get('decision_support_level', 'Unknown')}")
+        return success
+
+    def test_advanced_differential_diagnosis_confidence_analysis(self):
+        """Test GET /api/diagnosis/confidence-analysis - Advanced Differential Diagnosis System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for confidence analysis testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Advanced Differential Diagnosis - Confidence Analysis",
+            "GET",
+            f"diagnosis/confidence-analysis?patient_id={self.patient_id}&analysis_type=comprehensive",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            confidence_metrics = response.get('confidence_metrics', {})
+            if confidence_metrics:
+                print(f"   Overall Diagnostic Confidence: {confidence_metrics.get('overall_confidence', 0):.2f}")
+                print(f"   Data Completeness Score: {confidence_metrics.get('data_completeness', 0):.2f}")
+                print(f"   Evidence Quality Score: {confidence_metrics.get('evidence_quality', 0):.2f}")
+                print(f"   Clinical Complexity Level: {confidence_metrics.get('complexity_level', 'Unknown')}")
+            
+            uncertainty_analysis = response.get('uncertainty_analysis', {})
+            if uncertainty_analysis:
+                print(f"   Uncertainty Sources: {len(uncertainty_analysis.get('uncertainty_sources', []))}")
+                print(f"   Recommended Additional Tests: {len(uncertainty_analysis.get('recommended_tests', []))}")
+        return success
+
+    def test_advanced_differential_diagnosis_tree(self):
+        """Test GET /api/diagnosis/diagnostic-tree - Advanced Differential Diagnosis System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for diagnostic tree testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Advanced Differential Diagnosis - Generate Diagnostic Tree",
+            "GET",
+            f"diagnosis/diagnostic-tree?patient_id={self.patient_id}&tree_depth=4&include_probabilities=true",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Tree Generation Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            diagnostic_tree = response.get('diagnostic_tree', {})
+            if diagnostic_tree:
+                print(f"   Tree Depth: {diagnostic_tree.get('tree_depth', 0)}")
+                print(f"   Decision Nodes: {diagnostic_tree.get('total_nodes', 0)}")
+                print(f"   Leaf Diagnoses: {diagnostic_tree.get('leaf_diagnoses', 0)}")
+                print(f"   Tree Confidence: {diagnostic_tree.get('tree_confidence', 0):.2f}")
+            
+            decision_pathways = response.get('decision_pathways', [])
+            if decision_pathways:
+                print(f"   Primary Decision Pathways: {len(decision_pathways)}")
+                for i, pathway in enumerate(decision_pathways[:2], 1):
+                    print(f"     Pathway {i}: {pathway.get('pathway_name', 'Unknown')} (Probability: {pathway.get('probability', 0):.2f})")
+        return success
+
+    def test_advanced_differential_diagnosis_precision_assessment(self):
+        """Test POST /api/diagnosis/precision-assessment - Advanced Differential Diagnosis System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for precision assessment testing")
+            return False
+
+        precision_data = {
+            "patient_id": self.patient_id,
+            "diagnostic_hypotheses": [
+                {
+                    "diagnosis": "M17.0 - Bilateral primary osteoarthritis of knee",
+                    "confidence": 0.85,
+                    "supporting_evidence": ["imaging findings", "clinical presentation", "age factors"]
+                },
+                {
+                    "diagnosis": "M06.9 - Rheumatoid arthritis, unspecified",
+                    "confidence": 0.15,
+                    "supporting_evidence": ["joint involvement pattern"]
+                }
+            ],
+            "assessment_parameters": {
+                "precision_metrics": ["sensitivity", "specificity", "positive_predictive_value"],
+                "validation_method": "cross_validation",
+                "confidence_intervals": True
+            }
+        }
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Advanced Differential Diagnosis - Assess Diagnostic Precision",
+            "POST",
+            "diagnosis/precision-assessment",
+            200,
+            data=precision_data,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Assessment Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            precision_metrics = response.get('precision_metrics', {})
+            if precision_metrics:
+                print(f"   Diagnostic Sensitivity: {precision_metrics.get('sensitivity', 0):.2f}")
+                print(f"   Diagnostic Specificity: {precision_metrics.get('specificity', 0):.2f}")
+                print(f"   Positive Predictive Value: {precision_metrics.get('positive_predictive_value', 0):.2f}")
+                print(f"   Overall Precision Score: {precision_metrics.get('overall_precision', 0):.2f}")
+            
+            validation_results = response.get('validation_results', {})
+            if validation_results:
+                print(f"   Cross-Validation Score: {validation_results.get('cv_score', 0):.2f}")
+                print(f"   Confidence Interval: [{validation_results.get('confidence_interval', [0, 0])[0]:.2f}, {validation_results.get('confidence_interval', [0, 0])[1]:.2f}]")
+        return success
+
+    def test_enhanced_explainable_ai_explanation(self):
+        """Test POST /api/ai/enhanced-explanation - Enhanced Explainable AI System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for enhanced AI explanation testing")
+            return False
+
+        explanation_data = {
+            "patient_id": self.patient_id,
+            "analysis_results": {
+                "primary_diagnosis": "M17.0 - Bilateral primary osteoarthritis of knee",
+                "confidence_score": 0.85,
+                "treatment_recommendation": "PRP therapy with BMAC consideration"
+            },
+            "explanation_parameters": {
+                "explanation_type": "comprehensive",
+                "include_shap_values": True,
+                "include_lime_analysis": True,
+                "feature_importance_threshold": 0.05,
+                "visual_components": ["feature_importance", "decision_tree", "confidence_intervals"]
+            }
+        }
+
+        print("   This may take 45-60 seconds for enhanced AI explanation generation...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Enhanced Explainable AI - Generate Enhanced Explanation",
+            "POST",
+            "ai/enhanced-explanation",
+            200,
+            data=explanation_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Explanation Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            enhanced_explanation = response.get('enhanced_explanation', {})
+            if enhanced_explanation:
+                print(f"   Explanation ID: {enhanced_explanation.get('explanation_id', 'Unknown')}")
+                print(f"   Transparency Score: {enhanced_explanation.get('transparency_score', 0):.2f}")
+                print(f"   Feature Importance Count: {len(enhanced_explanation.get('feature_importance', []))}")
+                print(f"   SHAP Analysis Available: {enhanced_explanation.get('shap_analysis_available', False)}")
+                print(f"   LIME Analysis Available: {enhanced_explanation.get('lime_analysis_available', False)}")
+            
+            visual_breakdown = response.get('visual_breakdown', {})
+            if visual_breakdown:
+                print(f"   Visual Components Generated: {len(visual_breakdown.get('components', []))}")
+                print(f"   Interactive Elements: {visual_breakdown.get('interactive_elements', 0)}")
+        return success
+
+    def test_enhanced_explainable_ai_visual_breakdown(self):
+        """Test GET /api/ai/visual-breakdown - Enhanced Explainable AI System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for visual breakdown testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Enhanced Explainable AI - Create Visual Breakdown",
+            "GET",
+            f"ai/visual-breakdown?patient_id={self.patient_id}&breakdown_type=comprehensive&include_interactions=true",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Breakdown Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            visual_breakdown = response.get('visual_breakdown', {})
+            if visual_breakdown:
+                print(f"   Breakdown ID: {visual_breakdown.get('breakdown_id', 'Unknown')}")
+                print(f"   Visual Components: {len(visual_breakdown.get('visual_components', []))}")
+                print(f"   SHAP Visualizations: {len(visual_breakdown.get('shap_visualizations', []))}")
+                print(f"   LIME Visualizations: {len(visual_breakdown.get('lime_visualizations', []))}")
+            
+            interaction_analysis = response.get('interaction_analysis', {})
+            if interaction_analysis:
+                print(f"   Feature Interactions Detected: {interaction_analysis.get('interactions_count', 0)}")
+                print(f"   Interaction Strength Score: {interaction_analysis.get('interaction_strength', 0):.2f}")
+        return success
+
+    def test_enhanced_explainable_ai_feature_interactions(self):
+        """Test POST /api/ai/feature-interactions - Enhanced Explainable AI System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for feature interactions testing")
+            return False
+
+        interaction_data = {
+            "patient_id": self.patient_id,
+            "features": [
+                "age", "diagnosis_confidence", "symptom_severity", 
+                "medical_history", "regenerative_suitability", "literature_evidence"
+            ],
+            "interaction_parameters": {
+                "interaction_depth": 2,
+                "significance_threshold": 0.05,
+                "include_nonlinear": True,
+                "visualization_type": "network_graph"
+            }
+        }
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Enhanced Explainable AI - Analyze Feature Interactions",
+            "POST",
+            "ai/feature-interactions",
+            200,
+            data=interaction_data,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            interaction_analysis = response.get('interaction_analysis', {})
+            if interaction_analysis:
+                print(f"   Total Interactions Analyzed: {interaction_analysis.get('total_interactions', 0)}")
+                print(f"   Significant Interactions: {interaction_analysis.get('significant_interactions', 0)}")
+                print(f"   Strongest Interaction Strength: {interaction_analysis.get('max_interaction_strength', 0):.3f}")
+            
+            feature_network = response.get('feature_network', {})
+            if feature_network:
+                print(f"   Network Nodes: {feature_network.get('nodes', 0)}")
+                print(f"   Network Edges: {feature_network.get('edges', 0)}")
+                print(f"   Network Density: {feature_network.get('density', 0):.3f}")
+        return success
+
+    def test_enhanced_explainable_ai_transparency_assessment(self):
+        """Test GET /api/ai/transparency-assessment - Enhanced Explainable AI System"""
+        if not self.patient_id:
+            print("❌ No patient ID available for transparency assessment testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE: Enhanced Explainable AI - Assess Model Transparency",
+            "GET",
+            f"ai/transparency-assessment?patient_id={self.patient_id}&assessment_depth=comprehensive&include_benchmarks=true",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Assessment Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            transparency_metrics = response.get('transparency_metrics', {})
+            if transparency_metrics:
+                print(f"   Overall Transparency Score: {transparency_metrics.get('overall_score', 0):.2f}")
+                print(f"   Explainability Score: {transparency_metrics.get('explainability_score', 0):.2f}")
+                print(f"   Interpretability Score: {transparency_metrics.get('interpretability_score', 0):.2f}")
+                print(f"   Trust Score: {transparency_metrics.get('trust_score', 0):.2f}")
+            
+            benchmark_comparison = response.get('benchmark_comparison', {})
+            if benchmark_comparison:
+                print(f"   Industry Benchmark Percentile: {benchmark_comparison.get('percentile_rank', 0):.1f}")
+                print(f"   Transparency Grade: {benchmark_comparison.get('transparency_grade', 'Unknown')}")
+            
+            improvement_suggestions = response.get('improvement_suggestions', [])
+            if improvement_suggestions:
+                print(f"   Improvement Suggestions: {len(improvement_suggestions)}")
+                for i, suggestion in enumerate(improvement_suggestions[:2], 1):
+                    print(f"     {i}. {suggestion.get('suggestion', 'Unknown')[:50]}...")
+        return success
+
     def test_prediction_model_performance(self):
         """Test ML prediction model performance metrics"""
         success, response = self.run_test(
