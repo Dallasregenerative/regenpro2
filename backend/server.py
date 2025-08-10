@@ -4647,6 +4647,186 @@ async def get_differential_diagnosis_engine_status(
         raise HTTPException(status_code=500, detail=f"Failed to get engine status: {str(e)}")
 
 # ==========================================
+# CRITICAL FEATURE 3: Enhanced Explainable AI API Endpoints  
+# ==========================================
+
+@api_router.post("/ai/enhanced-explanation")
+async def generate_enhanced_ai_explanation(
+    explanation_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Generate enhanced AI explanation with advanced SHAP/LIME breakdowns"""
+    
+    try:
+        # Initialize Enhanced Explainable AI
+        from advanced_services import EnhancedExplainableAI
+        explainable_ai = EnhancedExplainableAI(db)
+        await explainable_ai.initialize_enhanced_explainable_ai()
+        
+        # Extract request parameters
+        model_prediction = explanation_request.get("model_prediction", {})
+        patient_data = explanation_request.get("patient_data", {})
+        explanation_type = explanation_request.get("explanation_type", "comprehensive")
+        
+        # Generate enhanced explanation
+        explanation_result = await explainable_ai.generate_enhanced_explanation(
+            model_prediction, patient_data, explanation_type
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "enhanced_explanation_generated",
+            "patient_id": patient_data.get("patient_id"),
+            "explanation_id": explanation_result.get("enhanced_explanation", {}).get("explanation_id"),
+            "explanation_type": explanation_type
+        })
+        
+        return explanation_result
+        
+    except Exception as e:
+        logger.error(f"Enhanced explanation generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate enhanced explanation: {str(e)}")
+
+@api_router.get("/ai/enhanced-explanation/{explanation_id}")
+async def get_enhanced_explanation(
+    explanation_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Retrieve enhanced explanation by ID"""
+    
+    try:
+        # Retrieve explanation from database
+        explanation = await db.enhanced_explanations.find_one({"explanation_id": explanation_id})
+        
+        if not explanation:
+            raise HTTPException(status_code=404, detail="Enhanced explanation not found")
+        
+        # Clean MongoDB ObjectIds
+        if '_id' in explanation:
+            explanation['_id'] = str(explanation['_id'])
+        
+        return explanation
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving enhanced explanation: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve explanation: {str(e)}")
+
+@api_router.get("/ai/visual-breakdown/{explanation_id}")
+async def get_visual_breakdown(
+    explanation_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get visual breakdown components for enhanced explanation"""
+    
+    try:
+        # Retrieve explanation from database
+        explanation = await db.enhanced_explanations.find_one({"explanation_id": explanation_id})
+        
+        if not explanation:
+            raise HTTPException(status_code=404, detail="Enhanced explanation not found")
+        
+        # Extract visual breakdown data
+        visual_breakdowns = explanation.get("visual_breakdowns", {})
+        
+        return {
+            "explanation_id": explanation_id,
+            "visual_breakdowns": visual_breakdowns,
+            "generated_at": explanation.get("generated_at"),
+            "visualization_ready": visual_breakdowns.get("export_ready", False)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving visual breakdown: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve visual breakdown: {str(e)}")
+
+@api_router.post("/ai/feature-interactions")
+async def analyze_feature_interactions(
+    interaction_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Analyze feature interactions for model prediction"""
+    
+    try:
+        # Initialize Enhanced Explainable AI
+        from advanced_services import EnhancedExplainableAI
+        explainable_ai = EnhancedExplainableAI(db)
+        
+        # Extract request parameters
+        model_prediction = interaction_request.get("model_prediction", {})
+        patient_data = interaction_request.get("patient_data", {})
+        
+        # Analyze feature interactions
+        interaction_result = await explainable_ai._analyze_feature_interactions(
+            model_prediction, patient_data
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "feature_interactions_analyzed",
+            "patient_id": patient_data.get("patient_id"),
+            "interaction_analysis_id": interaction_result.get("analysis_type")
+        })
+        
+        return {
+            "status": "feature_interactions_completed",
+            "interaction_analysis": interaction_result,
+            "advanced_features": [
+                "Pairwise feature interaction detection",
+                "Higher-order interaction analysis",
+                "Interaction network visualization",
+                "Dependency mapping and strength assessment"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Feature interaction analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to analyze feature interactions: {str(e)}")
+
+@api_router.get("/ai/transparency-assessment/{explanation_id}")
+async def get_transparency_assessment(
+    explanation_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get model transparency assessment for explanation"""
+    
+    try:
+        # Retrieve explanation from database
+        explanation = await db.enhanced_explanations.find_one({"explanation_id": explanation_id})
+        
+        if not explanation:
+            raise HTTPException(status_code=404, detail="Enhanced explanation not found")
+        
+        # Extract transparency assessment
+        transparency_assessment = explanation.get("transparency_assessment", {})
+        quality_metrics = explanation.get("quality_metrics", {})
+        
+        return {
+            "explanation_id": explanation_id,
+            "transparency_assessment": transparency_assessment,
+            "quality_metrics": quality_metrics,
+            "assessment_summary": {
+                "explanation_fidelity": quality_metrics.get("explanation_fidelity", 0.0),
+                "interpretability_score": quality_metrics.get("interpretability_score", 0.0),
+                "clinical_relevance": quality_metrics.get("clinical_relevance", 0.0),
+                "visual_clarity": quality_metrics.get("visual_clarity", 0.0)
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving transparency assessment: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve transparency assessment: {str(e)}")
+
+# ==========================================
 # CRITICAL FEATURE 1: Living Evidence Engine API Endpoints
 # ==========================================
 
