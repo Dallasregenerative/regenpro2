@@ -2600,18 +2600,17 @@ function App() {
                         </div>
                         <div className="text-right space-y-2">
                           <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Active</div>
-                          <Button
+                          <button
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
                               console.log("🔬 Select Patient button clicked for:", patient.demographics?.name);
                               handlePatientSelection(patient);
                             }}
-                            size="sm"
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white w-full"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded w-full transition-colors"
                           >
                             Select Patient
-                          </Button>
+                          </button>
                           <p className="text-xs text-slate-500">ID: {patient.patient_id.slice(0, 8)}...</p>
                         </div>
                       </div>
