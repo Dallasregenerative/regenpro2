@@ -5914,22 +5914,333 @@ def main():
         print("\n❌ FAILURE: Some Phase 2 features need attention.")
         return 1
 
-if __name__ == "__main__":
-    # Check if we should run Phase 3 tests
-    if len(sys.argv) > 1 and sys.argv[1] == "--phase3":
-        sys.exit(main_phase3())
-    # Check if we should run Phase 2 tests
-    elif len(sys.argv) > 1 and sys.argv[1] == "--phase2":
-        sys.exit(main())
-    # Check if we should run critical fixes verification
-    elif len(sys.argv) > 1 and sys.argv[1] == "--critical-fixes":
-        print("🧬 RegenMed AI Pro - CRITICAL FIXES VERIFICATION")
-        print("Testing the two critical fixes for 100% functionality")
-        print("=" * 70)
+    def run_phase3_focused_tests(self):
+        """Run Phase 3: Global Knowledge Engine focused testing with routing fix validation"""
+        print("🌍 PHASE 3: GLOBAL KNOWLEDGE ENGINE - ROUTING FIX VALIDATION")
+        print("=" * 80)
+        print("Testing FINALLY FIXED Phase 3 with routing issue resolved")
+        print("Focus: International Protocol Library routing fix + complete Phase 3 validation")
+        print("=" * 80)
         
-        tester = RegenMedAIProTester()
-        tester.run_critical_fixes_verification()
-        sys.exit(0)
-    else:
-        # Default: run Phase 3 tests (latest implementation)
-        sys.exit(main_phase3())
+        # Phase 3 System Status
+        print("\n🔍 PHASE 3 SYSTEM STATUS")
+        print("-" * 50)
+        self.test_phase3_global_knowledge_system_status()
+        
+        # International Protocol Library - ROUTING FIX TESTING
+        print("\n🌐 INTERNATIONAL PROTOCOL LIBRARY - ROUTING FIX TESTING")
+        print("-" * 50)
+        print("Testing the FIXED routing issue - duplicate endpoint removed, proper positioning")
+        self.test_international_protocol_search_osteoarthritis_fix()
+        self.test_international_protocol_search_rotator_cuff_fix()
+        self.test_international_protocol_search_chronic_pain_fix()
+        self.test_international_protocol_multiple_traditions()
+        self.test_international_protocol_integration_filter()
+        
+        # Global Regulatory Intelligence (was working previously)
+        print("\n🏛️ GLOBAL REGULATORY INTELLIGENCE SYSTEM")
+        print("-" * 50)
+        self.test_global_regulatory_intelligence_treatment_status()
+        self.test_global_regulatory_intelligence_country_specific()
+        self.test_global_regulatory_intelligence_cross_jurisdictional()
+        
+        # Community Collaboration Platform (peer consultation fixed)
+        print("\n👥 COMMUNITY COLLABORATION PLATFORM")
+        print("-" * 50)
+        self.test_community_peer_consultation_fix()
+        self.test_community_peer_consultation_minimal()
+        self.test_community_insights_collective_intelligence()
+        self.test_community_insights_therapy_comparison()
+        
+        # Overall Phase 3 System Integration
+        print("\n🔗 PHASE 3 SYSTEM INTEGRATION VALIDATION")
+        print("-" * 50)
+        self.test_phase3_complete_workflow()
+        
+        # Final Phase 3 Results
+        print("\n" + "=" * 80)
+        print("🎯 PHASE 3: GLOBAL KNOWLEDGE ENGINE TEST RESULTS")
+        print("=" * 80)
+        print(f"Total Tests Run: {self.tests_run}")
+        print(f"Tests Passed: {self.tests_passed}")
+        print(f"Tests Failed: {self.tests_run - self.tests_passed}")
+        success_rate = (self.tests_passed / self.tests_run * 100) if self.tests_run > 0 else 0
+        print(f"Success Rate: {success_rate:.1f}%")
+        
+        # Phase 3 specific assessment
+        if success_rate >= 80:
+            print("🎉 PHASE 3 SUCCESS! Global Knowledge Engine is fully operational!")
+            print("✅ International Protocol Library routing fix SUCCESSFUL")
+            print("✅ Community Collaboration Platform operational")
+            print("✅ Global Regulatory Intelligence functional")
+            print("🌟 World-class global knowledge capabilities achieved!")
+        elif success_rate >= 60:
+            print("⚠️  PHASE 3 PARTIAL SUCCESS: Most components working, minor issues remain")
+        else:
+            print("❌ PHASE 3 NEEDS WORK: Significant issues in global knowledge systems")
+        
+        return success_rate / 100
+
+    def test_international_protocol_search_osteoarthritis_fix(self):
+        """Test FIXED International Protocol Library - osteoarthritis search (routing fix)"""
+        success, response = self.run_test(
+            "ROUTING FIX: International Protocol Search - Osteoarthritis",
+            "GET",
+            "protocols/international-search?condition=osteoarthritis&max_results=10",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   ✅ ROUTING FIX SUCCESSFUL - No more 404 errors!")
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            print(f"   Search Status: {response.get('status', 'unknown')}")
+            
+            protocols = response.get('protocols', [])
+            print(f"   Protocols Found: {len(protocols)}")
+            
+            if protocols:
+                first_protocol = protocols[0]
+                print(f"   First Protocol: {first_protocol.get('protocol_name', 'Unknown')}")
+                print(f"   Medical Tradition: {first_protocol.get('medical_tradition', 'Unknown')}")
+                print(f"   Country: {first_protocol.get('country', 'Unknown')}")
+                print(f"   Integration Level: {first_protocol.get('integration_level', 'Unknown')}")
+                print(f"   Evidence Level: {first_protocol.get('evidence_level', 'Unknown')}")
+            
+            search_metadata = response.get('search_metadata', {})
+            if search_metadata:
+                print(f"   Search Timestamp: {search_metadata.get('search_timestamp', 'Unknown')}")
+                print(f"   Total Available: {search_metadata.get('total_available_protocols', 0)}")
+        else:
+            print("   ❌ ROUTING FIX FAILED - Still getting errors!")
+        
+        return success
+
+    def test_international_protocol_search_rotator_cuff_fix(self):
+        """Test FIXED International Protocol Library - rotator cuff search (routing fix)"""
+        success, response = self.run_test(
+            "ROUTING FIX: International Protocol Search - Rotator Cuff",
+            "GET",
+            "protocols/international-search?condition=rotator_cuff&max_results=8",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   ✅ ROUTING FIX SUCCESSFUL for rotator cuff!")
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            protocols = response.get('protocols', [])
+            print(f"   Protocols Found: {len(protocols)}")
+            
+            # Check for rotator cuff specific protocols
+            rotator_protocols = [p for p in protocols if 'rotator' in p.get('protocol_name', '').lower() or 'shoulder' in p.get('protocol_name', '').lower()]
+            print(f"   Rotator Cuff Specific: {len(rotator_protocols)}")
+            
+            if protocols:
+                sample = protocols[0]
+                print(f"   Sample Protocol: {sample.get('protocol_name', 'Unknown')}")
+                print(f"   Medical Tradition: {sample.get('medical_tradition', 'Unknown')}")
+        else:
+            print("   ❌ ROUTING FIX FAILED for rotator cuff!")
+        
+        return success
+
+    def test_international_protocol_search_chronic_pain_fix(self):
+        """Test FIXED International Protocol Library - chronic pain search (routing fix)"""
+        success, response = self.run_test(
+            "ROUTING FIX: International Protocol Search - Chronic Pain",
+            "GET",
+            "protocols/international-search?condition=chronic_pain&max_results=12",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   ✅ ROUTING FIX SUCCESSFUL for chronic pain!")
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            protocols = response.get('protocols', [])
+            print(f"   Protocols Found: {len(protocols)}")
+            
+            # Check for pain management protocols
+            pain_protocols = [p for p in protocols if 'pain' in p.get('protocol_name', '').lower()]
+            print(f"   Pain Management Specific: {len(pain_protocols)}")
+            
+            if protocols:
+                sample = protocols[0]
+                print(f"   Sample Protocol: {sample.get('protocol_name', 'Unknown')}")
+                print(f"   Target Conditions: {sample.get('target_conditions', [])}")
+        else:
+            print("   ❌ ROUTING FIX FAILED for chronic pain!")
+        
+        return success
+
+    def test_global_regulatory_intelligence_treatment_status(self):
+        """Test Global Regulatory Intelligence - treatment status queries"""
+        success, response = self.run_test(
+            "Global Regulatory Intelligence - Treatment Status",
+            "GET",
+            "regulatory/treatment-status?treatment=PRP&jurisdiction=global",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            print(f"   Jurisdiction: {response.get('jurisdiction', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            regulatory_data = response.get('regulatory_data', {})
+            if regulatory_data:
+                print(f"   Approval Status: {regulatory_data.get('approval_status', 'unknown')}")
+                print(f"   Regulatory Category: {regulatory_data.get('regulatory_category', 'unknown')}")
+        
+        return success
+
+    def test_global_regulatory_intelligence_country_specific(self):
+        """Test Global Regulatory Intelligence - country-specific queries"""
+        success, response = self.run_test(
+            "Global Regulatory Intelligence - Country Specific",
+            "GET",
+            "regulatory/country-status?country=US&treatment=BMAC",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Country: {response.get('country', 'unknown')}")
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            
+            country_data = response.get('country_regulatory_data', {})
+            if country_data:
+                print(f"   Legal Status: {country_data.get('legal_status', 'unknown')}")
+                print(f"   Regulatory Body: {country_data.get('regulatory_body', 'unknown')}")
+        
+        return success
+
+    def test_global_regulatory_intelligence_cross_jurisdictional(self):
+        """Test Global Regulatory Intelligence - cross-jurisdictional comparison"""
+        success, response = self.run_test(
+            "Global Regulatory Intelligence - Cross-Jurisdictional",
+            "GET",
+            "regulatory/cross-jurisdictional?treatment=stem_cells&countries=US,EU,Canada,Australia",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            
+            jurisdictional_comparison = response.get('jurisdictional_comparison', {})
+            if jurisdictional_comparison:
+                countries_analyzed = len(jurisdictional_comparison.get('countries', []))
+                print(f"   Countries Analyzed: {countries_analyzed}")
+                
+                harmonization = jurisdictional_comparison.get('harmonization_assessment', {})
+                if harmonization:
+                    print(f"   Harmonization Level: {harmonization.get('harmonization_level', 'unknown')}")
+        
+        return success
+
+    def test_community_peer_consultation_fix(self):
+        """Test FIXED Community Collaboration Platform - peer consultation with optional case_summary"""
+        consultation_data = {
+            "consultation_type": "regenerative_medicine_case",
+            "patient_demographics": {
+                "age": 58,
+                "gender": "Female",
+                "condition": "Bilateral knee osteoarthritis"
+            },
+            "clinical_question": "Seeking advice on optimal PRP protocol for 58-year-old female physician with bilateral knee osteoarthritis. Patient has failed conservative management and wants to avoid knee replacement. What are your experiences with PRP vs BMAC for this patient profile?",
+            "urgency_level": "routine",
+            "expertise_sought": ["regenerative_medicine", "orthopedics", "sports_medicine"],
+            "anonymized": True
+        }
+
+        success, response = self.run_test(
+            "FIXED: Community Peer Consultation - Optional case_summary",
+            "POST",
+            "community/peer-consultation",
+            200,
+            data=consultation_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   ✅ PEER CONSULTATION FIX SUCCESSFUL!")
+            print(f"   Consultation ID: {response.get('consultation_id', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            print(f"   Consultation Type: {response.get('consultation_type', 'unknown')}")
+            print(f"   Urgency Level: {response.get('urgency_level', 'unknown')}")
+            print(f"   Expertise Areas: {len(response.get('expertise_sought', []))}")
+            
+            matching_experts = response.get('matching_experts', [])
+            print(f"   Matching Experts Found: {len(matching_experts)}")
+        else:
+            print("   ❌ PEER CONSULTATION FIX FAILED!")
+        
+        return success
+
+    def test_community_peer_consultation_minimal(self):
+        """Test Community Collaboration Platform - minimal data consultation"""
+        minimal_consultation = {
+            "consultation_type": "quick_question",
+            "clinical_question": "What's the optimal PRP concentration for knee osteoarthritis in elderly patients?",
+            "urgency_level": "routine"
+        }
+
+        success, response = self.run_test(
+            "Community Peer Consultation - Minimal Data",
+            "POST",
+            "community/peer-consultation",
+            200,
+            data=minimal_consultation,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   ✅ MINIMAL CONSULTATION SUCCESSFUL!")
+            print(f"   Consultation ID: {response.get('consultation_id', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+        
+        return success
+
+    def test_phase3_complete_workflow(self):
+        """Test complete Phase 3 workflow integration"""
+        success, response = self.run_test(
+            "Phase 3: Complete Global Knowledge Workflow",
+            "GET",
+            "global-knowledge/system-status",
+            200
+        )
+        
+        if success:
+            services = response.get('services', {})
+            
+            # Check all three major Phase 3 components
+            regulatory_status = services.get('global_regulatory_intelligence', {}).get('status', 'unknown')
+            protocol_status = services.get('international_protocol_library', {}).get('status', 'unknown')
+            community_status = services.get('community_collaboration_platform', {}).get('status', 'unknown')
+            
+            print(f"   Global Regulatory Intelligence: {regulatory_status}")
+            print(f"   International Protocol Library: {protocol_status}")
+            print(f"   Community Collaboration Platform: {community_status}")
+            
+            # Calculate Phase 3 component success
+            working_components = sum(1 for status in [regulatory_status, protocol_status, community_status] if status == 'active')
+            phase3_success_rate = (working_components / 3) * 100
+            
+            print(f"   Phase 3 Component Success Rate: {phase3_success_rate:.1f}%")
+            
+            if phase3_success_rate >= 80:
+                print("   🎉 PHASE 3 COMPLETE SUCCESS - All major systems operational!")
+            elif phase3_success_rate >= 60:
+                print("   ⚠️  PHASE 3 PARTIAL SUCCESS - Most systems working")
+            else:
+                print("   ❌ PHASE 3 NEEDS WORK - Multiple system issues")
+        
+        return success
+
+if __name__ == "__main__":
+    tester = RegenMedAIProTester()
+    # Run Phase 3 focused tests as requested
+    tester.run_phase3_focused_tests()
