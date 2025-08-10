@@ -8555,31 +8555,119 @@ def main():
         self.test_enhanced_explainable_ai_feature_interactions()
         self.test_enhanced_explainable_ai_transparency_assessment()
 
+    def run_advanced_differential_diagnosis_tests_only(self):
+        """Run ONLY Advanced Differential Diagnosis System tests after troubleshoot agent fixes"""
+        print("🚀 Testing ONLY Advanced Differential Diagnosis System After Troubleshoot Agent Fixes")
+        print("=" * 80)
+        print("🎯 FOCUS: Testing the three specific endpoints mentioned in review request:")
+        print("   1. POST /api/diagnosis/comprehensive-differential")
+        print("   2. GET /api/diagnosis/engine-status") 
+        print("   3. GET /api/diagnosis/{diagnosis_id}")
+        print("=" * 80)
+        
+        # First create a patient for testing
+        print("\n👥 SETUP: Creating Patient for Diagnosis Testing")
+        print("-" * 50)
+        patient_created = self.test_create_patient()
+        
+        if not patient_created:
+            print("❌ CRITICAL: Could not create patient - cannot proceed with diagnosis tests")
+            return False
+        
+        # Now run the specific Advanced Differential Diagnosis tests
+        print("\n🧠 ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTS")
+        print("-" * 50)
+        
+        # Test 1: Comprehensive differential diagnosis generation
+        test1_success = self.test_advanced_differential_diagnosis_comprehensive_differential()
+        
+        # Test 2: Engine status check
+        test2_success = self.test_advanced_differential_diagnosis_engine_status()
+        
+        # Test 3: Diagnosis retrieval by ID
+        test3_success = self.test_advanced_differential_diagnosis_retrieval()
+        
+        # Additional test with different medical scenario
+        test4_success = self.test_advanced_differential_diagnosis_chronic_pain_case()
+        
+        # Final Results
+        print("\n" + "=" * 80)
+        print("🏁 ADVANCED DIFFERENTIAL DIAGNOSIS TESTING COMPLETE")
+        print(f"✅ Tests Passed: {self.tests_passed}/{self.tests_run}")
+        print(f"📊 Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
+        
+        # Specific results for the three critical endpoints
+        print("\n🎯 CRITICAL ENDPOINT RESULTS:")
+        print(f"   1. POST /api/diagnosis/comprehensive-differential: {'✅ PASSED' if test1_success else '❌ FAILED'}")
+        print(f"   2. GET /api/diagnosis/engine-status: {'✅ PASSED' if test2_success else '❌ FAILED'}")
+        print(f"   3. GET /api/diagnosis/{'{diagnosis_id}'}: {'✅ PASSED' if test3_success else '❌ FAILED'}")
+        print(f"   4. Additional chronic pain test: {'✅ PASSED' if test4_success else '❌ FAILED'}")
+        
+        all_critical_passed = test1_success and test2_success and test3_success
+        
+        if all_critical_passed:
+            print("\n🎉 SUCCESS: All critical Advanced Differential Diagnosis endpoints are working!")
+            print("✅ The troubleshoot agent fixes have resolved the AttributeError issues")
+            print("✅ Methods _generate_explainable_diagnostic_reasoning, _perform_confidence_interval_analysis, and _analyze_diagnostic_mechanisms are now callable")
+        else:
+            print("\n⚠️  ISSUES REMAIN: Some Advanced Differential Diagnosis endpoints are still failing")
+            print("❌ The troubleshoot agent fixes may not have fully resolved the AttributeError issues")
+        
+        return all_critical_passed
+
+
 if __name__ == "__main__":
-    print("🚀 RegenMed AI Pro - Critical Priority Features Testing")
-    print("=" * 80)
+    import sys
     
-    tester = RegenMedAIProTester()
-    
-    # Run only the critical priority features tests
-    tester.run_critical_priority_features_tests()
-    
-    print("\n" + "=" * 80)
-    print("🎯 CRITICAL PRIORITY FEATURES TESTING RESULTS")
-    print("=" * 80)
-    print(f"✅ Tests Passed: {tester.tests_passed}")
-    print(f"❌ Tests Failed: {tester.tests_run - tester.tests_passed}")
-    print(f"📊 Total Tests Run: {tester.tests_run}")
-    print(f"🎯 Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
-    
-    if tester.tests_passed == tester.tests_run:
-        print("\n🎉 ALL CRITICAL FEATURES TESTS PASSED!")
-        print("Living Evidence Engine, Advanced Differential Diagnosis, and Enhanced Explainable AI systems are fully functional!")
-    elif tester.tests_passed / tester.tests_run >= 0.8:
-        print("\n✅ EXCELLENT! Most critical features tests passed.")
-    elif tester.tests_passed / tester.tests_run >= 0.6:
-        print("\n⚠️  GOOD! Majority of critical features tests passed. Some issues need attention.")
+    # Check if we want to run only the Advanced Differential Diagnosis tests
+    if len(sys.argv) > 1 and sys.argv[1] == "--diagnosis-only":
+        print("🚀 RegenMed AI Pro - Advanced Differential Diagnosis System Testing")
+        print("=" * 80)
+        
+        tester = RegenMedAIProTester()
+        success = tester.run_advanced_differential_diagnosis_tests_only()
+        
+        print("\n" + "=" * 80)
+        print("🎯 ADVANCED DIFFERENTIAL DIAGNOSIS TESTING RESULTS")
+        print("=" * 80)
+        print(f"✅ Tests Passed: {tester.tests_passed}")
+        print(f"❌ Tests Failed: {tester.tests_run - tester.tests_passed}")
+        print(f"📊 Total Tests Run: {tester.tests_run}")
+        print(f"🎯 Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
+        
+        if success:
+            print("\n🎉 ALL ADVANCED DIFFERENTIAL DIAGNOSIS TESTS PASSED!")
+            print("The troubleshoot agent fixes have successfully resolved the AttributeError issues!")
+        else:
+            print("\n🚨 SOME ADVANCED DIFFERENTIAL DIAGNOSIS TESTS FAILED!")
+            print("The troubleshoot agent fixes may need further attention.")
+        
+        print("\n" + "=" * 80)
     else:
-        print("\n🚨 ATTENTION NEEDED! Multiple critical features test failures detected.")
-    
-    print("\n" + "=" * 80)
+        print("🚀 RegenMed AI Pro - Critical Priority Features Testing")
+        print("=" * 80)
+        
+        tester = RegenMedAIProTester()
+        
+        # Run only the critical priority features tests
+        tester.run_critical_priority_features_tests()
+        
+        print("\n" + "=" * 80)
+        print("🎯 CRITICAL PRIORITY FEATURES TESTING RESULTS")
+        print("=" * 80)
+        print(f"✅ Tests Passed: {tester.tests_passed}")
+        print(f"❌ Tests Failed: {tester.tests_run - tester.tests_passed}")
+        print(f"📊 Total Tests Run: {tester.tests_run}")
+        print(f"🎯 Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
+        
+        if tester.tests_passed == tester.tests_run:
+            print("\n🎉 ALL CRITICAL FEATURES TESTS PASSED!")
+            print("Living Evidence Engine, Advanced Differential Diagnosis, and Enhanced Explainable AI systems are fully functional!")
+        elif tester.tests_passed / tester.tests_run >= 0.8:
+            print("\n✅ EXCELLENT! Most critical features tests passed.")
+        elif tester.tests_passed / tester.tests_run >= 0.6:
+            print("\n⚠️  GOOD! Majority of critical features tests passed. Some issues need attention.")
+        else:
+            print("\n🚨 ATTENTION NEEDED! Multiple critical features test failures detected.")
+        
+        print("\n" + "=" * 80)
