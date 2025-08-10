@@ -1335,6 +1335,539 @@ IGF-1,180,109-284,ng/mL,Normal"""
                     print(f"   Fallback Available: {response.get('fallback_available')}")
         return success
 
+    # ========== PHASE 3: GLOBAL KNOWLEDGE ENGINE TESTING ==========
+
+    def test_phase3_global_knowledge_system_status(self):
+        """Test Phase 3 Global Knowledge Engine system status"""
+        success, response = self.run_test(
+            "Phase 3: Global Knowledge Engine Status",
+            "GET",
+            "global-knowledge/system-status",
+            200
+        )
+        
+        if success:
+            print(f"   System Status: {response.get('status', 'unknown')}")
+            
+            services = response.get('services', {})
+            if services:
+                print(f"   Global Regulatory Intelligence: {services.get('global_regulatory_intelligence', {}).get('status', 'unknown')}")
+                print(f"   International Protocol Library: {services.get('international_protocol_library', {}).get('status', 'unknown')}")
+                print(f"   Community Collaboration: {services.get('community_collaboration_platform', {}).get('status', 'unknown')}")
+            
+            database_stats = response.get('database_stats', {})
+            if database_stats:
+                print(f"   Regulatory Databases: {database_stats.get('regulatory_databases', 0)}")
+                print(f"   International Protocols: {database_stats.get('international_protocols', 0)}")
+                print(f"   Community Members: {database_stats.get('community_members', 0)}")
+        return success
+
+    def test_regulatory_treatment_status_prp(self):
+        """Test regulatory status for PRP treatment"""
+        success, response = self.run_test(
+            "Regulatory Treatment Status - PRP",
+            "GET",
+            "regulatory/treatment-status/PRP",
+            200
+        )
+        
+        if success:
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            print(f"   Global Status: {response.get('global_status', 'unknown')}")
+            
+            country_status = response.get('country_status', {})
+            if country_status:
+                print(f"   Countries Covered: {len(country_status)}")
+                # Show status for major countries
+                for country in ['US', 'EU', 'Canada', 'Australia']:
+                    if country in country_status:
+                        status = country_status[country].get('status', 'unknown')
+                        print(f"   {country}: {status}")
+            
+            regulatory_insights = response.get('regulatory_insights', {})
+            if regulatory_insights:
+                print(f"   Regulatory Insights Available: {len(regulatory_insights)}")
+        return success
+
+    def test_regulatory_treatment_status_bmac(self):
+        """Test regulatory status for BMAC treatment"""
+        success, response = self.run_test(
+            "Regulatory Treatment Status - BMAC",
+            "GET",
+            "regulatory/treatment-status/BMAC",
+            200
+        )
+        
+        if success:
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            print(f"   Global Status: {response.get('global_status', 'unknown')}")
+            
+            country_status = response.get('country_status', {})
+            if country_status:
+                print(f"   Countries with Data: {len(country_status)}")
+                
+            harmonization = response.get('harmonization_assessment', {})
+            if harmonization:
+                print(f"   Harmonization Score: {harmonization.get('harmonization_score', 0):.2f}")
+                print(f"   Regulatory Complexity: {harmonization.get('regulatory_complexity', 'unknown')}")
+        return success
+
+    def test_regulatory_treatment_status_stem_cells(self):
+        """Test regulatory status for stem cell treatments"""
+        success, response = self.run_test(
+            "Regulatory Treatment Status - Stem Cells",
+            "GET",
+            "regulatory/treatment-status/stem_cells",
+            200
+        )
+        
+        if success:
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            print(f"   Global Status: {response.get('global_status', 'unknown')}")
+            
+            country_status = response.get('country_status', {})
+            if country_status:
+                # Check for restrictive countries
+                restricted_count = sum(1 for country_data in country_status.values() 
+                                     if country_data.get('status') in ['restricted', 'clinical_trials_only'])
+                print(f"   Restricted/Clinical Trials Only: {restricted_count} countries")
+            
+            regulatory_insights = response.get('regulatory_insights', {})
+            if regulatory_insights:
+                print(f"   Key Insights: {len(regulatory_insights.get('key_insights', []))}")
+        return success
+
+    def test_regulatory_country_specific_us(self):
+        """Test country-specific regulatory status for US"""
+        success, response = self.run_test(
+            "Regulatory Status - US Specific",
+            "GET",
+            "regulatory/treatment-status/PRP?country=US",
+            200
+        )
+        
+        if success:
+            print(f"   Treatment: {response.get('treatment', 'unknown')}")
+            print(f"   Country: {response.get('country', 'unknown')}")
+            
+            country_status = response.get('country_status', {})
+            us_status = country_status.get('US', {})
+            if us_status:
+                print(f"   US Status: {us_status.get('status', 'unknown')}")
+                print(f"   FDA Classification: {us_status.get('fda_classification', 'unknown')}")
+                print(f"   Legal Framework: {us_status.get('legal_framework', 'unknown')}")
+        return success
+
+    def test_cross_jurisdictional_comparison(self):
+        """Test cross-jurisdictional regulatory comparison"""
+        comparison_data = {
+            "treatments": ["PRP", "BMAC", "stem_cells"],
+            "countries": ["US", "EU", "Canada", "Australia"],
+            "analysis_type": "comprehensive_comparison"
+        }
+
+        success, response = self.run_test(
+            "Cross-Jurisdictional Regulatory Comparison",
+            "POST",
+            "regulatory/cross-jurisdictional-comparison",
+            200,
+            data=comparison_data,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Analysis Type: {response.get('analysis_type', 'unknown')}")
+            print(f"   Treatments Analyzed: {len(response.get('treatments', []))}")
+            print(f"   Countries Analyzed: {len(response.get('countries', []))}")
+            
+            comparison_matrix = response.get('comparison_matrix', {})
+            if comparison_matrix:
+                print(f"   Comparison Matrix Available: Yes")
+                
+            harmonization = response.get('harmonization_assessment', {})
+            if harmonization:
+                print(f"   Overall Harmonization Score: {harmonization.get('overall_score', 0):.2f}")
+                print(f"   Most Harmonized Treatment: {harmonization.get('most_harmonized_treatment', 'unknown')}")
+                print(f"   Least Harmonized Treatment: {harmonization.get('least_harmonized_treatment', 'unknown')}")
+            
+            regulatory_insights = response.get('regulatory_insights', [])
+            print(f"   Regulatory Insights Generated: {len(regulatory_insights)}")
+        return success
+
+    def test_international_protocol_search_osteoarthritis(self):
+        """Test international protocol search for osteoarthritis"""
+        success, response = self.run_test(
+            "International Protocol Search - Osteoarthritis",
+            "GET",
+            "protocols/international-search?condition=osteoarthritis&max_results=10",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            print(f"   Search Type: {response.get('search_type', 'unknown')}")
+            
+            protocols = response.get('protocols', [])
+            print(f"   Protocols Found: {len(protocols)}")
+            
+            if protocols:
+                # Check medical traditions represented
+                traditions = set()
+                for protocol in protocols:
+                    tradition = protocol.get('medical_tradition', 'unknown')
+                    traditions.add(tradition)
+                
+                print(f"   Medical Traditions: {', '.join(traditions)}")
+                
+                # Show sample protocol
+                sample_protocol = protocols[0]
+                print(f"   Sample Protocol: {sample_protocol.get('protocol_name', 'Unknown')[:50]}...")
+                print(f"   Tradition: {sample_protocol.get('medical_tradition', 'Unknown')}")
+                print(f"   Country: {sample_protocol.get('country_origin', 'Unknown')}")
+                print(f"   Integration Level: {sample_protocol.get('integration_compatibility', {}).get('level', 'unknown')}")
+            
+            cross_tradition = response.get('cross_tradition_analysis', {})
+            if cross_tradition:
+                print(f"   Cross-Tradition Recommendations: {len(cross_tradition.get('recommendations', []))}")
+        return success
+
+    def test_international_protocol_search_multiple_traditions(self):
+        """Test international protocol search across multiple medical traditions"""
+        success, response = self.run_test(
+            "International Protocol Search - Multiple Traditions",
+            "GET",
+            "protocols/international-search?condition=rotator_cuff_injury&traditions=Western,TCM,Ayurvedic&max_results=15",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            
+            protocols = response.get('protocols', [])
+            print(f"   Total Protocols: {len(protocols)}")
+            
+            # Analyze tradition distribution
+            tradition_count = {}
+            for protocol in protocols:
+                tradition = protocol.get('medical_tradition', 'unknown')
+                tradition_count[tradition] = tradition_count.get(tradition, 0) + 1
+            
+            print(f"   Tradition Distribution:")
+            for tradition, count in tradition_count.items():
+                print(f"     {tradition}: {count} protocols")
+            
+            integration_analysis = response.get('integration_compatibility_assessment', {})
+            if integration_analysis:
+                print(f"   Integration Assessment Available: Yes")
+                print(f"   Recommended Integration Level: {integration_analysis.get('recommended_level', 'unknown')}")
+            
+            cross_tradition = response.get('cross_tradition_analysis', {})
+            if cross_tradition:
+                synergies = cross_tradition.get('potential_synergies', [])
+                print(f"   Potential Synergies Identified: {len(synergies)}")
+        return success
+
+    def test_international_protocol_integration_levels(self):
+        """Test international protocol integration compatibility levels"""
+        success, response = self.run_test(
+            "International Protocol Integration Levels",
+            "GET",
+            "protocols/international-search?condition=chronic_pain&integration_level=comprehensive&max_results=8",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            protocols = response.get('protocols', [])
+            print(f"   Protocols with Comprehensive Integration: {len(protocols)}")
+            
+            # Check integration levels
+            integration_levels = {}
+            for protocol in protocols:
+                level = protocol.get('integration_compatibility', {}).get('level', 'unknown')
+                integration_levels[level] = integration_levels.get(level, 0) + 1
+            
+            print(f"   Integration Level Distribution:")
+            for level, count in integration_levels.items():
+                print(f"     {level}: {count} protocols")
+            
+            # Check for comprehensive integration protocols
+            comprehensive_protocols = [p for p in protocols 
+                                     if p.get('integration_compatibility', {}).get('level') == 'comprehensive']
+            
+            if comprehensive_protocols:
+                sample = comprehensive_protocols[0]
+                compatibility = sample.get('integration_compatibility', {})
+                print(f"   Sample Comprehensive Protocol:")
+                print(f"     Name: {sample.get('protocol_name', 'Unknown')[:40]}...")
+                print(f"     Compatibility Score: {compatibility.get('compatibility_score', 0):.2f}")
+                print(f"     Integration Barriers: {len(compatibility.get('integration_barriers', []))}")
+        return success
+
+    def test_peer_consultation_emergency(self):
+        """Test peer consultation request with emergency urgency"""
+        consultation_data = {
+            "case_description": "58-year-old physician with bilateral knee osteoarthritis. Failed conservative management. Considering PRP vs BMAC vs stem cell therapy. Patient has diabetes and hypertension. Seeking expert opinion on optimal regenerative approach.",
+            "condition": "osteoarthritis",
+            "urgency_level": "emergency",
+            "expertise_needed": ["regenerative_medicine", "orthopedics", "diabetes_management"],
+            "patient_demographics": {
+                "age": 58,
+                "gender": "female",
+                "comorbidities": ["diabetes", "hypertension"]
+            },
+            "specific_questions": [
+                "Which regenerative therapy is most appropriate given diabetes?",
+                "How does hypertension affect treatment outcomes?",
+                "What are the contraindications for each therapy?"
+            ]
+        }
+
+        success, response = self.run_test(
+            "Peer Consultation Request - Emergency",
+            "POST",
+            "community/peer-consultation",
+            200,
+            data=consultation_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Consultation ID: {response.get('consultation_id', 'unknown')}")
+            print(f"   Urgency Level: {response.get('urgency_level', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            expert_matching = response.get('expert_matching', {})
+            if expert_matching:
+                print(f"   Experts Matched: {expert_matching.get('experts_matched', 0)}")
+                print(f"   Expected Response Time: {expert_matching.get('expected_response_time', 'unknown')}")
+                print(f"   Matching Score: {expert_matching.get('matching_score', 0):.2f}")
+            
+            consultation_workflow = response.get('consultation_workflow', {})
+            if consultation_workflow:
+                print(f"   Next Steps: {len(consultation_workflow.get('next_steps', []))}")
+                
+            # Store consultation ID for potential follow-up tests
+            if response.get('consultation_id'):
+                self.consultation_id = response.get('consultation_id')
+        return success
+
+    def test_peer_consultation_routine(self):
+        """Test peer consultation request with routine urgency"""
+        consultation_data = {
+            "case_description": "45-year-old athlete with rotator cuff injury. Exploring regenerative options before considering surgery. Looking for protocol recommendations and outcome expectations.",
+            "condition": "rotator_cuff_injury",
+            "urgency_level": "routine",
+            "expertise_needed": ["sports_medicine", "regenerative_medicine"],
+            "patient_demographics": {
+                "age": 45,
+                "gender": "male",
+                "activity_level": "high"
+            },
+            "specific_questions": [
+                "Best regenerative protocol for athletes?",
+                "Expected recovery timeline?",
+                "Return to sport considerations?"
+            ]
+        }
+
+        success, response = self.run_test(
+            "Peer Consultation Request - Routine",
+            "POST",
+            "community/peer-consultation",
+            200,
+            data=consultation_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Consultation ID: {response.get('consultation_id', 'unknown')}")
+            print(f"   Urgency Level: {response.get('urgency_level', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            expert_matching = response.get('expert_matching', {})
+            if expert_matching:
+                print(f"   Experts Matched: {expert_matching.get('experts_matched', 0)}")
+                print(f"   Expected Response Time: {expert_matching.get('expected_response_time', 'unknown')}")
+            
+            community_insights = response.get('community_insights', {})
+            if community_insights:
+                print(f"   Similar Cases Found: {community_insights.get('similar_cases_found', 0)}")
+                print(f"   Community Recommendations: {len(community_insights.get('community_recommendations', []))}")
+        return success
+
+    def test_share_protocol_public(self):
+        """Test sharing a protocol with the community (public level)"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for sharing testing")
+            return False
+
+        sharing_data = {
+            "protocol_id": self.protocol_id,
+            "sharing_level": "public",
+            "anonymization_level": "full",
+            "sharing_purpose": "knowledge_sharing",
+            "protocol_summary": {
+                "condition": "osteoarthritis",
+                "therapy_type": "PRP",
+                "outcome_summary": "Significant improvement in pain and function",
+                "key_learnings": [
+                    "PRP effective for moderate osteoarthritis",
+                    "Patient selection important for outcomes",
+                    "Combination with PT enhances results"
+                ]
+            },
+            "consent_obtained": True
+        }
+
+        success, response = self.run_test(
+            "Share Protocol - Public Level",
+            "POST",
+            "community/share-protocol",
+            200,
+            data=sharing_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Sharing ID: {response.get('sharing_id', 'unknown')}")
+            print(f"   Sharing Level: {response.get('sharing_level', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            
+            anonymization = response.get('anonymization_applied', {})
+            if anonymization:
+                print(f"   Anonymization Level: {anonymization.get('level', 'unknown')}")
+                print(f"   Data Protection: {anonymization.get('data_protection_applied', False)}")
+            
+            community_impact = response.get('community_impact', {})
+            if community_impact:
+                print(f"   Expected Reach: {community_impact.get('expected_reach', 'unknown')}")
+                print(f"   Knowledge Contribution Score: {community_impact.get('knowledge_contribution_score', 0):.2f}")
+        return success
+
+    def test_share_protocol_professional(self):
+        """Test sharing a protocol with professional network"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for professional sharing testing")
+            return False
+
+        sharing_data = {
+            "protocol_id": self.protocol_id,
+            "sharing_level": "professional_network",
+            "anonymization_level": "partial",
+            "sharing_purpose": "peer_review",
+            "target_specialties": ["regenerative_medicine", "orthopedics", "sports_medicine"],
+            "protocol_summary": {
+                "condition": "bilateral_knee_osteoarthritis",
+                "therapy_type": "AI_optimized_protocol",
+                "outcome_summary": "Excellent functional improvement with minimal adverse events",
+                "innovation_aspects": [
+                    "AI-guided therapy selection",
+                    "Personalized dosing protocol",
+                    "Multi-modal outcome tracking"
+                ]
+            },
+            "consent_obtained": True
+        }
+
+        success, response = self.run_test(
+            "Share Protocol - Professional Network",
+            "POST",
+            "community/share-protocol",
+            200,
+            data=sharing_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Sharing ID: {response.get('sharing_id', 'unknown')}")
+            print(f"   Sharing Level: {response.get('sharing_level', 'unknown')}")
+            print(f"   Target Specialties: {len(response.get('target_specialties', []))}")
+            
+            peer_review = response.get('peer_review_workflow', {})
+            if peer_review:
+                print(f"   Peer Review Initiated: {peer_review.get('initiated', False)}")
+                print(f"   Expected Reviewers: {peer_review.get('expected_reviewers', 0)}")
+            
+            professional_impact = response.get('professional_impact', {})
+            if professional_impact:
+                print(f"   Professional Network Reach: {professional_impact.get('network_reach', 0)}")
+        return success
+
+    def test_community_insights_collective_intelligence(self):
+        """Test community insights and collective intelligence"""
+        success, response = self.run_test(
+            "Community Insights - Collective Intelligence",
+            "GET",
+            "community/insights?condition=osteoarthritis&therapy_type=regenerative&time_period=6_months",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            print(f"   Therapy Type: {response.get('therapy_type', 'unknown')}")
+            print(f"   Time Period: {response.get('time_period', 'unknown')}")
+            
+            collective_insights = response.get('collective_insights', {})
+            if collective_insights:
+                print(f"   Total Cases Analyzed: {collective_insights.get('total_cases_analyzed', 0)}")
+                print(f"   Success Rate: {collective_insights.get('overall_success_rate', 0):.1%}")
+                print(f"   Average Improvement: {collective_insights.get('average_improvement', 0):.1f}%")
+            
+            trending_protocols = response.get('trending_protocols', [])
+            print(f"   Trending Protocols: {len(trending_protocols)}")
+            
+            if trending_protocols:
+                top_protocol = trending_protocols[0]
+                print(f"   Top Trending: {top_protocol.get('protocol_name', 'Unknown')}")
+                print(f"   Usage Growth: {top_protocol.get('usage_growth', 0):.1%}")
+            
+            expert_consensus = response.get('expert_consensus', {})
+            if expert_consensus:
+                print(f"   Expert Consensus Available: Yes")
+                print(f"   Consensus Strength: {expert_consensus.get('consensus_strength', 0):.2f}")
+            
+            emerging_trends = response.get('emerging_trends', [])
+            print(f"   Emerging Trends Identified: {len(emerging_trends)}")
+        return success
+
+    def test_community_insights_therapy_comparison(self):
+        """Test community insights for therapy comparison"""
+        success, response = self.run_test(
+            "Community Insights - Therapy Comparison",
+            "GET",
+            "community/insights?analysis_type=therapy_comparison&therapies=PRP,BMAC,stem_cells&condition=joint_disorders",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Analysis Type: {response.get('analysis_type', 'unknown')}")
+            
+            therapy_comparison = response.get('therapy_comparison', {})
+            if therapy_comparison:
+                print(f"   Therapies Compared: {len(therapy_comparison.get('therapies', []))}")
+                
+                # Show comparison results
+                for therapy_name, therapy_data in list(therapy_comparison.get('therapies', {}).items())[:3]:
+                    success_rate = therapy_data.get('success_rate', 0)
+                    case_count = therapy_data.get('case_count', 0)
+                    print(f"   {therapy_name}: {success_rate:.1%} success rate ({case_count} cases)")
+            
+            community_preferences = response.get('community_preferences', {})
+            if community_preferences:
+                print(f"   Most Preferred Therapy: {community_preferences.get('most_preferred', 'unknown')}")
+                print(f"   Preference Score: {community_preferences.get('preference_score', 0):.2f}")
+            
+            real_world_evidence = response.get('real_world_evidence', {})
+            if real_world_evidence:
+                print(f"   Real-World Evidence Quality: {real_world_evidence.get('evidence_quality', 'unknown')}")
+                print(f"   Data Points: {real_world_evidence.get('total_data_points', 0)}")
+        return success
+
     # ========== PHASE 2: AI CLINICAL INTELLIGENCE TESTING ==========
 
     def test_phase2_clinical_intelligence_status(self):
