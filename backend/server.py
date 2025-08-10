@@ -4423,7 +4423,7 @@ async def search_international_protocols(
         raise HTTPException(status_code=500, detail=f"Failed to search international protocols: {str(e)}")
 
 class PeerConsultationRequest(BaseModel):
-    case_summary: str
+    case_summary: Optional[str] = "Case details to be provided"
     specialty: Optional[str] = "Regenerative Medicine"
     urgency: Optional[str] = "routine"  # emergency, urgent, routine
     consultation_type: Optional[str] = "asynchronous"  # real_time, asynchronous
