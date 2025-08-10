@@ -2576,9 +2576,9 @@ function App() {
               <CardContent>
                 <div className="space-y-4">
                   {patients.map((patient) => (
-                    <Card 
+                    <div
                       key={patient.patient_id} 
-                      className={`cursor-pointer hover:shadow-md transition-all border-l-4 ${
+                      className={`cursor-pointer hover:shadow-md transition-all border-l-4 rounded-lg p-4 ${
                         selectedPatient?.patient_id === patient.patient_id 
                           ? 'border-l-blue-600 bg-gradient-to-r from-blue-100 to-indigo-100 shadow-md' 
                           : 'border-l-indigo-500 bg-gradient-to-r from-indigo-50 to-purple-50'
@@ -2590,28 +2590,26 @@ function App() {
                         handlePatientSelection(patient);
                       }}
                     >
-                      <CardContent className="pt-4">
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-3">
-                              <h4 className="font-semibold text-indigo-900">{patient.demographics.name}</h4>
-                              <Badge variant="outline" className="text-xs">
-                                {patient.demographics.age}y • {patient.demographics.gender}
-                              </Badge>
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3">
+                            <h4 className="font-semibold text-indigo-900">{patient.demographics.name}</h4>
+                            <div className="text-xs border border-slate-300 rounded px-2 py-1">
+                              {patient.demographics.age}y • {patient.demographics.gender}
                             </div>
-                            <p className="text-sm text-indigo-700 font-medium">{patient.chief_complaint}</p>
-                            <p className="text-xs text-slate-600">
-                              Created: {new Date(patient.created_at).toLocaleDateString()} • 
-                              Last Updated: {new Date(patient.updated_at).toLocaleDateString()}
-                            </p>
                           </div>
-                          <div className="text-right">
-                            <Badge className="bg-green-100 text-green-800 mb-2">Active</Badge>
-                            <p className="text-xs text-slate-500">ID: {patient.patient_id.slice(0, 8)}...</p>
-                          </div>
+                          <p className="text-sm text-indigo-700 font-medium">{patient.chief_complaint}</p>
+                          <p className="text-xs text-slate-600">
+                            Created: {new Date(patient.created_at).toLocaleDateString()} • 
+                            Last Updated: {new Date(patient.updated_at).toLocaleDateString()}
+                          </p>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="text-right">
+                          <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mb-2">Active</div>
+                          <p className="text-xs text-slate-500">ID: {patient.patient_id.slice(0, 8)}...</p>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                   
                   {patients.length === 0 && (
