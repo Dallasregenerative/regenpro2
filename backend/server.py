@@ -4351,6 +4351,302 @@ async def get_clinical_intelligence_status(
         raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
 
 # ==========================================
+# CRITICAL FEATURE 2: Advanced Differential Diagnosis API Endpoints  
+# ==========================================
+
+@api_router.post("/diagnosis/comprehensive-differential")
+async def perform_comprehensive_differential_diagnosis(
+    diagnosis_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Perform comprehensive differential diagnosis with multi-modal AI analysis"""
+    
+    try:
+        # Initialize Advanced Differential Diagnosis Engine
+        from advanced_services import AdvancedDifferentialDiagnosisEngine
+        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
+        await diagnosis_engine.initialize_differential_diagnosis_engine()
+        
+        # Extract patient data
+        patient_data = diagnosis_request.get("patient_data", {})
+        practitioner_controlled = diagnosis_request.get("practitioner_controlled", True)
+        
+        # Perform comprehensive differential diagnosis
+        diagnosis_result = await diagnosis_engine.perform_comprehensive_differential_diagnosis(
+            patient_data, practitioner_controlled
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "comprehensive_differential_diagnosis",
+            "patient_id": patient_data.get("patient_id"),
+            "diagnosis_id": diagnosis_result.get("comprehensive_diagnosis", {}).get("diagnosis_id"),
+            "practitioner_controlled": practitioner_controlled
+        })
+        
+        return diagnosis_result
+        
+    except Exception as e:
+        logger.error(f"Comprehensive differential diagnosis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to perform differential diagnosis: {str(e)}")
+
+@api_router.get("/diagnosis/{diagnosis_id}")
+async def get_comprehensive_diagnosis(
+    diagnosis_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Retrieve comprehensive diagnosis by ID"""
+    
+    try:
+        diagnosis = await db.comprehensive_diagnoses.find_one({"diagnosis_id": diagnosis_id})
+        
+        if not diagnosis:
+            raise HTTPException(status_code=404, detail="Diagnosis not found")
+        
+        # Convert ObjectId to string
+        if '_id' in diagnosis:
+            diagnosis['_id'] = str(diagnosis['_id'])
+        
+        return {
+            "status": "diagnosis_retrieved",
+            "comprehensive_diagnosis": diagnosis,
+            "advanced_features": [
+                "Multi-modal AI analysis with 6 data modalities",
+                "Evidence-weighted Bayesian diagnostic reasoning",
+                "Visual SHAP/LIME explainable AI breakdowns",
+                "Confidence intervals and scenario comparison",
+                "Mechanism-level cellular/molecular pathway insights"
+            ]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving comprehensive diagnosis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve diagnosis: {str(e)}")
+
+@api_router.post("/diagnosis/explainable-ai-analysis") 
+async def generate_explainable_ai_analysis(
+    analysis_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Generate explainable AI analysis for diagnostic reasoning"""
+    
+    try:
+        # Initialize Advanced Differential Diagnosis Engine
+        from advanced_services import AdvancedDifferentialDiagnosisEngine
+        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
+        
+        # Extract data
+        patient_data = analysis_request.get("patient_data", {})
+        differential_diagnoses = analysis_request.get("differential_diagnoses", [])
+        
+        # Generate explainable AI analysis
+        explainable_analysis = await diagnosis_engine._generate_explainable_diagnostic_reasoning(
+            patient_data, differential_diagnoses
+        )
+        
+        return {
+            "status": "explainable_analysis_generated",
+            "explainable_ai_analysis": explainable_analysis,
+            "explanation_features": [
+                "Visual SHAP/LIME feature importance breakdowns",
+                "Step-by-step diagnostic reasoning chains",
+                "Uncertainty quantification and confidence analysis",
+                "Clinical decision support recommendations"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Explainable AI analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate explainable analysis: {str(e)}")
+
+@api_router.post("/diagnosis/confidence-analysis")
+async def perform_diagnostic_confidence_analysis(
+    confidence_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Perform confidence interval analysis and scenario comparison"""
+    
+    try:
+        # Initialize Advanced Differential Diagnosis Engine
+        from advanced_services import AdvancedDifferentialDiagnosisEngine
+        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
+        
+        # Extract data
+        differential_diagnoses = confidence_request.get("differential_diagnoses", [])
+        patient_data = confidence_request.get("patient_data", {})
+        
+        # Perform confidence analysis
+        confidence_analysis = await diagnosis_engine._perform_confidence_interval_analysis(
+            differential_diagnoses, patient_data
+        )
+        
+        return {
+            "status": "confidence_analysis_completed",
+            "confidence_analysis": confidence_analysis,
+            "analysis_features": [
+                "Bayesian credible intervals for each diagnosis",
+                "Predictive uncertainty quantification", 
+                "Monte Carlo scenario simulation",
+                "Model and data uncertainty separation"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Confidence analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to perform confidence analysis: {str(e)}")
+
+@api_router.get("/diagnosis/mechanism-insights/{diagnosis_name}")
+async def get_diagnostic_mechanism_insights(
+    diagnosis_name: str,
+    patient_data: Optional[Dict[str, Any]] = None,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get mechanism-level cellular/molecular pathway insights for diagnosis"""
+    
+    try:
+        # Initialize Advanced Differential Diagnosis Engine
+        from advanced_services import AdvancedDifferentialDiagnosisEngine
+        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
+        
+        # Create diagnosis structure
+        diagnoses = [{
+            "diagnosis": diagnosis_name,
+            "posterior_probability": 0.8  # Default probability
+        }]
+        
+        # Generate mechanism insights
+        mechanism_insights = await diagnosis_engine._analyze_diagnostic_mechanisms(
+            diagnoses, patient_data or {}
+        )
+        
+        return {
+            "status": "mechanism_insights_generated",
+            "diagnosis": diagnosis_name,
+            "mechanism_insights": mechanism_insights,
+            "pathway_features": [
+                "Cellular signaling cascade visualization",
+                "Molecular pathway database integration",
+                "Protein-protein interaction analysis",
+                "Druggable therapeutic target identification"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Mechanism insights error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate mechanism insights: {str(e)}")
+
+@api_router.get("/diagnosis/comparative-analysis")
+async def perform_diagnostic_comparative_analysis(
+    diagnosis_1: str,
+    diagnosis_2: str,
+    patient_data: Optional[str] = None,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Perform head-to-head comparative analysis between diagnoses"""
+    
+    try:
+        # Initialize Advanced Differential Diagnosis Engine
+        from advanced_services import AdvancedDifferentialDiagnosisEngine
+        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
+        
+        # Create diagnosis structures
+        diagnoses = [
+            {
+                "diagnosis": diagnosis_1,
+                "posterior_probability": 0.75,
+                "evidence_quality": "high"
+            },
+            {
+                "diagnosis": diagnosis_2, 
+                "posterior_probability": 0.65,
+                "evidence_quality": "moderate"
+            }
+        ]
+        
+        # Perform comparative analysis
+        comparative_analysis = await diagnosis_engine._perform_head_to_head_diagnostic_comparison(
+            diagnoses
+        )
+        
+        return {
+            "status": "comparative_analysis_completed",
+            "diagnosis_1": diagnosis_1,
+            "diagnosis_2": diagnosis_2,
+            "comparative_analysis": comparative_analysis,
+            "comparison_features": [
+                "Head-to-head diagnostic accuracy comparison",
+                "Likelihood ratio analysis",
+                "Evidence quality assessment",
+                "Treatment pathway comparison"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Comparative analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to perform comparative analysis: {str(e)}")
+
+@api_router.get("/diagnosis/engine-status")
+async def get_differential_diagnosis_engine_status(
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get status of Advanced Differential Diagnosis Engine"""
+    
+    try:
+        # Initialize Advanced Differential Diagnosis Engine
+        from advanced_services import AdvancedDifferentialDiagnosisEngine
+        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
+        engine_status = await diagnosis_engine.initialize_differential_diagnosis_engine()
+        
+        # Check database statistics
+        diagnoses_count = await db.comprehensive_diagnoses.count_documents({})
+        explainable_analyses_count = await db.explainable_diagnoses.count_documents({})
+        
+        return {
+            "feature": "CRITICAL FEATURE 2: Advanced Multi-Modal AI Clinical Decision Support",
+            "overall_status": "operational" if engine_status.get("status") == "differential_diagnosis_engine_initialized" else "initializing",
+            "engine_status": engine_status,
+            "usage_statistics": {
+                "comprehensive_diagnoses_performed": diagnoses_count,
+                "explainable_analyses_generated": explainable_analyses_count
+            },
+            "critical_capabilities": [
+                "✅ Multi-modal AI clinical decision support integrating all patient data types",
+                "✅ Evidence-weighted differential diagnosis with Bayesian reasoning",
+                "✅ Visual SHAP/LIME explainable AI breakdowns for every recommendation",
+                "✅ Outcome confidence intervals & scenario comparison analysis",
+                "✅ Mechanism-level cellular/molecular pathway insights",
+                "✅ Head-to-head comparative effectiveness analysis"
+            ],
+            "data_modalities": [
+                "Demographics & risk factors",
+                "Clinical history & medications",
+                "Clinical presentation & symptoms",
+                "Laboratory results & biomarkers",
+                "Imaging studies & DICOM analysis", 
+                "Genomics & genetic factors"
+            ],
+            "diagnostic_reasoning": "Evidence-weighted Bayesian inference with population prevalence adjustment",
+            "explainability": "Visual breakdowns with feature importance charts and decision trees",
+            "cash_pay_value_proposition": [
+                "Provides comprehensive diagnostic assessment BEFORE protocol selection",
+                "Evidence-weighted reasoning supports defensible clinical decisions",
+                "Visual explanations enhance patient education and treatment justification",
+                "Confidence intervals help practitioners communicate uncertainty appropriately",
+                "Mechanism insights support targeted regenerative medicine approaches",
+                "Multi-modal analysis ensures no clinical data is overlooked"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Differential diagnosis engine status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get engine status: {str(e)}")
+
+# ==========================================
 # CRITICAL FEATURE 1: Living Evidence Engine API Endpoints
 # ==========================================
 
