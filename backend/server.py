@@ -27,7 +27,10 @@ from advanced_services import (
     initialize_advanced_services,
     VisualExplainableAI,
     ComparativeEffectivenessAnalytics,
-    PersonalizedRiskAssessment
+    PersonalizedRiskAssessment,
+    GlobalRegulatoryIntelligence,
+    InternationalProtocolLibrary,
+    CommunityCollaborationPlatform
 )
 from file_processing import (
     MedicalFileProcessor,
