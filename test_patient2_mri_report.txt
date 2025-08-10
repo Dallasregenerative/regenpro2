@@ -1,0 +1,53 @@
+MRI REPORT - RIGHT SHOULDER
+
+Patient: David Chen  
+DOB: August 22, 1996 (Age: 28)
+Patient ID: DC-2025-002
+Study Date: January 12, 2025
+Referring Physician: Dr. Mark Thompson, Sports Medicine
+
+CLINICAL HISTORY:
+28-year-old male competitive swimmer with 6-month history of progressive right shoulder pain and weakness. Pain worse with overhead activities and at night. Recent loss of throwing velocity and swimming performance.
+
+TECHNIQUE:
+MRI of the right shoulder without contrast using T1, T2, STIR, and proton density sequences in multiple planes.
+
+FINDINGS:
+
+ROTATOR CUFF:
+- Partial-thickness tear of the supraspinatus tendon involving 50% of tendon thickness
+- Moderate tendinopathy of the infraspinatus with intratendinous signal changes
+- Subscapularis tendon intact with mild thickening
+- Teres minor appears normal
+
+LABRUM:
+- Superior labral tear from anterior to posterior (SLAP Type II lesion)
+- Posterior labral fraying without detachment
+- Anterior labrum intact
+
+JOINT SPACE:
+- Minimal glenohumeral effusion
+- No significant cartilage loss
+- Mild subacromial bursitis with fluid collection
+
+BONE:
+- Mild subacromial spurring
+- No acute fractures or marrow edema
+- Slight flattening of greater tuberosity
+
+IMPRESSION:
+1. Partial-thickness supraspinatus tendon tear (50% thickness)
+2. SLAP Type II lesion (superior labrum tear)
+3. Infraspinatus tendinopathy  
+4. Subacromial impingement with bursitis
+5. Mild degenerative changes at acromioclavicular joint
+
+RECOMMENDATIONS:
+- Orthopedic/Sports medicine consultation
+- Consider arthroscopic evaluation and repair
+- Physical therapy may be beneficial for partial tears
+- Activity modification recommended
+
+Radiologist: Dr. Lisa Park, MD
+Fellowship Training: Musculoskeletal Imaging
+Date of Report: January 12, 2025
