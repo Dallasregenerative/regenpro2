@@ -4142,10 +4142,13 @@ async def get_risk_assessment(
         logger.error(f"Error retrieving risk assessment: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to retrieve assessment: {str(e)}")
 
+class RiskStratificationRequest(BaseModel):
+    patient_cohort: List[Dict[str, Any]]
+    treatment_type: str
+
 @api_router.post("/ai/risk-stratification")
 async def risk_stratify_patients(
-    patient_cohort: List[Dict[str, Any]],
-    treatment_type: str,
+    request: RiskStratificationRequest,
     practitioner: Practitioner = Depends(get_current_practitioner)
 ):
     """Risk stratify a cohort of patients for treatment selection"""
@@ -4157,9 +4160,9 @@ async def risk_stratify_patients(
         
         # Process each patient
         stratification_results = []
-        treatment_plan = {"treatment_type": treatment_type}
+        treatment_plan = {"treatment_type": request.treatment_type}
         
-        for patient_data in patient_cohort[:20]:  # Limit to 20 patients for performance
+        for patient_data in request.patient_cohort[:20]:  # Limit to 20 patients for performance
             try:
                 risk_result = await risk_assessment.perform_comprehensive_risk_assessment(
                     patient_data, treatment_plan
@@ -4196,16 +4199,16 @@ async def risk_stratify_patients(
             "timestamp": datetime.utcnow(),
             "practitioner_id": practitioner.id,
             "action": "patient_cohort_risk_stratified",
-            "cohort_size": len(patient_cohort),
-            "treatment_type": treatment_type,
+            "cohort_size": len(request.patient_cohort),
+            "treatment_type": request.treatment_type,
             "successful_assessments": len(stratification_results)
         })
         
         return {
             "stratification_results": stratification_results,
-            "cohort_size": len(patient_cohort),
+            "cohort_size": len(request.patient_cohort),
             "successful_assessments": len(stratification_results),
-            "treatment_type": treatment_type,
+            "treatment_type": request.treatment_type,
             "ranking_criteria": "risk_benefit_ratio",
             "timestamp": datetime.utcnow().isoformat()
         }
