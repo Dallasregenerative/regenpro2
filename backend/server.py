@@ -4351,6 +4351,220 @@ async def get_clinical_intelligence_status(
         raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
 
 # ==========================================
+# CRITICAL FEATURE 1: Living Evidence Engine API Endpoints
+# ==========================================
+
+@api_router.post("/evidence/protocol-evidence-mapping")
+async def generate_protocol_evidence_mapping(
+    protocol_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Generate comprehensive evidence mapping for specific protocol with automated justification"""
+    
+    try:
+        # Initialize Living Evidence Engine
+        from advanced_services import LivingEvidenceEngine
+        evidence_engine = LivingEvidenceEngine(db)
+        await evidence_engine.initialize_living_evidence_engine()
+        
+        # Extract protocol data
+        protocol_id = protocol_request.get("protocol_id", str(uuid.uuid4()))
+        protocol_data = protocol_request.get("protocol_data", {})
+        
+        # Generate comprehensive evidence mapping
+        evidence_mapping = await evidence_engine.generate_protocol_evidence_mapping(
+            protocol_id, protocol_data
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "protocol_evidence_mapping_generated",
+            "protocol_id": protocol_id,
+            "evidence_mapping_id": evidence_mapping.get("evidence_mapping", {}).get("evidence_mapping_id")
+        })
+        
+        return evidence_mapping
+        
+    except Exception as e:
+        logger.error(f"Protocol evidence mapping error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate evidence mapping: {str(e)}")
+
+@api_router.get("/evidence/protocol/{protocol_id}/evidence-mapping")
+async def get_protocol_evidence_mapping(
+    protocol_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Retrieve stored evidence mapping for protocol"""
+    
+    try:
+        evidence_mapping = await db.evidence_mappings.find_one({"protocol_id": protocol_id})
+        
+        if not evidence_mapping:
+            # Generate new evidence mapping if none exists
+            from advanced_services import LivingEvidenceEngine
+            evidence_engine = LivingEvidenceEngine(db)
+            await evidence_engine.initialize_living_evidence_engine()
+            
+            # Get protocol data
+            protocol_data = await db.protocols.find_one({"protocol_id": protocol_id})
+            if not protocol_data:
+                raise HTTPException(status_code=404, detail="Protocol not found")
+            
+            # Generate evidence mapping
+            mapping_result = await evidence_engine.generate_protocol_evidence_mapping(
+                protocol_id, protocol_data
+            )
+            evidence_mapping = mapping_result.get("evidence_mapping", {})
+        
+        # Convert ObjectId to string
+        if '_id' in evidence_mapping:
+            evidence_mapping['_id'] = str(evidence_mapping['_id'])
+        
+        return {
+            "status": "evidence_mapping_retrieved",
+            "evidence_mapping": evidence_mapping,
+            "living_evidence_features": [
+                "Component-level evidence justification",
+                "AI-generated summaries explaining WHY each component is recommended",
+                "Living systematic reviews with auto-updates",
+                "Evidence strength visualizations",
+                "Contradiction detection and evidence-changed alerts"
+            ]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving protocol evidence mapping: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve evidence mapping: {str(e)}")
+
+@api_router.get("/evidence/living-reviews/{condition}")
+async def get_living_systematic_review(
+    condition: str,
+    therapies: Optional[str] = None,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get living systematic review for condition and therapies"""
+    
+    try:
+        # Initialize Living Evidence Engine
+        from advanced_services import LivingEvidenceEngine
+        evidence_engine = LivingEvidenceEngine(db)
+        await evidence_engine.initialize_living_evidence_engine()
+        
+        # Parse therapies parameter
+        therapy_list = therapies.split(",") if therapies else ["PRP", "BMAC"]
+        
+        # Perform living systematic review
+        living_review = await evidence_engine._perform_living_systematic_review(
+            therapy_list, condition
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "living_systematic_review_accessed",
+            "condition": condition,
+            "therapies": therapy_list
+        })
+        
+        return {
+            "status": "living_review_generated",
+            "condition": condition,
+            "therapies": therapy_list,
+            "living_systematic_review": living_review,
+            "review_features": [
+                "Auto-updating as new studies emerge",
+                "Contradiction detection with evidence stability assessment",
+                "Meta-analysis of available systematic reviews",
+                "Recent evidence updates monitoring"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Living systematic review error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate living review: {str(e)}")
+
+@api_router.get("/evidence/alerts/{protocol_id}")
+async def get_evidence_change_alerts(
+    protocol_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get evidence change alerts for specific protocol"""
+    
+    try:
+        # Initialize Living Evidence Engine
+        from advanced_services import LivingEvidenceEngine
+        evidence_engine = LivingEvidenceEngine(db)
+        
+        # Get evidence change alerts
+        alerts = await evidence_engine._check_evidence_change_alerts(protocol_id)
+        
+        return {
+            "status": "alerts_retrieved",
+            "protocol_id": protocol_id,
+            "alert_count": len(alerts),
+            "evidence_change_alerts": alerts,
+            "alert_types": list(set(alert.get("alert_type", "unknown") for alert in alerts)),
+            "requires_attention": any(alert.get("severity") in ["high", "critical"] for alert in alerts)
+        }
+        
+    except Exception as e:
+        logger.error(f"Evidence alerts retrieval error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve evidence alerts: {str(e)}")
+
+@api_router.get("/evidence/engine-status")
+async def get_living_evidence_engine_status(
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get status of Living Evidence Engine system"""
+    
+    try:
+        # Initialize Living Evidence Engine
+        from advanced_services import LivingEvidenceEngine
+        evidence_engine = LivingEvidenceEngine(db)
+        engine_status = await evidence_engine.initialize_living_evidence_engine()
+        
+        # Check database statistics
+        evidence_mappings_count = await db.evidence_mappings.count_documents({})
+        living_reviews_count = await db.living_systematic_reviews.count_documents({})
+        evidence_alerts_count = await db.evidence_change_alerts.count_documents({})
+        
+        return {
+            "feature": "CRITICAL FEATURE 1: Living Evidence Engine & Protocol Justification",
+            "overall_status": "operational" if engine_status.get("status") == "living_evidence_engine_initialized" else "initializing",
+            "engine_status": engine_status,
+            "usage_statistics": {
+                "evidence_mappings_generated": evidence_mappings_count,
+                "living_reviews_performed": living_reviews_count,
+                "evidence_change_alerts": evidence_alerts_count
+            },
+            "critical_capabilities": [
+                "✅ Automated protocol-specific evidence mapping",
+                "✅ AI-generated evidence summaries for each protocol component", 
+                "✅ Living systematic reviews with auto-updates",
+                "✅ Evidence strength visualizations with level-of-evidence gradings",
+                "✅ Contradiction detection and 'evidence changed' alerts",
+                "✅ Full-spectrum literature ingestion (PubMed + Google Scholar + preprints + international)"
+            ],
+            "cash_pay_value_proposition": [
+                "Provides scientifically defensible rationale for every protocol component",
+                "Real-time evidence updates ensure practitioners stay ahead of latest research",
+                "AI-generated summaries explain WHY treatments work and FOR WHOM",
+                "Evidence-strength visualizations support patient education and consent",
+                "Living reviews prevent protocol stagnation and maintain cutting-edge approach"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Living Evidence Engine status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get engine status: {str(e)}")
+
+# ==========================================
 # Phase 3: Global Knowledge Engine - New Endpoints
 # ==========================================
 
