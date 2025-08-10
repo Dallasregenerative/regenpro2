@@ -126,35 +126,47 @@ class TargetedFixTester:
         
         # Test 1: POST /api/diagnosis/comprehensive-differential
         differential_data = {
-            "patient_id": self.patient_id,
-            "clinical_presentation": {
-                "chief_complaint": "Progressive right shoulder pain and weakness affecting surgical practice",
-                "symptom_duration": "8 months",
-                "pain_characteristics": {
-                    "intensity": 7,
-                    "quality": "deep aching pain with sharp exacerbations during overhead activities",
-                    "aggravating_factors": ["overhead reaching", "lifting", "sleeping on affected side"],
-                    "relieving_factors": ["rest", "ice application", "NSAIDs"]
+            "patient_data": {
+                "patient_id": self.patient_id,
+                "demographics": {
+                    "age": 52,
+                    "gender": "female",
+                    "occupation": "surgeon"
                 },
-                "functional_impact": {
-                    "work_impact": "unable to perform complex surgical procedures requiring overhead positioning",
-                    "daily_activities": "difficulty with hair washing, reaching overhead shelves",
-                    "sleep_disturbance": "awakens 2-3 times nightly due to shoulder pain"
-                }
-            },
-            "diagnostic_modalities": {
-                "physical_examination": {
-                    "inspection": "mild deltoid atrophy, no visible deformity",
-                    "palpation": "tenderness over greater tuberosity and subacromial space",
-                    "range_of_motion": "active abduction limited to 90 degrees, passive abduction 140 degrees",
-                    "special_tests": ["positive Hawkins-Kennedy test", "positive empty can test", "positive drop arm test", "positive external rotation lag sign"],
-                    "strength_testing": "4/5 abduction, 3/5 external rotation, 5/5 internal rotation"
+                "medical_history": {
+                    "past_medical_history": ["Rotator cuff tendinopathy", "Cervical spondylosis"],
+                    "medications": ["Ibuprofen 600mg TID", "Omeprazole 20mg daily"],
+                    "allergies": ["NKDA"]
                 },
-                "imaging": {
-                    "mri_findings": "Full-thickness rotator cuff tear involving supraspinatus and infraspinatus tendons with moderate retraction, mild fatty infiltration Goutallier grade 2"
+                "clinical_presentation": {
+                    "chief_complaint": "Progressive right shoulder pain and weakness affecting surgical practice",
+                    "symptom_duration": "8 months",
+                    "pain_characteristics": {
+                        "intensity": 7,
+                        "quality": "deep aching pain with sharp exacerbations during overhead activities",
+                        "aggravating_factors": ["overhead reaching", "lifting", "sleeping on affected side"],
+                        "relieving_factors": ["rest", "ice application", "NSAIDs"]
+                    },
+                    "functional_impact": {
+                        "work_impact": "unable to perform complex surgical procedures requiring overhead positioning",
+                        "daily_activities": "difficulty with hair washing, reaching overhead shelves",
+                        "sleep_disturbance": "awakens 2-3 times nightly due to shoulder pain"
+                    }
                 },
-                "laboratory": {
-                    "inflammatory_markers": {"CRP": 1.8, "ESR": 15}
+                "diagnostic_modalities": {
+                    "physical_examination": {
+                        "inspection": "mild deltoid atrophy, no visible deformity",
+                        "palpation": "tenderness over greater tuberosity and subacromial space",
+                        "range_of_motion": "active abduction limited to 90 degrees, passive abduction 140 degrees",
+                        "special_tests": ["positive Hawkins-Kennedy test", "positive empty can test", "positive drop arm test", "positive external rotation lag sign"],
+                        "strength_testing": "4/5 abduction, 3/5 external rotation, 5/5 internal rotation"
+                    },
+                    "imaging": {
+                        "mri_findings": "Full-thickness rotator cuff tear involving supraspinatus and infraspinatus tendons with moderate retraction, mild fatty infiltration Goutallier grade 2"
+                    },
+                    "laboratory": {
+                        "inflammatory_markers": {"CRP": 1.8, "ESR": 15}
+                    }
                 }
             },
             "analysis_parameters": {
@@ -162,7 +174,8 @@ class TargetedFixTester:
                 "confidence_threshold": 0.1,
                 "regenerative_focus": True,
                 "evidence_level_minimum": 2
-            }
+            },
+            "practitioner_controlled": True
         }
 
         print("\n1. Testing POST /api/diagnosis/comprehensive-differential")
