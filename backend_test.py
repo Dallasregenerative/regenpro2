@@ -1187,6 +1187,680 @@ IGF-1,180,109-284,ng/mL,Normal"""
             print(f"   Analyses Returned: {len(analyses)}")
         return success
 
+    # ========== CRITICAL FEATURE 1: LIVING EVIDENCE ENGINE & PROTOCOL JUSTIFICATION ==========
+
+    def test_critical_feature_1_protocol_evidence_mapping(self):
+        """Test POST /api/evidence/protocol-evidence-mapping - CRITICAL FEATURE 1"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for evidence mapping testing")
+            return False
+
+        evidence_mapping_data = {
+            "protocol_id": self.protocol_id,
+            "condition": "osteoarthritis",
+            "therapies": ["PRP", "BMAC"],
+            "patient_factors": {
+                "age": 58,
+                "severity": "moderate",
+                "previous_treatments": ["NSAIDs", "physical_therapy"]
+            },
+            "evidence_requirements": {
+                "minimum_evidence_level": 2,
+                "include_real_world_data": True,
+                "geographic_relevance": ["US", "EU"]
+            }
+        }
+
+        print("   This may take 30-60 seconds for comprehensive evidence mapping...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 1: Protocol Evidence Mapping",
+            "POST",
+            "evidence/protocol-evidence-mapping",
+            200,
+            data=evidence_mapping_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Evidence Mapping Status: {response.get('status', 'Unknown')}")
+            
+            evidence_summary = response.get('evidence_summary', {})
+            if evidence_summary:
+                print(f"   Total Evidence Sources: {evidence_summary.get('total_sources', 0)}")
+                print(f"   High Quality Evidence: {evidence_summary.get('high_quality_sources', 0)}")
+                print(f"   Evidence Confidence: {evidence_summary.get('overall_confidence', 0):.2f}")
+            
+            protocol_justification = response.get('protocol_justification', {})
+            if protocol_justification:
+                print(f"   Justification Score: {protocol_justification.get('justification_score', 0):.2f}")
+                print(f"   Evidence-Based Recommendations: {len(protocol_justification.get('recommendations', []))}")
+                
+            automated_analysis = response.get('automated_analysis', {})
+            if automated_analysis:
+                print(f"   AI Summary Generated: {automated_analysis.get('ai_summary_available', False)}")
+                print(f"   Literature Papers Analyzed: {automated_analysis.get('papers_analyzed', 0)}")
+        return success
+
+    def test_critical_feature_1_living_reviews(self):
+        """Test GET /api/evidence/living-reviews/osteoarthritis - CRITICAL FEATURE 1"""
+        success, response = self.run_test(
+            "CRITICAL FEATURE 1: Living Evidence Reviews - Osteoarthritis",
+            "GET",
+            "evidence/living-reviews/osteoarthritis?therapies=PRP,BMAC&include_real_world=true&evidence_level=2",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'Unknown')}")
+            print(f"   Review Status: {response.get('status', 'Unknown')}")
+            
+            living_review = response.get('living_review', {})
+            if living_review:
+                print(f"   Last Updated: {living_review.get('last_updated', 'Unknown')}")
+                print(f"   Evidence Sources: {living_review.get('total_evidence_sources', 0)}")
+                print(f"   Therapy Coverage: {len(living_review.get('therapies_covered', []))}")
+                
+            therapy_analysis = response.get('therapy_analysis', {})
+            if therapy_analysis:
+                prp_data = therapy_analysis.get('PRP', {})
+                bmac_data = therapy_analysis.get('BMAC', {})
+                
+                if prp_data:
+                    print(f"   PRP Evidence Quality: {prp_data.get('evidence_quality', 'Unknown')}")
+                    print(f"   PRP Success Rate: {prp_data.get('pooled_success_rate', 0):.1%}")
+                
+                if bmac_data:
+                    print(f"   BMAC Evidence Quality: {bmac_data.get('evidence_quality', 'Unknown')}")
+                    print(f"   BMAC Success Rate: {bmac_data.get('pooled_success_rate', 0):.1%}")
+                    
+            real_world_data = response.get('real_world_evidence', {})
+            if real_world_data:
+                print(f"   Real-World Studies: {real_world_data.get('studies_included', 0)}")
+                print(f"   Patient Population: {real_world_data.get('total_patients', 0)}")
+        return success
+
+    def test_critical_feature_1_evidence_alerts(self):
+        """Test GET /api/evidence/alerts/{protocol_id} - CRITICAL FEATURE 1"""
+        if not self.protocol_id:
+            print("❌ No protocol ID available for evidence alerts testing")
+            return False
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE 1: Evidence Change Alerts",
+            "GET",
+            f"evidence/alerts/{self.protocol_id}",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Alert Status: {response.get('status', 'Unknown')}")
+            
+            alerts = response.get('alerts', [])
+            print(f"   Active Alerts: {len(alerts)}")
+            
+            if alerts:
+                for i, alert in enumerate(alerts[:3], 1):  # Show first 3 alerts
+                    print(f"   Alert {i}: {alert.get('alert_type', 'Unknown')} - {alert.get('severity', 'Unknown')}")
+                    print(f"     Message: {alert.get('message', 'No message')[:60]}...")
+                    
+            evidence_changes = response.get('evidence_changes', {})
+            if evidence_changes:
+                print(f"   New Evidence Available: {evidence_changes.get('new_evidence_count', 0)}")
+                print(f"   Updated Guidelines: {evidence_changes.get('updated_guidelines', 0)}")
+                print(f"   Safety Updates: {evidence_changes.get('safety_updates', 0)}")
+                
+            monitoring_status = response.get('monitoring_status', {})
+            if monitoring_status:
+                print(f"   Monitoring Active: {monitoring_status.get('active', False)}")
+                print(f"   Last Check: {monitoring_status.get('last_check', 'Unknown')}")
+        return success
+
+    def test_critical_feature_1_engine_status(self):
+        """Test GET /api/evidence/engine-status - CRITICAL FEATURE 1"""
+        success, response = self.run_test(
+            "CRITICAL FEATURE 1: Evidence Engine Status",
+            "GET",
+            "evidence/engine-status",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Engine Status: {response.get('status', 'Unknown')}")
+            print(f"   Engine Version: {response.get('version', 'Unknown')}")
+            
+            capabilities = response.get('capabilities', {})
+            if capabilities:
+                print(f"   Living Reviews: {capabilities.get('living_reviews', False)}")
+                print(f"   Protocol Mapping: {capabilities.get('protocol_evidence_mapping', False)}")
+                print(f"   Real-time Alerts: {capabilities.get('evidence_alerts', False)}")
+                print(f"   AI Synthesis: {capabilities.get('ai_synthesis', False)}")
+                
+            database_stats = response.get('database_stats', {})
+            if database_stats:
+                print(f"   Evidence Sources: {database_stats.get('total_evidence_sources', 0)}")
+                print(f"   Active Protocols: {database_stats.get('active_protocols', 0)}")
+                print(f"   Literature Papers: {database_stats.get('literature_papers', 0)}")
+                
+            performance_metrics = response.get('performance_metrics', {})
+            if performance_metrics:
+                print(f"   Average Response Time: {performance_metrics.get('avg_response_time', 0):.2f}s")
+                print(f"   Success Rate: {performance_metrics.get('success_rate', 0):.1%}")
+        return success
+
+    # ========== CRITICAL FEATURE 2: ADVANCED MULTI-MODAL AI CLINICAL DECISION SUPPORT ==========
+
+    def test_critical_feature_2_comprehensive_differential(self):
+        """Test POST /api/diagnosis/comprehensive-differential - CRITICAL FEATURE 2"""
+        if not self.patient_id:
+            print("❌ No patient ID available for comprehensive differential testing")
+            return False
+
+        multi_modal_data = {
+            "patient_id": self.patient_id,
+            "clinical_data": {
+                "chief_complaint": "Bilateral knee pain and stiffness",
+                "history_present_illness": "Progressive bilateral knee pain over 3 years, worse with activity",
+                "physical_exam": {
+                    "inspection": "Mild bilateral knee swelling",
+                    "palpation": "Tenderness over medial joint lines",
+                    "range_of_motion": "Flexion limited to 120 degrees bilaterally",
+                    "special_tests": "Positive McMurray test bilaterally"
+                }
+            },
+            "laboratory_data": {
+                "inflammatory_markers": {
+                    "CRP": 2.1,
+                    "ESR": 18,
+                    "RF": "negative",
+                    "anti_CCP": "negative"
+                },
+                "metabolic_panel": {
+                    "glucose": 95,
+                    "creatinine": 0.9,
+                    "uric_acid": 4.2
+                }
+            },
+            "imaging_data": {
+                "xray_findings": "Grade 2-3 osteoarthritis with joint space narrowing",
+                "mri_findings": "Cartilage thinning, meniscal degeneration, mild bone marrow edema"
+            },
+            "genetic_data": {
+                "collagen_variants": "COL2A1 normal",
+                "inflammatory_markers": "IL1B normal variant"
+            },
+            "wearable_data": {
+                "activity_level": "moderately active",
+                "pain_patterns": "worse in morning and after activity",
+                "sleep_quality": "disrupted by pain"
+            },
+            "patient_reported_outcomes": {
+                "pain_scale": 6,
+                "functional_limitation": "moderate",
+                "quality_of_life_impact": "significant"
+            }
+        }
+
+        print("   This may take 60-90 seconds for comprehensive multi-modal AI analysis...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 2: Comprehensive Multi-Modal Differential Diagnosis",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data=multi_modal_data,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            print(f"   Differential Diagnoses Generated: {len(differential_diagnoses)}")
+            
+            if differential_diagnoses:
+                for i, diagnosis in enumerate(differential_diagnoses[:3], 1):  # Show top 3
+                    print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"     Confidence: {diagnosis.get('confidence_score', 0):.2f}")
+                    print(f"     ICD-10: {diagnosis.get('icd10_code', 'Unknown')}")
+                    print(f"     Evidence Sources: {len(diagnosis.get('supporting_evidence', []))}")
+                    
+            multi_modal_integration = response.get('multi_modal_integration', {})
+            if multi_modal_integration:
+                print(f"   Data Modalities Integrated: {multi_modal_integration.get('modalities_count', 0)}")
+                print(f"   Integration Confidence: {multi_modal_integration.get('integration_confidence', 0):.2f}")
+                print(f"   Key Correlations Found: {len(multi_modal_integration.get('key_correlations', []))}")
+                
+            ai_reasoning = response.get('ai_reasoning', {})
+            if ai_reasoning:
+                print(f"   Bayesian Analysis: {ai_reasoning.get('bayesian_analysis_performed', False)}")
+                print(f"   Decision Tree Depth: {ai_reasoning.get('decision_tree_depth', 0)}")
+                print(f"   Confidence Intervals: {ai_reasoning.get('confidence_intervals_calculated', False)}")
+        return success
+
+    def test_critical_feature_2_explainable_ai_analysis(self):
+        """Test POST /api/diagnosis/explainable-ai-analysis - CRITICAL FEATURE 2"""
+        if not self.patient_id:
+            print("❌ No patient ID available for explainable AI analysis testing")
+            return False
+
+        analysis_request = {
+            "patient_id": self.patient_id,
+            "diagnoses": [
+                {
+                    "diagnosis": "M17.0 - Bilateral primary osteoarthritis of knee",
+                    "confidence_score": 0.85,
+                    "icd10_code": "M17.0"
+                },
+                {
+                    "diagnosis": "M06.9 - Rheumatoid arthritis, unspecified",
+                    "confidence_score": 0.15,
+                    "icd10_code": "M06.9"
+                }
+            ],
+            "explanation_type": "comprehensive",
+            "include_feature_importance": True,
+            "include_decision_path": True,
+            "include_counterfactuals": True
+        }
+
+        print("   This may take 45-60 seconds for explainable AI analysis...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 2: Explainable AI Analysis",
+            "POST",
+            "diagnosis/explainable-ai-analysis",
+            200,
+            data=analysis_request,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Analysis ID: {response.get('analysis_id', 'Unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            
+            feature_importance = response.get('feature_importance', {})
+            if feature_importance:
+                print(f"   Feature Analysis Method: {feature_importance.get('method', 'Unknown')}")
+                
+                top_features = feature_importance.get('top_features', [])
+                print(f"   Top Contributing Features: {len(top_features)}")
+                
+                for i, feature in enumerate(top_features[:5], 1):  # Show top 5
+                    print(f"     Feature {i}: {feature.get('feature_name', 'Unknown')} - Impact: {feature.get('importance_score', 0):.3f}")
+                    
+            decision_path = response.get('decision_path', {})
+            if decision_path:
+                print(f"   Decision Path Nodes: {len(decision_path.get('path_nodes', []))}")
+                print(f"   Critical Decision Points: {len(decision_path.get('critical_points', []))}")
+                
+            shap_analysis = response.get('shap_analysis', {})
+            if shap_analysis:
+                print(f"   SHAP Base Value: {shap_analysis.get('base_value', 0):.3f}")
+                print(f"   SHAP Values Calculated: {len(shap_analysis.get('shap_values', []))}")
+                print(f"   Final Prediction: {shap_analysis.get('final_prediction', 0):.3f}")
+                
+            lime_analysis = response.get('lime_analysis', {})
+            if lime_analysis:
+                print(f"   LIME Explanations: {len(lime_analysis.get('explanations', []))}")
+                print(f"   Local Fidelity Score: {lime_analysis.get('fidelity_score', 0):.3f}")
+        return success
+
+    def test_critical_feature_2_confidence_analysis(self):
+        """Test POST /api/diagnosis/confidence-analysis - CRITICAL FEATURE 2"""
+        if not self.patient_id:
+            print("❌ No patient ID available for confidence analysis testing")
+            return False
+
+        confidence_request = {
+            "patient_id": self.patient_id,
+            "diagnosis": "M17.0 - Bilateral primary osteoarthritis of knee",
+            "confidence_score": 0.85,
+            "analysis_type": "bayesian_credible_intervals",
+            "monte_carlo_samples": 1000,
+            "uncertainty_quantification": True
+        }
+
+        print("   This may take 30-45 seconds for Bayesian confidence analysis...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 2: Bayesian Confidence Analysis",
+            "POST",
+            "diagnosis/confidence-analysis",
+            200,
+            data=confidence_request,
+            timeout=75
+        )
+        
+        if success:
+            print(f"   Analysis ID: {response.get('analysis_id', 'Unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            
+            bayesian_analysis = response.get('bayesian_analysis', {})
+            if bayesian_analysis:
+                credible_interval = bayesian_analysis.get('credible_interval', {})
+                if credible_interval:
+                    print(f"   95% Credible Interval: [{credible_interval.get('lower', 0):.3f}, {credible_interval.get('upper', 0):.3f}]")
+                    print(f"   Posterior Mean: {credible_interval.get('mean', 0):.3f}")
+                    print(f"   Posterior Std: {credible_interval.get('std', 0):.3f}")
+                    
+                print(f"   Prior Distribution: {bayesian_analysis.get('prior_distribution', 'Unknown')}")
+                print(f"   Likelihood Function: {bayesian_analysis.get('likelihood_function', 'Unknown')}")
+                
+            uncertainty_metrics = response.get('uncertainty_metrics', {})
+            if uncertainty_metrics:
+                print(f"   Epistemic Uncertainty: {uncertainty_metrics.get('epistemic_uncertainty', 0):.3f}")
+                print(f"   Aleatoric Uncertainty: {uncertainty_metrics.get('aleatoric_uncertainty', 0):.3f}")
+                print(f"   Total Uncertainty: {uncertainty_metrics.get('total_uncertainty', 0):.3f}")
+                
+            monte_carlo_results = response.get('monte_carlo_results', {})
+            if monte_carlo_results:
+                print(f"   MC Samples: {monte_carlo_results.get('samples_used', 0)}")
+                print(f"   MC Convergence: {monte_carlo_results.get('convergence_achieved', False)}")
+                print(f"   Effective Sample Size: {monte_carlo_results.get('effective_sample_size', 0)}")
+        return success
+
+    def test_critical_feature_2_mechanism_insights(self):
+        """Test GET /api/diagnosis/mechanism-insights/Osteoarthritis - CRITICAL FEATURE 2"""
+        success, response = self.run_test(
+            "CRITICAL FEATURE 2: Cellular Mechanism Insights - Osteoarthritis",
+            "GET",
+            "diagnosis/mechanism-insights/Osteoarthritis?include_pathways=true&include_targets=true&detail_level=comprehensive",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Diagnosis: {response.get('diagnosis', 'Unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            
+            cellular_mechanisms = response.get('cellular_mechanisms', {})
+            if cellular_mechanisms:
+                pathways = cellular_mechanisms.get('pathways', [])
+                print(f"   Cellular Pathways: {len(pathways)}")
+                
+                for i, pathway in enumerate(pathways[:3], 1):  # Show top 3
+                    print(f"     Pathway {i}: {pathway.get('pathway_name', 'Unknown')}")
+                    print(f"       Key Molecules: {', '.join(pathway.get('key_molecules', [])[:3])}")
+                    print(f"       Therapeutic Relevance: {pathway.get('therapeutic_relevance', 'Unknown')}")
+                    
+            molecular_targets = response.get('molecular_targets', {})
+            if molecular_targets:
+                regenerative_targets = molecular_targets.get('regenerative_targets', [])
+                print(f"   Regenerative Targets: {len(regenerative_targets)}")
+                
+                for i, target in enumerate(regenerative_targets[:3], 1):  # Show top 3
+                    print(f"     Target {i}: {target.get('target_name', 'Unknown')}")
+                    print(f"       Target Type: {target.get('target_type', 'Unknown')}")
+                    print(f"       Druggability Score: {target.get('druggability_score', 0):.2f}")
+                    
+            therapeutic_implications = response.get('therapeutic_implications', {})
+            if therapeutic_implications:
+                print(f"   Therapy Recommendations: {len(therapeutic_implications.get('recommended_therapies', []))}")
+                print(f"   Mechanism-Based Rationale: {therapeutic_implications.get('mechanism_rationale_available', False)}")
+                
+                biomarkers = therapeutic_implications.get('predictive_biomarkers', [])
+                print(f"   Predictive Biomarkers: {len(biomarkers)}")
+        return success
+
+    def test_critical_feature_2_engine_status(self):
+        """Test GET /api/diagnosis/engine-status - CRITICAL FEATURE 2"""
+        success, response = self.run_test(
+            "CRITICAL FEATURE 2: Diagnostic Engine Status",
+            "GET",
+            "diagnosis/engine-status",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Engine Status: {response.get('status', 'Unknown')}")
+            print(f"   Engine Version: {response.get('version', 'Unknown')}")
+            
+            capabilities = response.get('capabilities', {})
+            if capabilities:
+                print(f"   Multi-Modal Integration: {capabilities.get('multi_modal_integration', False)}")
+                print(f"   Bayesian Analysis: {capabilities.get('bayesian_analysis', False)}")
+                print(f"   Explainable AI: {capabilities.get('explainable_ai', False)}")
+                print(f"   Confidence Analysis: {capabilities.get('confidence_analysis', False)}")
+                print(f"   Mechanism Insights: {capabilities.get('mechanism_insights', False)}")
+                
+            performance_metrics = response.get('performance_metrics', {})
+            if performance_metrics:
+                print(f"   Diagnostic Accuracy: {performance_metrics.get('diagnostic_accuracy', 0):.1%}")
+                print(f"   Average Analysis Time: {performance_metrics.get('avg_analysis_time', 0):.2f}s")
+                print(f"   Multi-Modal Success Rate: {performance_metrics.get('multi_modal_success_rate', 0):.1%}")
+                
+            model_statistics = response.get('model_statistics', {})
+            if model_statistics:
+                print(f"   Total Diagnoses Processed: {model_statistics.get('total_diagnoses', 0)}")
+                print(f"   Unique Conditions: {model_statistics.get('unique_conditions', 0)}")
+                print(f"   AI Models Active: {model_statistics.get('active_models', 0)}")
+        return success
+
+    # ========== CRITICAL FEATURE 3: ENHANCED EXPLAINABLE AI INTEGRATION ==========
+
+    def test_critical_feature_3_integrated_shap_lime(self):
+        """Test integrated SHAP/LIME analysis within differential diagnosis - CRITICAL FEATURE 3"""
+        if not self.patient_id:
+            print("❌ No patient ID available for integrated SHAP/LIME testing")
+            return False
+
+        # First generate a comprehensive differential diagnosis
+        differential_request = {
+            "patient_id": self.patient_id,
+            "include_explainable_ai": True,
+            "explanation_methods": ["SHAP", "LIME", "integrated_analysis"],
+            "feature_importance_threshold": 0.05,
+            "generate_visual_explanations": True
+        }
+
+        print("   This may take 60-90 seconds for integrated SHAP/LIME analysis...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 3: Integrated SHAP/LIME in Differential Diagnosis",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data=differential_request,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            
+            explainable_ai = response.get('explainable_ai_integration', {})
+            if explainable_ai:
+                print(f"   SHAP Analysis Available: {explainable_ai.get('shap_analysis_available', False)}")
+                print(f"   LIME Analysis Available: {explainable_ai.get('lime_analysis_available', False)}")
+                print(f"   Integrated Analysis: {explainable_ai.get('integrated_analysis_available', False)}")
+                
+                shap_results = explainable_ai.get('shap_results', {})
+                if shap_results:
+                    print(f"   SHAP Base Value: {shap_results.get('base_value', 0):.3f}")
+                    print(f"   SHAP Feature Count: {len(shap_results.get('feature_values', []))}")
+                    print(f"   SHAP Explanation Quality: {shap_results.get('explanation_quality', 0):.2f}")
+                    
+                lime_results = explainable_ai.get('lime_results', {})
+                if lime_results:
+                    print(f"   LIME Local Fidelity: {lime_results.get('local_fidelity', 0):.3f}")
+                    print(f"   LIME Feature Explanations: {len(lime_results.get('feature_explanations', []))}")
+                    print(f"   LIME Stability Score: {lime_results.get('stability_score', 0):.3f}")
+                    
+            visual_explanations = response.get('visual_explanations', {})
+            if visual_explanations:
+                print(f"   Visual Breakdown URLs Generated: {len(visual_explanations.get('breakdown_urls', []))}")
+                print(f"   Feature Importance Charts: {visual_explanations.get('feature_importance_chart_available', False)}")
+                print(f"   Decision Path Visualization: {visual_explanations.get('decision_path_viz_available', False)}")
+        return success
+
+    def test_critical_feature_3_visual_breakdown_urls(self):
+        """Test visual breakdown URLs generation - CRITICAL FEATURE 3"""
+        if not self.patient_id:
+            print("❌ No patient ID available for visual breakdown testing")
+            return False
+
+        visual_request = {
+            "patient_id": self.patient_id,
+            "analysis_type": "comprehensive_visual_breakdown",
+            "chart_types": ["feature_importance", "shap_waterfall", "lime_explanation", "decision_tree"],
+            "output_format": "interactive_html",
+            "include_clinical_interpretation": True
+        }
+
+        success, response = self.run_test(
+            "CRITICAL FEATURE 3: Visual Breakdown URLs Generation",
+            "POST",
+            "diagnosis/explainable-ai-analysis",
+            200,
+            data=visual_request,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Visual Analysis ID: {response.get('analysis_id', 'Unknown')}")
+            
+            visual_outputs = response.get('visual_outputs', {})
+            if visual_outputs:
+                breakdown_urls = visual_outputs.get('breakdown_urls', [])
+                print(f"   Visual Breakdown URLs: {len(breakdown_urls)}")
+                
+                for i, url_info in enumerate(breakdown_urls[:3], 1):  # Show first 3
+                    print(f"     URL {i}: {url_info.get('chart_type', 'Unknown')} - {url_info.get('url', 'No URL')[:50]}...")
+                    print(f"       Interactive: {url_info.get('interactive', False)}")
+                    print(f"       Clinical Context: {url_info.get('clinical_context_included', False)}")
+                    
+                chart_metadata = visual_outputs.get('chart_metadata', {})
+                if chart_metadata:
+                    print(f"   Chart Generation Time: {chart_metadata.get('generation_time', 0):.2f}s")
+                    print(f"   Chart Quality Score: {chart_metadata.get('quality_score', 0):.2f}")
+                    
+            clinical_interpretation = response.get('clinical_interpretation', {})
+            if clinical_interpretation:
+                print(f"   Clinical Insights Generated: {len(clinical_interpretation.get('insights', []))}")
+                print(f"   Practitioner Recommendations: {len(clinical_interpretation.get('recommendations', []))}")
+        return success
+
+    def test_critical_feature_3_uncertainty_quantification(self):
+        """Test uncertainty quantification and confidence intervals - CRITICAL FEATURE 3"""
+        if not self.patient_id:
+            print("❌ No patient ID available for uncertainty quantification testing")
+            return False
+
+        uncertainty_request = {
+            "patient_id": self.patient_id,
+            "uncertainty_methods": ["bayesian", "bootstrap", "monte_carlo", "ensemble"],
+            "confidence_levels": [0.90, 0.95, 0.99],
+            "quantify_model_uncertainty": True,
+            "quantify_data_uncertainty": True,
+            "include_prediction_intervals": True
+        }
+
+        print("   This may take 45-60 seconds for comprehensive uncertainty quantification...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 3: Uncertainty Quantification & Confidence Intervals",
+            "POST",
+            "diagnosis/confidence-analysis",
+            200,
+            data=uncertainty_request,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Uncertainty Analysis ID: {response.get('analysis_id', 'Unknown')}")
+            
+            uncertainty_results = response.get('uncertainty_quantification', {})
+            if uncertainty_results:
+                model_uncertainty = uncertainty_results.get('model_uncertainty', {})
+                if model_uncertainty:
+                    print(f"   Model Uncertainty (Epistemic): {model_uncertainty.get('epistemic', 0):.4f}")
+                    print(f"   Data Uncertainty (Aleatoric): {model_uncertainty.get('aleatoric', 0):.4f}")
+                    print(f"   Total Uncertainty: {model_uncertainty.get('total', 0):.4f}")
+                    
+                confidence_intervals = uncertainty_results.get('confidence_intervals', {})
+                for level, interval in confidence_intervals.items():
+                    if isinstance(interval, dict):
+                        print(f"   {level}% CI: [{interval.get('lower', 0):.3f}, {interval.get('upper', 0):.3f}]")
+                        
+                prediction_intervals = uncertainty_results.get('prediction_intervals', {})
+                if prediction_intervals:
+                    print(f"   Prediction Intervals Available: {len(prediction_intervals)}")
+                    
+            ensemble_analysis = response.get('ensemble_analysis', {})
+            if ensemble_analysis:
+                print(f"   Ensemble Models Used: {ensemble_analysis.get('models_count', 0)}")
+                print(f"   Ensemble Agreement: {ensemble_analysis.get('agreement_score', 0):.3f}")
+                print(f"   Prediction Variance: {ensemble_analysis.get('prediction_variance', 0):.4f}")
+                
+            bootstrap_results = response.get('bootstrap_results', {})
+            if bootstrap_results:
+                print(f"   Bootstrap Samples: {bootstrap_results.get('samples_used', 0)}")
+                print(f"   Bootstrap CI Width: {bootstrap_results.get('ci_width', 0):.4f}")
+        return success
+
+    def test_critical_feature_3_monte_carlo_simulation(self):
+        """Test Monte Carlo scenario simulation - CRITICAL FEATURE 3"""
+        if not self.patient_id:
+            print("❌ No patient ID available for Monte Carlo simulation testing")
+            return False
+
+        simulation_request = {
+            "patient_id": self.patient_id,
+            "simulation_type": "treatment_outcome_scenarios",
+            "monte_carlo_samples": 10000,
+            "scenario_parameters": {
+                "treatment_variations": ["PRP_standard", "PRP_high_concentration", "BMAC", "combination_therapy"],
+                "patient_factors": ["age_variation", "severity_variation", "comorbidity_presence"],
+                "environmental_factors": ["seasonal_effects", "activity_level", "compliance_rates"]
+            },
+            "outcome_metrics": ["pain_reduction", "functional_improvement", "adverse_events", "patient_satisfaction"],
+            "confidence_level": 0.95,
+            "include_sensitivity_analysis": True
+        }
+
+        print("   This may take 60-90 seconds for Monte Carlo scenario simulation...")
+        success, response = self.run_test(
+            "CRITICAL FEATURE 3: Monte Carlo Scenario Simulation",
+            "POST",
+            "diagnosis/confidence-analysis",
+            200,
+            data=simulation_request,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Simulation ID: {response.get('analysis_id', 'Unknown')}")
+            
+            monte_carlo_results = response.get('monte_carlo_simulation', {})
+            if monte_carlo_results:
+                print(f"   Samples Completed: {monte_carlo_results.get('samples_completed', 0)}")
+                print(f"   Convergence Achieved: {monte_carlo_results.get('convergence_achieved', False)}")
+                print(f"   Simulation Quality: {monte_carlo_results.get('simulation_quality', 0):.3f}")
+                
+                scenario_outcomes = monte_carlo_results.get('scenario_outcomes', {})
+                for scenario, outcome in scenario_outcomes.items():
+                    if isinstance(outcome, dict):
+                        print(f"   {scenario}: Success Rate {outcome.get('success_rate', 0):.1%}, CI [{outcome.get('ci_lower', 0):.2f}, {outcome.get('ci_upper', 0):.2f}]")
+                        
+            sensitivity_analysis = response.get('sensitivity_analysis', {})
+            if sensitivity_analysis:
+                print(f"   Most Influential Factor: {sensitivity_analysis.get('most_influential_factor', 'Unknown')}")
+                print(f"   Factor Sensitivity Score: {sensitivity_analysis.get('max_sensitivity_score', 0):.3f}")
+                
+                parameter_rankings = sensitivity_analysis.get('parameter_rankings', [])
+                print(f"   Parameter Rankings: {len(parameter_rankings)}")
+                
+                for i, param in enumerate(parameter_rankings[:3], 1):  # Show top 3
+                    print(f"     Rank {i}: {param.get('parameter', 'Unknown')} - Sensitivity: {param.get('sensitivity', 0):.3f}")
+                    
+            risk_assessment = response.get('risk_assessment', {})
+            if risk_assessment:
+                print(f"   Low Risk Scenarios: {risk_assessment.get('low_risk_percentage', 0):.1%}")
+                print(f"   High Risk Scenarios: {risk_assessment.get('high_risk_percentage', 0):.1%}")
+                print(f"   Expected Value: {risk_assessment.get('expected_value', 0):.2f}")
+        return success
+
     # ========== EVIDENCE SYNTHESIS SYSTEM TESTING ==========
 
     def test_evidence_synthesis_status(self):
