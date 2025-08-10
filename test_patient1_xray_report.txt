@@ -1,0 +1,46 @@
+RADIOLOGY REPORT - BILATERAL KNEE X-RAY
+
+Patient: Maria Rodriguez
+DOB: March 15, 1979 (Age: 45)
+Patient ID: MR-2025-001
+Study Date: January 10, 2025
+Referring Physician: Dr. Sarah Johnson, Orthopedic Surgery
+
+CLINICAL HISTORY:
+45-year-old female with bilateral knee pain, stiffness, and functional limitation. Pain worse in the morning and after prolonged sitting. Difficulty with stairs and prolonged walking.
+
+TECHNIQUE:
+Bilateral knee radiographs obtained in standing AP and lateral projections.
+
+FINDINGS:
+
+RIGHT KNEE:
+- Moderate joint space narrowing in the medial compartment
+- Mild osteophyte formation at the tibial spines and femoral condyles  
+- Subchondral sclerosis present in the medial compartment
+- No significant effusion
+- Patellofemoral joint shows mild degenerative changes
+
+LEFT KNEE:
+- Severe joint space narrowing in the medial compartment
+- Prominent osteophyte formation at tibial spines and femoral condyles
+- Moderate subchondral sclerosis and cyst formation
+- Small effusion present
+- Patellofemoral joint demonstrates moderate degenerative changes
+- Possible meniscal calcification
+
+IMPRESSION:
+1. Bilateral knee osteoarthritis
+   - Right knee: Moderate (Kellgren-Lawrence Grade 2-3)
+   - Left knee: Severe (Kellgren-Lawrence Grade 3-4)
+2. Left knee effusion
+3. Possible left meniscal degeneration
+
+RECOMMENDATIONS:
+- Clinical correlation recommended
+- Consider MRI if meniscal pathology suspected
+- Orthopedic consultation for treatment planning
+- Weight-bearing restrictions as clinically indicated
+
+Radiologist: Dr. Michael Chen, MD
+Date of Report: January 10, 2025
