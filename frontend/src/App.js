@@ -505,7 +505,7 @@ function App() {
       setGeneratedProtocol(response.data);
       
       // Automatically switch to Protocol Gen tab to show results
-      setActiveTab("protocol-gen");
+      setActiveTab("protocol-generation");
     } catch (error) {
       console.error("Protocol generation failed:", error);
       alert("Protocol generation failed. Please check the AI analysis results.");
