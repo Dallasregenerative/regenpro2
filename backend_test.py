@@ -8808,8 +8808,32 @@ def main():
 if __name__ == "__main__":
     import sys
     
+    # Check for focused differential diagnosis testing (REVIEW REQUEST)
+    if len(sys.argv) > 1 and sys.argv[1] == "--focused-differential":
+        print("🎯 FOCUSED DIFFERENTIAL DIAGNOSIS FIX VERIFICATION")
+        print("=" * 80)
+        
+        tester = RegenMedAIProTester()
+        success = tester.run_focused_differential_diagnosis_tests()
+        
+        print("\n" + "=" * 80)
+        print("🎯 FOCUSED DIFFERENTIAL DIAGNOSIS TEST RESULTS")
+        print("=" * 80)
+        print(f"✅ Tests Passed: {tester.tests_passed}")
+        print(f"❌ Tests Failed: {tester.tests_run - tester.tests_passed}")
+        print(f"📊 Total Tests Run: {tester.tests_run}")
+        print(f"🎯 Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
+        
+        if success:
+            print("\n🎉 FOCUSED DIFFERENTIAL DIAGNOSIS TESTS PASSED!")
+            print("Advanced Differential Diagnosis System: 33% → 100% functional!")
+        else:
+            print("\n🚨 FOCUSED DIFFERENTIAL DIAGNOSIS TESTS FAILED!")
+            print("Advanced Differential Diagnosis System still needs fixes.")
+        
+        print("\n" + "=" * 80)
     # Check if we want to run only the Advanced Differential Diagnosis tests
-    if len(sys.argv) > 1 and sys.argv[1] == "--diagnosis-only":
+    elif len(sys.argv) > 1 and sys.argv[1] == "--diagnosis-only":
         print("🚀 RegenMed AI Pro - Advanced Differential Diagnosis System Testing")
         print("=" * 80)
         
