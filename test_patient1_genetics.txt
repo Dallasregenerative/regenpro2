@@ -1,0 +1,62 @@
+GENETIC TEST RESULTS - OSTEOARTHRITIS RISK PANEL
+
+Patient: Maria Rodriguez
+DOB: March 15, 1979
+Patient ID: MR-2025-001
+Test Date: January 5, 2025
+Report Date: January 7, 2025
+
+Referring Physician: Dr. Sarah Johnson, Orthopedic Surgery
+Testing Laboratory: GenomeHealth Labs
+Sample Type: Saliva
+Sample ID: GH-2025-MR001
+
+GENETIC MARKERS ANALYZED:
+
+1. COL2A1 (Collagen Type II Alpha 1 Chain) - rs1061237
+   Genotype: C/T (Heterozygous)
+   Clinical Significance: MODERATE RISK
+   Impact: Associated with increased susceptibility to cartilage degeneration
+   Frequency: 35% of population carries this variant
+
+2. COMP (Cartilage Oligomeric Matrix Protein) - rs28933982
+   Genotype: G/G (Wild type)
+   Clinical Significance: NO INCREASED RISK
+   Impact: Normal cartilage matrix protein function expected
+   
+3. VDR (Vitamin D Receptor) - rs2228570
+   Genotype: A/A (Homozygous variant)
+   Clinical Significance: MODERATE RISK
+   Impact: Reduced vitamin D receptor activity, affecting bone density
+   Frequency: 42% of population carries this genotype
+
+4. GDF5 (Growth Differentiation Factor 5) - rs143383
+   Genotype: C/T (Heterozygous) 
+   Clinical Significance: INCREASED RISK
+   Impact: Associated with reduced joint space width and early OA onset
+   
+5. ASPN (Asporin) - D14 repeat
+   Genotype: D13/D14 (Heterozygous)
+   Clinical Significance: MODERATE RISK
+   Impact: D14 allele associated with increased OA susceptibility in Asian populations
+
+OVERALL GENETIC RISK ASSESSMENT:
+MODERATE-HIGH RISK (3.2x increased risk compared to population average)
+
+INTERPRETATION:
+Maria Rodriguez carries genetic variants that predispose to osteoarthritis development. The combination of COL2A1, VDR, and GDF5 variants suggests increased susceptibility to cartilage degeneration and reduced bone density. The ASPN D14 variant provides additional risk, particularly given family ancestry.
+
+CLINICAL RECOMMENDATIONS:
+1. Lifestyle modifications: Weight management, low-impact exercise
+2. Vitamin D supplementation (given VDR variant and lab deficiency)
+3. Joint protection strategies
+4. Regular monitoring for early OA symptoms
+5. Consider prophylactic interventions (glucosamine, chondroitin)
+6. Family counseling regarding hereditary risk
+
+GENETIC COUNSELOR NOTES:
+Recommend genetic counseling for family planning and risk assessment of offspring. First-degree relatives may benefit from genetic testing.
+
+Genetics Director: Dr. Jennifer Martinez, PhD, FACMG
+Certified Genetic Counselor: Sarah Kim, MS, CGC
+Report Approved: January 7, 2025
