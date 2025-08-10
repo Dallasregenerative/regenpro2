@@ -1362,6 +1362,170 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Community Members: {database_stats.get('community_members', 0)}")
         return success
 
+    def test_international_protocol_search_fix(self):
+        """Test FIXED International Protocol Library - osteoarthritis search"""
+        success, response = self.run_test(
+            "FIXED: International Protocol Search - Osteoarthritis",
+            "GET",
+            "protocols/international-search?condition=osteoarthritis&max_results=10",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            print(f"   Search Status: {response.get('status', 'unknown')}")
+            
+            protocols = response.get('protocols', [])
+            print(f"   Protocols Found: {len(protocols)}")
+            
+            if protocols:
+                first_protocol = protocols[0]
+                print(f"   First Protocol: {first_protocol.get('protocol_name', 'Unknown')}")
+                print(f"   Medical Tradition: {first_protocol.get('medical_tradition', 'Unknown')}")
+                print(f"   Country: {first_protocol.get('country', 'Unknown')}")
+                print(f"   Integration Level: {first_protocol.get('integration_level', 'Unknown')}")
+                print(f"   Evidence Level: {first_protocol.get('evidence_level', 'Unknown')}")
+            
+            search_metadata = response.get('search_metadata', {})
+            if search_metadata:
+                print(f"   Search Timestamp: {search_metadata.get('search_timestamp', 'Unknown')}")
+                print(f"   Total Available: {search_metadata.get('total_available_protocols', 0)}")
+        return success
+
+    def test_international_protocol_multiple_traditions(self):
+        """Test international protocol search across multiple medical traditions"""
+        success, response = self.run_test(
+            "International Protocol Search - Multiple Traditions",
+            "GET",
+            "protocols/international-search?condition=osteoarthritis&medical_traditions=Western,TCM,Ayurvedic&max_results=15",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            protocols = response.get('protocols', [])
+            print(f"   Protocols Found: {len(protocols)}")
+            
+            # Check tradition diversity
+            traditions = {}
+            for protocol in protocols:
+                tradition = protocol.get('medical_tradition', 'Unknown')
+                traditions[tradition] = traditions.get(tradition, 0) + 1
+            
+            print(f"   Medical Traditions Represented: {len(traditions)}")
+            for tradition, count in traditions.items():
+                print(f"     {tradition}: {count} protocols")
+            
+            # Check integration levels
+            integration_levels = {}
+            for protocol in protocols:
+                level = protocol.get('integration_level', 'Unknown')
+                integration_levels[level] = integration_levels.get(level, 0) + 1
+            
+            print(f"   Integration Levels: {list(integration_levels.keys())}")
+        return success
+
+    def test_international_protocol_integration_filter(self):
+        """Test international protocol search with integration level filtering"""
+        success, response = self.run_test(
+            "International Protocol Search - Integration Filter",
+            "GET",
+            "protocols/international-search?condition=osteoarthritis&integration_level=high&max_results=8",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'unknown')}")
+            print(f"   Integration Filter: high")
+            
+            protocols = response.get('protocols', [])
+            print(f"   High Integration Protocols: {len(protocols)}")
+            
+            if protocols:
+                # Verify all protocols have high integration level
+                high_integration_count = sum(1 for p in protocols if p.get('integration_level') == 'high')
+                print(f"   Correctly Filtered: {high_integration_count}/{len(protocols)} protocols")
+                
+                # Show sample protocol details
+                sample = protocols[0]
+                print(f"   Sample Protocol: {sample.get('protocol_name', 'Unknown')}")
+                print(f"   Evidence Quality: {sample.get('evidence_quality', 'Unknown')}")
+                print(f"   Clinical Validation: {sample.get('clinical_validation', 'Unknown')}")
+        return success
+
+    def test_community_peer_consultation_fix(self):
+        """Test FIXED Community Collaboration Platform - peer consultation with optional case_summary"""
+        consultation_data = {
+            "consultation_type": "regenerative_medicine_case",
+            "patient_demographics": {
+                "age": 58,
+                "gender": "Female",
+                "condition": "Bilateral knee osteoarthritis"
+            },
+            "clinical_question": "Seeking advice on optimal PRP protocol for 58-year-old female physician with bilateral knee osteoarthritis. Patient has failed conservative management and wants to avoid knee replacement. What are your experiences with PRP vs BMAC for this patient profile?",
+            "urgency_level": "routine",
+            "expertise_sought": ["regenerative_medicine", "orthopedics", "sports_medicine"],
+            "anonymized": True
+        }
+
+        success, response = self.run_test(
+            "FIXED: Community Peer Consultation - Optional case_summary",
+            "POST",
+            "community/peer-consultation",
+            200,
+            data=consultation_data,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Consultation ID: {response.get('consultation_id', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            print(f"   Consultation Type: {response.get('consultation_type', 'unknown')}")
+            print(f"   Urgency Level: {response.get('urgency_level', 'unknown')}")
+            print(f"   Expertise Areas: {len(response.get('expertise_sought', []))}")
+            
+            matching_experts = response.get('matching_experts', [])
+            print(f"   Matching Experts Found: {len(matching_experts)}")
+            
+            if matching_experts:
+                print(f"   Expert Specialties: {', '.join([e.get('specialty', 'Unknown') for e in matching_experts[:3]])}")
+            
+            estimated_response = response.get('estimated_response_time', {})
+            if estimated_response:
+                print(f"   Estimated Response Time: {estimated_response.get('typical_response', 'Unknown')}")
+        return success
+
+    def test_community_peer_consultation_minimal_data(self):
+        """Test peer consultation with minimal required data (testing validation fix)"""
+        minimal_consultation = {
+            "consultation_type": "treatment_advice",
+            "clinical_question": "What is your preferred PRP preparation protocol for knee osteoarthritis?",
+            "urgency_level": "routine"
+        }
+
+        success, response = self.run_test(
+            "Community Peer Consultation - Minimal Data",
+            "POST",
+            "community/peer-consultation",
+            200,
+            data=minimal_consultation,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Consultation ID: {response.get('consultation_id', 'unknown')}")
+            print(f"   Status: {response.get('status', 'unknown')}")
+            print(f"   Minimal Data Accepted: True")
+            
+            # Verify the system handled missing optional fields gracefully
+            print(f"   Patient Demographics: {response.get('patient_demographics', 'Not provided')}")
+            print(f"   Case Summary: {response.get('case_summary', 'Not provided')}")
+            print(f"   Expertise Sought: {response.get('expertise_sought', 'General')}")
+        return success
+
     def test_regulatory_treatment_status_prp(self):
         """Test regulatory status for PRP treatment"""
         success, response = self.run_test(
