@@ -1076,14 +1076,160 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Evidence Level Indicators: {len(evidence_mentions)}")
         return success
 
-    # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTING ==========
-    # Testing the Advanced Differential Diagnosis System after main agent fixes
-    # FOCUSED TEST SEQUENCE as requested in review:
-    # 1. POST /api/diagnosis/comprehensive-differential - Generate and store diagnosis
-    # 2. Extract diagnosis_id from response
-    # 3. GET /api/diagnosis/{diagnosis_id} - Should now retrieve stored diagnosis (not 404)
-    # 4. GET /api/diagnosis/engine-status - Should return engine status (not 404)
+    # ========== CRITICAL PRIORITY SYSTEMS TESTING ==========
+    # Testing the three Critical Priority systems as requested in review:
+    # 1. Living Evidence Engine System (4 endpoints)
+    # 2. Advanced Differential Diagnosis System (3 endpoints) 
+    # 3. Enhanced Explainable AI System (5 endpoints)
 
+    # ========== LIVING EVIDENCE ENGINE SYSTEM TESTING ==========
+    
+    def test_living_evidence_protocol_evidence_mapping(self):
+        """Test POST /api/evidence/protocol-evidence-mapping - Living Evidence Engine"""
+        
+        mapping_data = {
+            "protocol_id": "test_protocol_123",
+            "condition": "osteoarthritis",
+            "protocol_components": [
+                {
+                    "name": "PRP injection",
+                    "therapy": "platelet rich plasma",
+                    "dosage": "3-5ml intra-articular"
+                },
+                {
+                    "name": "Physical therapy",
+                    "therapy": "rehabilitation",
+                    "duration": "6 weeks"
+                }
+            ],
+            "evidence_requirements": {
+                "minimum_evidence_level": "Level II",
+                "include_recent_studies": True,
+                "max_studies_per_component": 10
+            }
+        }
+
+        print("   Testing protocol-evidence mapping generation...")
+        success, response = self.run_test(
+            "Living Evidence Engine - Protocol Evidence Mapping",
+            "POST",
+            "evidence/protocol-evidence-mapping",
+            200,
+            data=mapping_data,
+            timeout=90
+        )
+        
+        if success:
+            print(f"   Mapping Status: {response.get('status', 'Unknown')}")
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            
+            evidence_mapping = response.get('evidence_mapping', {})
+            if evidence_mapping:
+                print(f"   Components Mapped: {evidence_mapping.get('total_components', 0)}")
+                print(f"   Evidence Quality: {evidence_mapping.get('overall_evidence_quality', {}).get('grade', 'Unknown')}")
+                print(f"   Supporting Studies: {evidence_mapping.get('overall_evidence_quality', {}).get('total_studies', 0)}")
+                
+                # Store protocol_id for later tests
+                if not hasattr(self, 'evidence_protocol_id'):
+                    self.evidence_protocol_id = response.get('protocol_id', 'test_protocol_123')
+        
+        return success
+
+    def test_living_evidence_living_reviews(self):
+        """Test GET /api/evidence/living-reviews/{condition} - Living Systematic Reviews"""
+        
+        condition = "osteoarthritis"
+        
+        success, response = self.run_test(
+            "Living Evidence Engine - Living Systematic Reviews",
+            "GET",
+            f"evidence/living-reviews/{condition}",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Condition: {response.get('condition', 'Unknown')}")
+            print(f"   Review Status: {response.get('review_status', 'Unknown')}")
+            
+            living_review = response.get('living_systematic_review', {})
+            if living_review:
+                print(f"   Total Studies: {living_review.get('total_studies', 0)}")
+                print(f"   Last Updated: {living_review.get('last_search_date', 'Unknown')}")
+                print(f"   New Studies Pending: {living_review.get('new_studies_pending', 0)}")
+                
+                therapy_evidence = living_review.get('therapy_evidence', {})
+                print(f"   Therapy Evidence Categories: {len(therapy_evidence)}")
+                
+                quality_assessment = living_review.get('quality_assessment', {})
+                if quality_assessment:
+                    print(f"   Evidence Quality Score: {quality_assessment.get('overall_quality_score', 0):.2f}")
+        
+        return success
+
+    def test_living_evidence_protocol_mapping_retrieval(self):
+        """Test GET /api/evidence/protocol/{protocol_id}/evidence-mapping - Evidence Mapping Retrieval"""
+        
+        # Use protocol_id from previous test or default
+        protocol_id = getattr(self, 'evidence_protocol_id', 'test_protocol_123')
+        
+        success, response = self.run_test(
+            "Living Evidence Engine - Protocol Evidence Mapping Retrieval",
+            "GET",
+            f"evidence/protocol/{protocol_id}/evidence-mapping",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Mapping Status: {response.get('mapping_status', 'Unknown')}")
+            
+            evidence_mapping = response.get('evidence_mapping', {})
+            if evidence_mapping:
+                print(f"   Living Evidence Features: {len(evidence_mapping.get('living_evidence_features', []))}")
+                print(f"   Last Evidence Update: {evidence_mapping.get('last_evidence_update', 'Unknown')}")
+                print(f"   Evidence Freshness Score: {evidence_mapping.get('evidence_freshness_score', 0):.2f}")
+                
+                component_mappings = evidence_mapping.get('component_mappings', [])
+                print(f"   Component Mappings: {len(component_mappings)}")
+        
+        return success
+
+    def test_living_evidence_alerts(self):
+        """Test GET /api/evidence/alerts/{protocol_id} - Evidence Change Alerts"""
+        
+        # Use protocol_id from previous test or default
+        protocol_id = getattr(self, 'evidence_protocol_id', 'test_protocol_123')
+        
+        success, response = self.run_test(
+            "Living Evidence Engine - Evidence Change Alerts",
+            "GET",
+            f"evidence/alerts/{protocol_id}",
+            200,
+            timeout=30
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Alert System Status: {response.get('alert_system_status', 'Unknown')}")
+            
+            active_alerts = response.get('active_alerts', [])
+            print(f"   Active Alerts: {len(active_alerts)}")
+            
+            if active_alerts:
+                for i, alert in enumerate(active_alerts[:3], 1):
+                    print(f"   Alert {i}: {alert.get('alert_type', 'Unknown')} - {alert.get('priority', 'Unknown')}")
+            
+            monitoring_status = response.get('monitoring_status', {})
+            if monitoring_status:
+                print(f"   Monitoring Active: {monitoring_status.get('active', False)}")
+                print(f"   Last Check: {monitoring_status.get('last_check', 'Unknown')}")
+        
+        return success
+
+    # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTING ==========
+    
     def test_advanced_differential_diagnosis_comprehensive_differential(self):
         """Test POST /api/diagnosis/comprehensive-differential - CRITICAL BUG FIX VERIFICATION"""
         print("   🎯 TESTING THE SPECIFIC FIX: 'list' object has no attribute 'get' error")
