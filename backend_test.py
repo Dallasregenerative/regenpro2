@@ -4681,6 +4681,93 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return passed_phase2_tests == total_phase2_tests
 
+    def run_phase3_global_knowledge_engine_tests(self):
+        """Run comprehensive Phase 3: Global Knowledge Engine tests"""
+        print("🌍 Starting Phase 3: Global Knowledge Engine Test Suite")
+        print("=" * 80)
+        print("Testing Global Regulatory Intelligence, International Protocol Library,")
+        print("and Community Collaboration Platform systems.")
+        print("=" * 80)
+        
+        # Setup: Create patient for testing if needed
+        if not self.patient_id:
+            print("\n📋 SETUP: Creating Test Patient")
+            print("-" * 50)
+            patient_created = self.test_create_patient()
+            
+            if not patient_created:
+                print("❌ Cannot proceed without patient - setup failed")
+                return False
+        
+        # Phase 3 Global Knowledge Engine Tests
+        print("\n🌍 PHASE 3: GLOBAL KNOWLEDGE ENGINE TESTS")
+        print("-" * 50)
+        
+        # Test 1: System Status
+        test1_success = self.test_phase3_global_knowledge_system_status()
+        
+        # Test 2-6: Global Regulatory Intelligence
+        test2_success = self.test_regulatory_treatment_status_prp()
+        test3_success = self.test_regulatory_treatment_status_bmac()
+        test4_success = self.test_regulatory_treatment_status_stem_cells()
+        test5_success = self.test_regulatory_country_specific_us()
+        test6_success = self.test_cross_jurisdictional_comparison()
+        
+        # Test 7-9: International Protocol Library
+        test7_success = self.test_international_protocol_search_osteoarthritis()
+        test8_success = self.test_international_protocol_search_multiple_traditions()
+        test9_success = self.test_international_protocol_integration_levels()
+        
+        # Test 10-15: Community & Collaboration Platform
+        test10_success = self.test_peer_consultation_emergency()
+        test11_success = self.test_peer_consultation_routine()
+        test12_success = self.test_share_protocol_public()
+        test13_success = self.test_share_protocol_professional()
+        test14_success = self.test_community_insights_collective_intelligence()
+        test15_success = self.test_community_insights_therapy_comparison()
+        
+        # Summary of Phase 3 Tests
+        print("\n" + "=" * 80)
+        print("🌍 PHASE 3: GLOBAL KNOWLEDGE ENGINE TESTING SUMMARY")
+        print("=" * 80)
+        
+        phase3_tests = [
+            ("Global Knowledge System Status", test1_success),
+            ("Regulatory Treatment Status - PRP", test2_success),
+            ("Regulatory Treatment Status - BMAC", test3_success),
+            ("Regulatory Treatment Status - Stem Cells", test4_success),
+            ("Regulatory Country Specific - US", test5_success),
+            ("Cross-Jurisdictional Comparison", test6_success),
+            ("International Protocol Search - Osteoarthritis", test7_success),
+            ("International Protocol Search - Multiple Traditions", test8_success),
+            ("International Protocol Integration Levels", test9_success),
+            ("Peer Consultation - Emergency", test10_success),
+            ("Peer Consultation - Routine", test11_success),
+            ("Share Protocol - Public", test12_success),
+            ("Share Protocol - Professional", test13_success),
+            ("Community Insights - Collective Intelligence", test14_success),
+            ("Community Insights - Therapy Comparison", test15_success)
+        ]
+        
+        passed_phase3_tests = sum(1 for _, success in phase3_tests if success)
+        total_phase3_tests = len(phase3_tests)
+        
+        print(f"Phase 3 Global Knowledge Engine Tests: {passed_phase3_tests}/{total_phase3_tests} PASSED")
+        print(f"Phase 3 Success Rate: {(passed_phase3_tests / total_phase3_tests * 100):.1f}%")
+        
+        for test_name, success in phase3_tests:
+            status = "✅ PASSED" if success else "❌ FAILED"
+            print(f"   {status}: {test_name}")
+        
+        if passed_phase3_tests == total_phase3_tests:
+            print("\n🎉 ALL PHASE 3: GLOBAL KNOWLEDGE ENGINE FEATURES ARE FUNCTIONAL!")
+            print("The world-class global knowledge engine system is ready for production use.")
+        else:
+            print(f"\n⚠️  {total_phase3_tests - passed_phase3_tests} Phase 3 features failed.")
+            print("These are critical for world-class global knowledge capabilities.")
+        
+        return passed_phase3_tests == total_phase3_tests
+
 def main():
     print("🧬 RegenMed AI Pro - Comprehensive Backend API Testing")
     print("Advanced Regenerative Medicine Knowledge Platform v2.0")
