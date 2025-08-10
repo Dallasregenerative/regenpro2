@@ -1076,6 +1076,324 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Evidence Level Indicators: {len(evidence_mentions)}")
         return success
 
+    # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTING ==========
+    # Testing the Advanced Differential Diagnosis System after troubleshoot agent fixes
+
+    def test_advanced_differential_diagnosis_comprehensive_differential(self):
+        """Test POST /api/diagnosis/comprehensive-differential - Generate comprehensive differential diagnoses"""
+        if not self.patient_id:
+            print("❌ No patient ID available for comprehensive differential diagnosis testing")
+            return False
+
+        # Use realistic medical data as requested - osteoarthritis case
+        differential_data = {
+            "patient_id": self.patient_id,
+            "clinical_presentation": {
+                "chief_complaint": "Progressive bilateral knee pain and morning stiffness affecting daily activities",
+                "symptom_duration": "3 years",
+                "pain_characteristics": {
+                    "intensity": 7,
+                    "quality": "deep aching pain with morning stiffness lasting 45 minutes",
+                    "aggravating_factors": ["prolonged standing", "stair climbing", "cold weather"],
+                    "relieving_factors": ["rest", "heat application", "gentle movement"]
+                },
+                "functional_impact": {
+                    "walking_distance": "limited to 2 blocks",
+                    "stair_climbing": "requires handrail support",
+                    "work_impact": "difficulty with prolonged standing during surgeries"
+                }
+            },
+            "diagnostic_modalities": {
+                "physical_examination": {
+                    "inspection": "bilateral knee swelling, no erythema",
+                    "palpation": "tenderness over medial joint lines bilaterally",
+                    "range_of_motion": "flexion limited to 115 degrees bilaterally",
+                    "special_tests": ["positive McMurray test bilateral", "negative drawer test"],
+                    "gait_analysis": "antalgic gait with shortened stance phase"
+                },
+                "imaging": {
+                    "xray_findings": "Grade 2-3 osteoarthritis with joint space narrowing, osteophyte formation, subchondral sclerosis",
+                    "mri_findings": "cartilage thinning, meniscal degeneration, mild bone marrow edema, small effusions"
+                },
+                "laboratory": {
+                    "inflammatory_markers": {"CRP": 2.1, "ESR": 18},
+                    "autoimmune_markers": {"RF": "negative", "anti_CCP": "negative", "ANA": "negative"},
+                    "metabolic_markers": {"uric_acid": 4.2, "vitamin_D": 32}
+                }
+            },
+            "analysis_parameters": {
+                "differential_count": 5,
+                "confidence_threshold": 0.1,
+                "include_rare_conditions": False,
+                "regenerative_focus": True,
+                "evidence_level_minimum": 2
+            }
+        }
+
+        print("   Testing comprehensive differential diagnosis generation...")
+        print("   This may take 60-90 seconds for AI analysis...")
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Comprehensive Differential",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data=differential_data,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            
+            # Check for diagnosis_id in response
+            diagnosis_id = response.get('diagnosis_id')
+            if diagnosis_id:
+                print(f"   Diagnosis ID Generated: {diagnosis_id}")
+                # Store for later tests
+                if not hasattr(self, 'diagnosis_id'):
+                    self.diagnosis_id = diagnosis_id
+            
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            print(f"   Differential Diagnoses Generated: {len(differential_diagnoses)}")
+            
+            if differential_diagnoses:
+                for i, diagnosis in enumerate(differential_diagnoses[:3], 1):
+                    print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"     Confidence: {diagnosis.get('confidence_score', 0):.2f}")
+                    print(f"     ICD-10: {diagnosis.get('icd10_code', 'Unknown')}")
+                    print(f"     Regenerative Suitability: {diagnosis.get('regenerative_suitability', 'Unknown')}")
+            
+            # Check for explainable AI analysis
+            explainable_analysis = response.get('explainable_ai_analysis', {})
+            if explainable_analysis:
+                print(f"   Explainable AI Features: {len(explainable_analysis.get('feature_importance', []))}")
+                print(f"   Transparency Score: {explainable_analysis.get('transparency_score', 0):.2f}")
+            
+            # Check for confidence analysis
+            confidence_analysis = response.get('confidence_analysis', {})
+            if confidence_analysis:
+                print(f"   Confidence Intervals Generated: {len(confidence_analysis.get('confidence_intervals', []))}")
+                print(f"   Overall Diagnostic Confidence: {confidence_analysis.get('overall_confidence', 0):.2f}")
+            
+            # Check for mechanism insights
+            mechanism_insights = response.get('mechanism_insights', {})
+            if mechanism_insights:
+                print(f"   Mechanism Pathways Analyzed: {len(mechanism_insights.get('pathways', []))}")
+                print(f"   Cellular Mechanisms: {len(mechanism_insights.get('cellular_mechanisms', []))}")
+        
+        return success
+
+    def test_advanced_differential_diagnosis_engine_status(self):
+        """Test GET /api/diagnosis/engine-status - Check differential diagnosis engine status"""
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Engine Status",
+            "GET",
+            "diagnosis/engine-status",
+            200,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Engine Status: {response.get('status', 'Unknown')}")
+            print(f"   Engine Version: {response.get('version', 'Unknown')}")
+            
+            capabilities = response.get('capabilities', {})
+            if capabilities:
+                print(f"   Multi-Modal Integration: {capabilities.get('multi_modal_integration', False)}")
+                print(f"   Bayesian Analysis: {capabilities.get('bayesian_analysis', False)}")
+                print(f"   Explainable AI: {capabilities.get('explainable_ai', False)}")
+                print(f"   Confidence Analysis: {capabilities.get('confidence_analysis', False)}")
+                print(f"   Mechanism Insights: {capabilities.get('mechanism_insights', False)}")
+            
+            performance_metrics = response.get('performance_metrics', {})
+            if performance_metrics:
+                print(f"   Diagnostic Accuracy: {performance_metrics.get('diagnostic_accuracy', 0):.1%}")
+                print(f"   Average Analysis Time: {performance_metrics.get('avg_analysis_time', 0):.2f}s")
+                print(f"   Total Diagnoses Processed: {performance_metrics.get('total_diagnoses', 0)}")
+            
+            # Check for system health indicators
+            system_health = response.get('system_health', {})
+            if system_health:
+                print(f"   Database Connection: {system_health.get('database_status', 'Unknown')}")
+                print(f"   AI Models Loaded: {system_health.get('models_loaded', 0)}")
+        
+        return success
+
+    def test_advanced_differential_diagnosis_retrieval(self):
+        """Test GET /api/diagnosis/{diagnosis_id} - Retrieve comprehensive diagnosis by ID"""
+        # Check if we have a diagnosis_id from previous test
+        if not hasattr(self, 'diagnosis_id') or not self.diagnosis_id:
+            print("❌ No diagnosis ID available from previous test - creating one first...")
+            
+            # Create a diagnosis first using rotator cuff injury case
+            if not self.patient_id:
+                print("❌ No patient ID available for diagnosis creation")
+                return False
+                
+            differential_data = {
+                "patient_id": self.patient_id,
+                "clinical_presentation": {
+                    "chief_complaint": "Right shoulder pain and weakness with overhead activities",
+                    "symptom_duration": "6 months",
+                    "pain_characteristics": {
+                        "intensity": 6,
+                        "quality": "sharp pain with overhead motion, dull ache at rest",
+                        "aggravating_factors": ["overhead reaching", "sleeping on affected side", "lifting"],
+                        "relieving_factors": ["rest", "ice application", "avoiding overhead activities"]
+                    }
+                },
+                "diagnostic_modalities": {
+                    "physical_examination": {
+                        "inspection": "mild deltoid atrophy",
+                        "palpation": "tenderness over greater tuberosity",
+                        "range_of_motion": "limited abduction to 120 degrees, painful arc 60-120 degrees",
+                        "special_tests": ["positive Hawkins test", "positive empty can test", "positive drop arm test"]
+                    },
+                    "imaging": {
+                        "mri_findings": "full-thickness rotator cuff tear involving supraspinatus tendon, mild retraction"
+                    }
+                },
+                "analysis_parameters": {
+                    "differential_count": 3,
+                    "regenerative_focus": True
+                }
+            }
+
+            create_success, create_response = self.run_test(
+                "Setup: Create Diagnosis for Retrieval Test",
+                "POST",
+                "diagnosis/comprehensive-differential",
+                200,
+                data=differential_data,
+                timeout=90
+            )
+            
+            if not create_success:
+                print("❌ Could not create diagnosis for retrieval testing")
+                return False
+            
+            self.diagnosis_id = create_response.get('diagnosis_id')
+            if not self.diagnosis_id:
+                print("❌ No diagnosis ID returned for retrieval testing")
+                return False
+
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Get Diagnosis by ID",
+            "GET",
+            f"diagnosis/{self.diagnosis_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Diagnosis ID: {response.get('diagnosis_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            print(f"   Analysis Timestamp: {response.get('analysis_timestamp', 'Unknown')}")
+            
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            print(f"   Retrieved Diagnoses: {len(differential_diagnoses)}")
+            
+            if differential_diagnoses:
+                top_diagnosis = differential_diagnoses[0]
+                print(f"   Top Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
+                print(f"   Confidence: {top_diagnosis.get('confidence_score', 0):.2f}")
+                print(f"   ICD-10 Code: {top_diagnosis.get('icd10_code', 'Unknown')}")
+            
+            # Check for comprehensive analysis components
+            multi_modal_analysis = response.get('multi_modal_analysis', {})
+            if multi_modal_analysis:
+                print(f"   Multi-Modal Data Integration: {multi_modal_analysis.get('integration_score', 0):.2f}")
+            
+            explainable_ai = response.get('explainable_ai_analysis', {})
+            if explainable_ai:
+                print(f"   Explainable AI Transparency: {explainable_ai.get('transparency_score', 0):.2f}")
+            
+            confidence_analysis = response.get('confidence_analysis', {})
+            if confidence_analysis:
+                print(f"   Diagnostic Confidence: {confidence_analysis.get('overall_confidence', 0):.2f}")
+        
+        return success
+
+    def test_advanced_differential_diagnosis_chronic_pain_case(self):
+        """Test Advanced Differential Diagnosis with chronic pain case"""
+        if not self.patient_id:
+            print("❌ No patient ID available for chronic pain diagnosis testing")
+            return False
+
+        # Chronic pain case as requested in review
+        chronic_pain_data = {
+            "patient_id": self.patient_id,
+            "clinical_presentation": {
+                "chief_complaint": "Chronic lower back pain radiating to left leg with numbness",
+                "symptom_duration": "18 months",
+                "pain_characteristics": {
+                    "intensity": 8,
+                    "quality": "burning pain with electric shock sensations down left leg",
+                    "aggravating_factors": ["prolonged sitting", "bending forward", "coughing/sneezing"],
+                    "relieving_factors": ["walking", "lying down", "extension exercises"]
+                },
+                "neurological_symptoms": {
+                    "numbness": "left L5 dermatome distribution",
+                    "weakness": "mild left foot dorsiflexion weakness",
+                    "reflexes": "diminished left Achilles reflex"
+                }
+            },
+            "diagnostic_modalities": {
+                "physical_examination": {
+                    "inspection": "normal lumbar lordosis, no visible deformity",
+                    "palpation": "paravertebral muscle spasm L4-L5 level",
+                    "range_of_motion": "flexion limited to 45 degrees due to pain",
+                    "special_tests": ["positive straight leg raise at 45 degrees", "positive crossed straight leg raise"]
+                },
+                "imaging": {
+                    "mri_findings": "L4-L5 disc herniation with left neural foraminal stenosis, mild central canal stenosis"
+                },
+                "laboratory": {
+                    "inflammatory_markers": {"CRP": 1.2, "ESR": 12}
+                }
+            },
+            "analysis_parameters": {
+                "differential_count": 4,
+                "confidence_threshold": 0.2,
+                "include_rare_conditions": True,
+                "regenerative_focus": True
+            }
+        }
+
+        print("   Testing chronic pain differential diagnosis...")
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Chronic Pain Case",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data=chronic_pain_data,
+            timeout=120
+        )
+        
+        if success:
+            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
+            
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            print(f"   Chronic Pain Differentials: {len(differential_diagnoses)}")
+            
+            if differential_diagnoses:
+                for i, diagnosis in enumerate(differential_diagnoses[:3], 1):
+                    print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"     Confidence: {diagnosis.get('confidence_score', 0):.2f}")
+                    print(f"     Regenerative Options: {len(diagnosis.get('regenerative_targets', []))}")
+            
+            # Check for mechanism insights specific to chronic pain
+            mechanism_insights = response.get('mechanism_insights', {})
+            if mechanism_insights:
+                pain_pathways = mechanism_insights.get('pain_pathways', [])
+                print(f"   Pain Pathways Analyzed: {len(pain_pathways)}")
+                
+                inflammatory_mechanisms = mechanism_insights.get('inflammatory_mechanisms', [])
+                print(f"   Inflammatory Mechanisms: {len(inflammatory_mechanisms)}")
+        
+        return success
+
     # ========== CRITICAL PRIORITY FEATURES TESTING ==========
     # Testing the three newly implemented "Critical Priority" features
 
