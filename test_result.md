@@ -633,12 +633,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Phase 2: AI Clinical Intelligence System Status"
-    - "Treatment Effectiveness Data Endpoint"
-    - "Personalized Risk Assessment System"
-  stuck_tasks: []
+    - "Phase 3: International Protocol Library System"
+    - "Phase 3: Community Collaboration Platform"
+  stuck_tasks:
+    - "Phase 3: International Protocol Library System"
+    - "Phase 3: Community Collaboration Platform"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
