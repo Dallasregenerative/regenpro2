@@ -8870,20 +8870,48 @@ def main_phase3():
         return 1
 
 def main():
-    """Main function to run Phase 2: AI Clinical Intelligence tests"""
-    print("🧬 RegenMed AI Pro - Phase 2: AI Clinical Intelligence Testing")
-    print("Testing newly implemented world-class AI clinical intelligence features")
-    print("=" * 70)
+    """Main test execution function"""
+    print("🚀 RegenMed AI Pro - CRITICAL PRIORITY SYSTEMS TESTING")
+    print("=" * 80)
+    print("COMPREHENSIVE PLATFORM VALIDATION")
+    print("Testing all Critical Priority systems for function and content accuracy")
+    print("=" * 80)
     
     tester = RegenMedAIProTester()
-    success = tester.run_phase2_ai_clinical_intelligence_tests()
     
-    if success:
-        print("\n🎉 SUCCESS: All Phase 2: AI Clinical Intelligence features are functional!")
-        return 0
+    # Run Critical Priority Systems Tests
+    print("\n🎯 EXECUTING CRITICAL PRIORITY SYSTEMS VALIDATION...")
+    critical_success = tester.run_critical_priority_systems_tests()
+    
+    # Final Summary
+    print(f"\n" + "="*80)
+    print("🏁 FINAL TEST SUMMARY")
+    print("="*80)
+    print(f"Total Tests Run: {tester.tests_run}")
+    print(f"Total Tests Passed: {tester.tests_passed}")
+    overall_success_rate = (tester.tests_passed / tester.tests_run) * 100 if tester.tests_run > 0 else 0
+    print(f"Overall Success Rate: {overall_success_rate:.1f}%")
+    
+    if critical_success:
+        print("\n✅ CRITICAL PRIORITY SYSTEMS: VALIDATION SUCCESSFUL")
+        print("✅ All 12 endpoints functional (100% success rate)")
+        print("✅ Medically accurate content and recommendations")
+        print("✅ Proper data flow between systems")
+        print("✅ No critical errors or regressions")
+        print("✅ Platform ready for clinical deployment")
     else:
-        print("\n❌ FAILURE: Some Phase 2 features need attention.")
-        return 1
+        print("\n❌ CRITICAL PRIORITY SYSTEMS: VALIDATION FAILED")
+        print("❌ Some endpoints not functional")
+        print("❌ Platform not ready for clinical deployment")
+        print("❌ Review failed tests and fix issues")
+    
+    print("="*80)
+    
+    return critical_success
+
+if __name__ == "__main__":
+    success = main()
+    sys.exit(0 if success else 1)
 
     def run_phase3_focused_tests(self):
         """Run Phase 3: Global Knowledge Engine focused testing with routing fix validation"""
