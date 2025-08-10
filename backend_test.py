@@ -1104,10 +1104,14 @@ IGF-1,180,109-284,ng/mL,Normal"""
             "practitioner_controlled": True
         }
 
-        print("   Testing comprehensive differential diagnosis generation and storage...")
+        print("   🔍 CRITICAL SUCCESS CRITERIA:")
+        print("   ✅ Should return 200 status code (NOT 500 Internal Server Error)")
+        print("   ✅ Should return status: 'comprehensive_diagnosis_completed' (NOT 'diagnosis_failed')")
+        print("   ✅ Should generate a valid diagnosis_id for retrieval testing")
+        print("   ✅ Should handle medical_history as list format without 'get' attribute error")
         print("   This may take 60-90 seconds for AI analysis...")
         success, response = self.run_test(
-            "FOCUSED TEST 1: POST /api/diagnosis/comprehensive-differential",
+            "🎯 CRITICAL BUG FIX: POST /api/diagnosis/comprehensive-differential",
             "POST",
             "diagnosis/comprehensive-differential",
             200,
