@@ -404,9 +404,16 @@ function App() {
 
   // NEW INTEGRATED AI WORKFLOW FUNCTIONS
   const handlePatientSelection = async (patient) => {
+    console.log("🔍 Patient selected:", patient.demographics.name, patient.patient_id);
     setSelectedPatient(patient);
-    // Automatically trigger AI analysis when patient is selected
-    await runIntegratedAiAnalysis(patient.patient_id);
+    
+    // Automatically navigate to AI Analysis and trigger analysis
+    setActiveTab("patient-analysis");
+    
+    // Add small delay for UI update
+    setTimeout(async () => {
+      await runIntegratedAiAnalysis(patient.patient_id);
+    }, 500);
   };
 
   const runIntegratedAiAnalysis = async (patientId) => {
