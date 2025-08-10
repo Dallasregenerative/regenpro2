@@ -4311,6 +4311,317 @@ async def get_clinical_intelligence_status(
         logger.error(f"Clinical intelligence status error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
 
+# ==========================================
+# Phase 3: Global Knowledge Engine - New Endpoints
+# ==========================================
+
+@api_router.get("/regulatory/treatment-status/{treatment}")
+async def get_treatment_regulatory_status(
+    treatment: str,
+    country: Optional[str] = None,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get regulatory status for specific treatment globally or by country"""
+    
+    try:
+        # Initialize Global Regulatory Intelligence service
+        from advanced_services import GlobalRegulatoryIntelligence
+        regulatory_intel = GlobalRegulatoryIntelligence(db)
+        await regulatory_intel.initialize_regulatory_intelligence()
+        
+        # Get regulatory status
+        status_result = await regulatory_intel.get_treatment_regulatory_status(treatment, country)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "regulatory_status_checked",
+            "treatment": treatment,
+            "country": country,
+            "status": status_result.get("status")
+        })
+        
+        return status_result
+        
+    except Exception as e:
+        logger.error(f"Regulatory status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get regulatory status: {str(e)}")
+
+@api_router.post("/regulatory/cross-jurisdictional-comparison")
+async def perform_regulatory_comparison(
+    comparison_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Perform cross-jurisdictional regulatory comparison"""
+    
+    try:
+        # Initialize Global Regulatory Intelligence service
+        from advanced_services import GlobalRegulatoryIntelligence
+        regulatory_intel = GlobalRegulatoryIntelligence(db)
+        await regulatory_intel.initialize_regulatory_intelligence()
+        
+        # Perform regulatory comparison
+        treatments = comparison_request.get("treatments", ["PRP", "BMAC"])
+        countries = comparison_request.get("countries", ["United States", "European Union", "Canada", "Australia"])
+        
+        comparison_result = await regulatory_intel.perform_regulatory_comparison(treatments, countries)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "regulatory_comparison_performed",
+            "comparison_id": comparison_result.get("comparison_id"),
+            "treatments": treatments,
+            "countries": countries
+        })
+        
+        return comparison_result
+        
+    except Exception as e:
+        logger.error(f"Regulatory comparison error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to perform regulatory comparison: {str(e)}")
+
+@api_router.get("/protocols/international-search")
+async def search_international_protocols(
+    condition: str,
+    medical_tradition: Optional[str] = None,
+    integration_level: Optional[str] = "moderate",
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Search for international protocols across medical traditions"""
+    
+    try:
+        # Initialize International Protocol Library service
+        from advanced_services import InternationalProtocolLibrary
+        protocol_library = InternationalProtocolLibrary(db)
+        await protocol_library.initialize_protocol_library()
+        
+        # Search international protocols
+        search_result = await protocol_library.search_international_protocols(
+            condition, medical_tradition, integration_level
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "international_protocol_search",
+            "condition": condition,
+            "medical_tradition": medical_tradition,
+            "search_id": search_result.get("search_id")
+        })
+        
+        return search_result
+        
+    except Exception as e:
+        logger.error(f"International protocol search error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to search international protocols: {str(e)}")
+
+class PeerConsultationRequest(BaseModel):
+    case_summary: str
+    specialty: Optional[str] = "Regenerative Medicine"
+    urgency: Optional[str] = "routine"  # emergency, urgent, routine
+    consultation_type: Optional[str] = "asynchronous"  # real_time, asynchronous
+    patient_deidentified_data: Optional[Dict[str, Any]] = None
+
+@api_router.post("/community/peer-consultation")
+async def request_peer_consultation(
+    request: PeerConsultationRequest,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Request peer consultation from expert network"""
+    
+    try:
+        # Initialize Community Collaboration Platform service
+        from advanced_services import CommunityCollaborationPlatform
+        collaboration_platform = CommunityCollaborationPlatform(db)
+        await collaboration_platform.initialize_collaboration_platform()
+        
+        # Submit peer consultation request
+        consultation_data = {
+            "case_summary": request.case_summary,
+            "specialty": request.specialty,
+            "urgency": request.urgency,
+            "type": request.consultation_type,
+            "patient_data": request.patient_deidentified_data
+        }
+        
+        consultation_result = await collaboration_platform.request_peer_consultation(
+            consultation_data, practitioner.id
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "peer_consultation_requested",
+            "consultation_id": consultation_result.get("consultation_id"),
+            "specialty": request.specialty,
+            "urgency": request.urgency
+        })
+        
+        return consultation_result
+        
+    except Exception as e:
+        logger.error(f"Peer consultation request error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to request peer consultation: {str(e)}")
+
+class ProtocolSharingRequest(BaseModel):
+    protocol_name: str
+    protocol_category: Optional[str] = "treatment_protocol"
+    sharing_level: Optional[str] = "restricted"  # public, restricted, private
+    protocol_content: Dict[str, Any]
+    specialty: Optional[str] = "Regenerative Medicine"
+
+@api_router.post("/community/share-protocol")
+async def share_protocol_with_community(
+    request: ProtocolSharingRequest,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Share a clinical protocol with the community"""
+    
+    try:
+        # Initialize Community Collaboration Platform service
+        from advanced_services import CommunityCollaborationPlatform
+        collaboration_platform = CommunityCollaborationPlatform(db)
+        await collaboration_platform.initialize_collaboration_platform()
+        
+        # Share protocol
+        protocol_data = {
+            "protocol_name": request.protocol_name,
+            "category": request.protocol_category,
+            "sharing_level": request.sharing_level,
+            "content": request.protocol_content,
+            "specialty": request.specialty
+        }
+        
+        sharing_result = await collaboration_platform.share_protocol(protocol_data, practitioner.id)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "protocol_shared",
+            "protocol_share_id": sharing_result.get("protocol_share_id"),
+            "protocol_name": request.protocol_name,
+            "sharing_level": request.sharing_level
+        })
+        
+        return sharing_result
+        
+    except Exception as e:
+        logger.error(f"Protocol sharing error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to share protocol: {str(e)}")
+
+@api_router.get("/community/insights")
+async def get_community_insights(
+    topic: Optional[str] = None,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get collective intelligence insights from the practitioner community"""
+    
+    try:
+        # Initialize Community Collaboration Platform service
+        from advanced_services import CommunityCollaborationPlatform
+        collaboration_platform = CommunityCollaborationPlatform(db)
+        await collaboration_platform.initialize_collaboration_platform()
+        
+        # Get community insights
+        insights_result = await collaboration_platform.get_community_insights(topic)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "community_insights_accessed",
+            "topic": topic,
+            "insights_id": insights_result.get("community_insights", {}).get("insights_id")
+        })
+        
+        return insights_result
+        
+    except Exception as e:
+        logger.error(f"Community insights error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get community insights: {str(e)}")
+
+@api_router.get("/global-knowledge/system-status")
+async def get_global_knowledge_status(
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get status of all Phase 3: Global Knowledge Engine components"""
+    
+    try:
+        # Check Global Regulatory Intelligence status
+        try:
+            from advanced_services import GlobalRegulatoryIntelligence
+            regulatory_intel = GlobalRegulatoryIntelligence(db)
+            regulatory_status = await regulatory_intel.initialize_regulatory_intelligence()
+        except Exception as e:
+            regulatory_status = {"status": "error", "error": str(e)}
+        
+        # Check International Protocol Library status
+        try:
+            from advanced_services import InternationalProtocolLibrary
+            protocol_library = InternationalProtocolLibrary(db)
+            library_status = await protocol_library.initialize_protocol_library()
+        except Exception as e:
+            library_status = {"status": "error", "error": str(e)}
+        
+        # Check Community Collaboration Platform status
+        try:
+            from advanced_services import CommunityCollaborationPlatform
+            collaboration_platform = CommunityCollaborationPlatform(db)
+            collaboration_status = await collaboration_platform.initialize_collaboration_platform()
+        except Exception as e:
+            collaboration_status = {"status": "error", "error": str(e)}
+        
+        # Check database collections
+        regulatory_comparisons_count = await db.regulatory_comparisons.count_documents({})
+        shared_protocols_count = await db.shared_protocols.count_documents({})
+        peer_consultations_count = await db.peer_consultations.count_documents({})
+        
+        return {
+            "phase": "Phase 3: Global Knowledge Engine",
+            "overall_status": "operational" if all(
+                status.get("status") in ["regulatory_intelligence_initialized", "protocol_library_initialized", "collaboration_platform_initialized"]
+                for status in [regulatory_status, library_status, collaboration_status]
+            ) else "partial",
+            "component_status": {
+                "global_regulatory_intelligence": regulatory_status,
+                "international_protocol_library": library_status,
+                "community_collaboration_platform": collaboration_status
+            },
+            "usage_statistics": {
+                "regulatory_comparisons_performed": regulatory_comparisons_count,
+                "protocols_shared": shared_protocols_count,
+                "peer_consultations_completed": peer_consultations_count
+            },
+            "global_capabilities": [
+                "Real-time regulatory intelligence across 9+ countries",
+                "Multi-tradition protocol library with 7 medical systems",
+                "Peer consultation network with expert practitioners",
+                "Cross-jurisdictional treatment comparison",
+                "Evidence-based traditional medicine integration",
+                "Community-driven collective intelligence"
+            ],
+            "monitored_jurisdictions": [
+                "United States (FDA)", "European Union (EMA)", "Canada (Health Canada)",
+                "Australia (TGA)", "Japan (PMDA)", "South Korea", "Singapore", "Brazil", "Mexico"
+            ],
+            "medical_traditions": [
+                "Western Evidence-Based Medicine", "Traditional Chinese Medicine",
+                "Ayurvedic Medicine", "Japanese Kampo Medicine", "Korean Traditional Medicine",
+                "German Naturopathic Medicine", "Integrative Medicine Protocols"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Global knowledge status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
+
 # Include router in main app
 app.include_router(api_router)
 
