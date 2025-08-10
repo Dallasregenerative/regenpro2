@@ -6,7 +6,7 @@ from datetime import datetime
 
 class FocusedTester:
     def __init__(self):
-        self.base_url = "https://7270ea2f-1d23-46a0-9a6e-bef595343dd6.preview.emergentagent.com"
+        self.base_url = "https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com"
         self.api_url = f"{self.base_url}/api"
         self.patient_id = "c458d177-712c-4eb9-8fd3-5f5e41fe7b71"
         self.headers = {

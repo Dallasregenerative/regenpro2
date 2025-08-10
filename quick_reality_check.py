@@ -8,7 +8,7 @@ import json
 import sys
 
 def quick_reality_check():
-    base_url = "https://7270ea2f-1d23-46a0-9a6e-bef595343dd6.preview.emergentagent.com"
+    base_url = "https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com"
     api_url = f"{base_url}/api"
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer demo-token'}
     
