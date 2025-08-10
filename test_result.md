@@ -642,11 +642,10 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Living Evidence Engine System"
     - "Advanced Differential Diagnosis System"
     - "Enhanced Explainable AI System"
-  stuck_tasks:
-    - "Advanced Differential Diagnosis System"
-    - "Enhanced Explainable AI System"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
