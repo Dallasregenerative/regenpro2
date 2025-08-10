@@ -12311,6 +12311,69 @@ class AdvancedDifferentialDiagnosisEngine:
                 "fallback_recommendations": "Standard treatment protocols recommended"
             }
 
+    async def _generate_clinical_decision_support(
+        self, differential_diagnoses: List[Dict], explainable_ai_analysis: Dict
+    ) -> Dict[str, Any]:
+        """Generate clinical decision support recommendations for differential diagnoses"""
+        
+        if not differential_diagnoses:
+            return {
+                "recommendations": ["Comprehensive clinical evaluation recommended"],
+                "decision_support_level": "basic",
+                "confidence": 0.5
+            }
+        
+        # Get top diagnosis
+        top_diagnosis = differential_diagnoses[0]
+        top_confidence = top_diagnosis.get("confidence_score", 0.5)
+        
+        recommendations = []
+        
+        # High confidence recommendations
+        if top_confidence >= 0.8:
+            recommendations.extend([
+                f"Primary diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')} (High confidence: {top_confidence:.1%})",
+                "Consider proceeding with targeted treatment plan",
+                "Monitor treatment response and adjust as needed"
+            ])
+        elif top_confidence >= 0.6:
+            recommendations.extend([
+                f"Likely diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')} (Moderate confidence: {top_confidence:.1%})",
+                "Consider additional diagnostic testing to confirm",
+                "Initiate conservative treatment while monitoring"
+            ])
+        else:
+            recommendations.extend([
+                f"Possible diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')} (Low confidence: {top_confidence:.1%})",
+                "Comprehensive diagnostic workup recommended",
+                "Consider differential diagnosis and rule out alternatives"
+            ])
+        
+        # Add explainable AI insights if available
+        if explainable_ai_analysis:
+            key_factors = explainable_ai_analysis.get("key_diagnostic_factors", [])
+            if key_factors:
+                recommendations.append(f"Key diagnostic factors: {', '.join(key_factors[:3])}")
+        
+        # Multiple diagnosis considerations
+        if len(differential_diagnoses) > 1:
+            second_diagnosis = differential_diagnoses[1]
+            second_confidence = second_diagnosis.get("confidence_score", 0.0)
+            
+            if second_confidence > 0.4:
+                recommendations.append(
+                    f"Consider alternative: {second_diagnosis.get('diagnosis', 'Unknown')} "
+                    f"(Confidence: {second_confidence:.1%})"
+                )
+        
+        return {
+            "recommendations": recommendations,
+            "decision_support_level": "comprehensive" if top_confidence >= 0.7 else "moderate",
+            "confidence": top_confidence,
+            "primary_diagnosis": top_diagnosis.get("diagnosis", "Unknown"),
+            "diagnostic_certainty": "high" if top_confidence >= 0.8 else "moderate" if top_confidence >= 0.6 else "low"
+        }
+
 
 # Advanced DICOM Processing Service
 class DICOMProcessingService:
