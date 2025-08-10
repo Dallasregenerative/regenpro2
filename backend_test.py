@@ -1268,6 +1268,15 @@ IGF-1,180,109-284,ng/mL,Normal"""
         focused_tests_run = 0
         focused_tests_passed = 0
         
+        # First, create a patient if we don't have one
+        if not self.patient_id:
+            print(f"\n🔧 SETUP: Creating patient for testing...")
+            if self.test_create_patient():
+                print(f"   ✅ Patient created: {self.patient_id}")
+            else:
+                print(f"   ❌ Failed to create patient - cannot proceed with tests")
+                return False
+        
         # Test 1: POST comprehensive differential diagnosis
         print(f"\n🔍 FOCUSED TEST 1/4: POST /api/diagnosis/comprehensive-differential")
         if self.test_advanced_differential_diagnosis_comprehensive_differential():
