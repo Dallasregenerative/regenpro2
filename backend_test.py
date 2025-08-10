@@ -5751,8 +5751,11 @@ def main():
         return 1
 
 if __name__ == "__main__":
+    # Check if we should run Phase 3 tests
+    if len(sys.argv) > 1 and sys.argv[1] == "--phase3":
+        sys.exit(main_phase3())
     # Check if we should run Phase 2 tests
-    if len(sys.argv) > 1 and sys.argv[1] == "--phase2":
+    elif len(sys.argv) > 1 and sys.argv[1] == "--phase2":
         sys.exit(main())
     # Check if we should run critical fixes verification
     elif len(sys.argv) > 1 and sys.argv[1] == "--critical-fixes":
@@ -5764,5 +5767,5 @@ if __name__ == "__main__":
         tester.run_critical_fixes_verification()
         sys.exit(0)
     else:
-        # Default: run Phase 2 tests
-        sys.exit(main())
+        # Default: run Phase 3 tests (latest implementation)
+        sys.exit(main_phase3())
