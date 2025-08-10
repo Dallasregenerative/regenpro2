@@ -4682,6 +4682,15 @@ async def generate_enhanced_ai_explanation(
             model_prediction, patient_data, explanation_type
         )
         
+        # Store enhanced explanation in database for retrieval
+        enhanced_explanation = explanation_result.get("enhanced_explanation", {})
+        if enhanced_explanation and enhanced_explanation.get("explanation_id"):
+            await db.enhanced_explanations.replace_one(
+                {"explanation_id": enhanced_explanation["explanation_id"]},
+                enhanced_explanation,
+                upsert=True
+            )
+        
         # Audit log
         await db.audit_log.insert_one({
             "timestamp": datetime.utcnow(),
