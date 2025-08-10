@@ -452,15 +452,18 @@ backend:
 
   - task: "Patient Cohort Risk Stratification"
     implemented: true
-    working: false
+    working: true
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL: API parameter validation error (422). Endpoint expects treatment_type as query parameter and patient list as body, but current implementation has parameter mismatch. API design needs correction to match the intended functionality."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: Patient Cohort Risk Stratification now working perfectly. POST /api/ai/risk-stratification accepts proper JSON structure with patient_cohort array and treatment_type. RiskStratificationRequest model validation working correctly. System successfully processes patient cohorts (5 patients tested), generates risk stratification by category (high/moderate/low risk), calculates success probabilities, and provides cohort-level recommendations."
 
 frontend:
   - task: "File Upload Interface"
