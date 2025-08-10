@@ -1157,9 +1157,9 @@ IGF-1,180,109-284,ng/mL,Normal"""
             return False
 
     def test_advanced_differential_diagnosis_engine_status(self):
-        """Test GET /api/diagnosis/engine-status - Check differential diagnosis engine status"""
+        """Test GET /api/diagnosis/engine-status - Should return engine status (not 404)"""
         success, response = self.run_test(
-            "Advanced Differential Diagnosis - Engine Status",
+            "FOCUSED TEST 4: GET /api/diagnosis/engine-status",
             "GET",
             "diagnosis/engine-status",
             200,
@@ -1167,30 +1167,37 @@ IGF-1,180,109-284,ng/mL,Normal"""
         )
         
         if success:
-            print(f"   Engine Status: {response.get('status', 'Unknown')}")
-            print(f"   Engine Version: {response.get('version', 'Unknown')}")
+            print(f"   ✅ SUCCESS: GET engine-status should return 200 (not 404)")
+            print(f"   Overall Status: {response.get('overall_status', 'Unknown')}")
+            print(f"   Feature: {response.get('feature', 'Unknown')}")
             
-            capabilities = response.get('capabilities', {})
-            if capabilities:
-                print(f"   Multi-Modal Integration: {capabilities.get('multi_modal_integration', False)}")
-                print(f"   Bayesian Analysis: {capabilities.get('bayesian_analysis', False)}")
-                print(f"   Explainable AI: {capabilities.get('explainable_ai', False)}")
-                print(f"   Confidence Analysis: {capabilities.get('confidence_analysis', False)}")
-                print(f"   Mechanism Insights: {capabilities.get('mechanism_insights', False)}")
+            engine_status = response.get('engine_status', {})
+            if engine_status:
+                print(f"   Engine Status: {engine_status.get('status', 'Unknown')}")
+                print(f"   Systems Active: {engine_status.get('systems_active', 0)}")
             
-            performance_metrics = response.get('performance_metrics', {})
-            if performance_metrics:
-                print(f"   Diagnostic Accuracy: {performance_metrics.get('diagnostic_accuracy', 0):.1%}")
-                print(f"   Average Analysis Time: {performance_metrics.get('avg_analysis_time', 0):.2f}s")
-                print(f"   Total Diagnoses Processed: {performance_metrics.get('total_diagnoses', 0)}")
+            capabilities = response.get('critical_capabilities', [])
+            print(f"   Critical Capabilities: {len(capabilities)}")
+            
+            usage_stats = response.get('usage_statistics', {})
+            if usage_stats:
+                print(f"   Comprehensive Diagnoses Performed: {usage_stats.get('comprehensive_diagnoses_performed', 0)}")
+                print(f"   Explainable Analyses Generated: {usage_stats.get('explainable_analyses_generated', 0)}")
+            
+            data_modalities = response.get('data_modalities', [])
+            print(f"   Data Modalities Supported: {len(data_modalities)}")
             
             # Check for system health indicators
-            system_health = response.get('system_health', {})
-            if system_health:
-                print(f"   Database Connection: {system_health.get('database_status', 'Unknown')}")
-                print(f"   AI Models Loaded: {system_health.get('models_loaded', 0)}")
-        
-        return success
+            diagnostic_reasoning = response.get('diagnostic_reasoning', 'Unknown')
+            explainability = response.get('explainability', 'Unknown')
+            
+            print(f"   Diagnostic Reasoning: {diagnostic_reasoning[:50]}...")
+            print(f"   Explainability: {explainability[:50]}...")
+            
+            return True
+        else:
+            print(f"   ❌ FAILED: GET /api/diagnosis/engine-status returned error (should be 200)")
+            return False
 
     def test_advanced_differential_diagnosis_retrieval(self):
         """Test GET /api/diagnosis/{diagnosis_id} - Should now retrieve stored diagnosis (not 404)"""
