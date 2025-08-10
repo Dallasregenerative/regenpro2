@@ -4301,19 +4301,31 @@ logger = logging.getLogger(__name__)
 async def startup_advanced_services():
     """Initialize advanced AI services on startup"""
     global federated_service, pubmed_service, dicom_service, prediction_service, file_processor
+    global visual_explainable_ai, comparative_analytics, personalized_risk_assessment
     
     try:
-        # Initialize advanced services
+        # Initialize existing advanced services
         federated_service = FederatedLearningService(db)
         pubmed_service = PubMedIntegrationService(db)
         dicom_service = DICOMProcessingService(db)
         prediction_service = OutcomePredictionService(db)
         file_processor = MedicalFileProcessor(db, OPENAI_API_KEY)
         
+        # Initialize Phase 2: AI Clinical Intelligence services
+        from advanced_services import VisualExplainableAI, ComparativeEffectivenessAnalytics, PersonalizedRiskAssessment
+        visual_explainable_ai = VisualExplainableAI(db)
+        comparative_analytics = ComparativeEffectivenessAnalytics(db)
+        personalized_risk_assessment = PersonalizedRiskAssessment(db)
+        
         # Initialize services
         await initialize_advanced_services(db)
         
-        logger.info("Advanced AI services and file processing initialized successfully")
+        # Initialize Phase 2 services
+        await visual_explainable_ai.initialize_visual_explainability()
+        await comparative_analytics.initialize_comparative_analytics()
+        await personalized_risk_assessment.initialize_risk_assessment()
+        
+        logger.info("Advanced AI services, file processing, and Phase 2 Clinical Intelligence initialized successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize advanced services: {str(e)}")
