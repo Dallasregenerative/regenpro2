@@ -24,7 +24,10 @@ from advanced_services import (
     PubMedIntegrationService, 
     DICOMProcessingService,
     OutcomePredictionService,
-    initialize_advanced_services
+    initialize_advanced_services,
+    VisualExplainableAI,
+    ComparativeEffectivenessAnalytics,
+    PersonalizedRiskAssessment
 )
 from file_processing import (
     MedicalFileProcessor,
