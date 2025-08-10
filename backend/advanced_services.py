@@ -12920,6 +12920,61 @@ class OutcomePredictionService:
         
         return recommendations
 
+    async def _generate_clinical_decision_support(
+        self, differential_diagnoses: List[Dict], explainable_ai_analysis: Dict
+    ) -> Dict[str, Any]:
+        """Generate clinical decision support recommendations for differential diagnoses"""
+        
+        if not differential_diagnoses:
+            return {
+                "recommendations": ["Comprehensive clinical evaluation recommended"],
+                "decision_support_level": "basic",
+                "confidence": 0.5
+            }
+        
+        # Get top diagnosis
+        top_diagnosis = differential_diagnoses[0]
+        top_confidence = top_diagnosis.get("confidence_score", 0.5)
+        
+        recommendations = []
+        
+        # High confidence recommendations
+        if top_confidence >= 0.8:
+            recommendations.extend([
+                f"Primary diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')} (High confidence: {top_confidence:.1%})",
+                "Consider proceeding with targeted treatment plan",
+                "Monitor treatment response and adjust as needed"
+            ])
+        elif top_confidence >= 0.6:
+            recommendations.extend([
+                f"Likely diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')} (Moderate confidence: {top_confidence:.1%})",
+                "Consider additional confirmatory testing",
+                "Initiate conservative treatment while monitoring"
+            ])
+        else:
+            recommendations.extend([
+                f"Possible diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')} (Low confidence: {top_confidence:.1%})",
+                "Comprehensive diagnostic workup recommended",
+                "Consider specialist consultation"
+            ])
+        
+        # Add differential considerations
+        if len(differential_diagnoses) > 1:
+            recommendations.append(f"Consider differential diagnoses: {', '.join([d.get('diagnosis', 'Unknown') for d in differential_diagnoses[1:3]])}")
+        
+        # Add regenerative medicine recommendations
+        regenerative_targets = top_diagnosis.get("regenerative_targets", [])
+        if regenerative_targets:
+            recommendations.append(f"Regenerative medicine targets identified: {', '.join(regenerative_targets[:3])}")
+        
+        return {
+            "recommendations": recommendations,
+            "decision_support_level": "comprehensive" if top_confidence >= 0.7 else "moderate",
+            "confidence": top_confidence,
+            "primary_diagnosis": top_diagnosis.get("diagnosis", "Unknown"),
+            "differential_count": len(differential_diagnoses)
+        }
+
 
 # Initialize all advanced services
 
