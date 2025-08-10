@@ -151,13 +151,16 @@ backend:
     implemented: true
     working: false
     file: "/app/backend/advanced_services.py"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUE - International Protocol Library endpoints returning 404 'Protocol not found' errors. All 3 test scenarios failed: osteoarthritis search, multiple medical traditions search (Western, TCM, Ayurvedic), and integration level filtering. The GET /api/protocols/international-search endpoint exists but appears to have routing or implementation issues preventing protocol retrieval. This breaks the international protocol discovery workflow."
+      - working: false
+        agent: "testing"
+        comment: "❌ STILL BROKEN AFTER FIX ATTEMPT - International Protocol Library endpoints still returning 404 'Protocol not found' errors. Tested 3 scenarios: (1) GET /api/protocols/international-search?condition=osteoarthritis - 404 error, (2) Multiple medical traditions search with Western,TCM,Ayurvedic - 404 error, (3) Integration level filtering with high level - 404 error. The FederatedLearningService class restoration fix did not resolve the routing/implementation issues. The endpoint exists but protocol retrieval mechanism is still broken."
 
   - task: "Phase 3: Community Collaboration Platform"
     implemented: true
