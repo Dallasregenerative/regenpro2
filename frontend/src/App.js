@@ -383,7 +383,7 @@ function App() {
   };
 
   const handleGenerateProtocol = async (patientId, schoolOfThought) => {
-    setLoading(true);
+    setProtocolGenerationLoading(true);
     setGeneratedProtocol(null);
     
     try {
@@ -398,7 +398,84 @@ function App() {
       console.error("Protocol generation failed:", error);
       alert("Protocol generation failed");
     } finally {
-      setLoading(false);
+      setProtocolGenerationLoading(false);
+    }
+  };
+
+  // NEW INTEGRATED AI WORKFLOW FUNCTIONS
+  const handlePatientSelection = async (patient) => {
+    setSelectedPatient(patient);
+    // Automatically trigger AI analysis when patient is selected
+    await runIntegratedAiAnalysis(patient.patient_id);
+  };
+
+  const runIntegratedAiAnalysis = async (patientId) => {
+    setAiAnalysisLoading(true);
+    setPatientAnalysis(null);
+    setAiDifferentialDiagnosis(null);
+    setExplainableAiResults(null);
+    
+    try {
+      // Run comprehensive patient analysis
+      const analysisResponse = await axios.post(`${API}/patients/${patientId}/analyze`, {
+        analysis_type: "comprehensive",
+        include_files: true,
+        generate_protocol: false
+      }, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setPatientAnalysis(analysisResponse.data);
+
+      // Run advanced differential diagnosis
+      const diagnosisResponse = await axios.post(`${API}/diagnosis/comprehensive-differential`, {
+        patient_id: patientId,
+        include_confidence_intervals: true,
+        max_diagnoses: 5
+      }, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setAiDifferentialDiagnosis(diagnosisResponse.data);
+
+      // Run explainable AI analysis
+      const explainableResponse = await axios.post(`${API}/ai/enhanced-explanation`, {
+        patient_id: patientId,
+        analysis_type: "comprehensive",
+        explanation_depth: "detailed"
+      }, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setExplainableAiResults(explainableResponse.data);
+
+    } catch (error) {
+      console.error("Integrated AI analysis failed:", error);
+      alert("AI analysis failed. Please try again.");
+    } finally {
+      setAiAnalysisLoading(false);
+    }
+  };
+
+  const generateProtocolWithEvidence = async (patientId, schoolOfThought) => {
+    setProtocolGenerationLoading(true);
+    setGeneratedProtocol(null);
+    
+    try {
+      const response = await axios.post(`${API}/protocols/generate`, {
+        patient_id: patientId,
+        school_of_thought: schoolOfThought,
+        include_evidence: true,
+        include_cost_analysis: true
+      }, {
+        headers: { Authorization: `Bearer demo-token` }
+      });
+      setGeneratedProtocol(response.data);
+      
+      // Automatically switch to Protocol Gen tab to show results
+      setActiveTab("protocol-gen");
+    } catch (error) {
+      console.error("Protocol generation failed:", error);
+      alert("Protocol generation failed. Please check the AI analysis results.");
+    } finally {
+      setProtocolGenerationLoading(false);
     }
   };
 
