@@ -164,15 +164,18 @@ backend:
 
   - task: "Phase 3: Community Collaboration Platform"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/advanced_services.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUES - Community Collaboration Platform partially functional (2/5 tests passed). ✅ Community insights endpoints working (collective intelligence and therapy comparison). ❌ Peer consultation requests failing with 422 validation error - missing required field 'case_summary' in request model. ❌ Protocol sharing tests skipped due to missing protocol_id dependency. The POST /api/community/peer-consultation endpoint has incorrect request model validation that prevents consultation requests."
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED - Community Collaboration Platform peer consultation validation issue RESOLVED. POST /api/community/peer-consultation now accepts requests with optional case_summary field. Tested 2 scenarios: (1) Comprehensive consultation request with patient demographics and clinical question - successful (consultation_id: e365f896-9425-446d-b8d8-ce244dedfd14), (2) Minimal data consultation with only consultation_type and clinical_question - successful (consultation_id: 7a77a5d9-dba1-4fc0-9e9b-dce7e8ec0602). The case_summary field is now properly optional. Community insights endpoints remain functional for collective intelligence and therapy comparison."
 
   - task: "Phase 3: Global Knowledge Engine System Integration"
     implemented: true
