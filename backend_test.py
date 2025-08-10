@@ -1085,60 +1085,30 @@ IGF-1,180,109-284,ng/mL,Normal"""
     # 4. GET /api/diagnosis/engine-status - Should return engine status (not 404)
 
     def test_advanced_differential_diagnosis_comprehensive_differential(self):
-        """Test POST /api/diagnosis/comprehensive-differential - Generate comprehensive differential diagnoses"""
+        """Test POST /api/diagnosis/comprehensive-differential - Generate and store diagnosis"""
         if not self.patient_id:
             print("❌ No patient ID available for comprehensive differential diagnosis testing")
             return False
 
-        # Use realistic medical data as requested - osteoarthritis case
+        # Use realistic patient data as requested in review - 58-year-old female with bilateral knee pain
         differential_data = {
-            "patient_id": self.patient_id,
-            "clinical_presentation": {
-                "chief_complaint": "Progressive bilateral knee pain and morning stiffness affecting daily activities",
-                "symptom_duration": "3 years",
-                "pain_characteristics": {
-                    "intensity": 7,
-                    "quality": "deep aching pain with morning stiffness lasting 45 minutes",
-                    "aggravating_factors": ["prolonged standing", "stair climbing", "cold weather"],
-                    "relieving_factors": ["rest", "heat application", "gentle movement"]
-                },
-                "functional_impact": {
-                    "walking_distance": "limited to 2 blocks",
-                    "stair_climbing": "requires handrail support",
-                    "work_impact": "difficulty with prolonged standing during surgeries"
+            "patient_data": {
+                "patient_id": "test_patient_differential_123",
+                "demographics": {"age": 58, "gender": "female"},
+                "medical_history": ["Osteoarthritis", "Hypertension"], 
+                "clinical_presentation": {
+                    "chief_complaint": "Bilateral knee pain",
+                    "symptom_duration": "2 years",
+                    "pain_characteristics": {"intensity": 7}
                 }
             },
-            "diagnostic_modalities": {
-                "physical_examination": {
-                    "inspection": "bilateral knee swelling, no erythema",
-                    "palpation": "tenderness over medial joint lines bilaterally",
-                    "range_of_motion": "flexion limited to 115 degrees bilaterally",
-                    "special_tests": ["positive McMurray test bilateral", "negative drawer test"],
-                    "gait_analysis": "antalgic gait with shortened stance phase"
-                },
-                "imaging": {
-                    "xray_findings": "Grade 2-3 osteoarthritis with joint space narrowing, osteophyte formation, subchondral sclerosis",
-                    "mri_findings": "cartilage thinning, meniscal degeneration, mild bone marrow edema, small effusions"
-                },
-                "laboratory": {
-                    "inflammatory_markers": {"CRP": 2.1, "ESR": 18},
-                    "autoimmune_markers": {"RF": "negative", "anti_CCP": "negative", "ANA": "negative"},
-                    "metabolic_markers": {"uric_acid": 4.2, "vitamin_D": 32}
-                }
-            },
-            "analysis_parameters": {
-                "differential_count": 5,
-                "confidence_threshold": 0.1,
-                "include_rare_conditions": False,
-                "regenerative_focus": True,
-                "evidence_level_minimum": 2
-            }
+            "practitioner_controlled": True
         }
 
-        print("   Testing comprehensive differential diagnosis generation...")
+        print("   Testing comprehensive differential diagnosis generation and storage...")
         print("   This may take 60-90 seconds for AI analysis...")
         success, response = self.run_test(
-            "Advanced Differential Diagnosis - Comprehensive Differential",
+            "FOCUSED TEST 1: POST /api/diagnosis/comprehensive-differential",
             "POST",
             "diagnosis/comprehensive-differential",
             200,
@@ -1147,46 +1117,44 @@ IGF-1,180,109-284,ng/mL,Normal"""
         )
         
         if success:
+            print(f"   ✅ SUCCESS: POST should return 200 with diagnosis_id")
             print(f"   Analysis Status: {response.get('status', 'Unknown')}")
-            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
             
-            # Check for diagnosis_id in response
-            diagnosis_id = response.get('diagnosis_id')
+            # Extract diagnosis_id from response - CRITICAL for next tests
+            comprehensive_diagnosis = response.get('comprehensive_diagnosis', {})
+            diagnosis_id = comprehensive_diagnosis.get('diagnosis_id')
+            
             if diagnosis_id:
-                print(f"   Diagnosis ID Generated: {diagnosis_id}")
+                print(f"   ✅ DIAGNOSIS_ID EXTRACTED: {diagnosis_id}")
                 # Store for later tests
-                if not hasattr(self, 'diagnosis_id'):
-                    self.diagnosis_id = diagnosis_id
-            
-            differential_diagnoses = response.get('differential_diagnoses', [])
-            print(f"   Differential Diagnoses Generated: {len(differential_diagnoses)}")
-            
-            if differential_diagnoses:
-                for i, diagnosis in enumerate(differential_diagnoses[:3], 1):
-                    print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
-                    print(f"     Confidence: {diagnosis.get('confidence_score', 0):.2f}")
-                    print(f"     ICD-10: {diagnosis.get('icd10_code', 'Unknown')}")
-                    print(f"     Regenerative Suitability: {diagnosis.get('regenerative_suitability', 'Unknown')}")
-            
-            # Check for explainable AI analysis
-            explainable_analysis = response.get('explainable_ai_analysis', {})
-            if explainable_analysis:
-                print(f"   Explainable AI Features: {len(explainable_analysis.get('feature_importance', []))}")
-                print(f"   Transparency Score: {explainable_analysis.get('transparency_score', 0):.2f}")
-            
-            # Check for confidence analysis
-            confidence_analysis = response.get('confidence_analysis', {})
-            if confidence_analysis:
-                print(f"   Confidence Intervals Generated: {len(confidence_analysis.get('confidence_intervals', []))}")
-                print(f"   Overall Diagnostic Confidence: {confidence_analysis.get('overall_confidence', 0):.2f}")
-            
-            # Check for mechanism insights
-            mechanism_insights = response.get('mechanism_insights', {})
-            if mechanism_insights:
-                print(f"   Mechanism Pathways Analyzed: {len(mechanism_insights.get('pathways', []))}")
-                print(f"   Cellular Mechanisms: {len(mechanism_insights.get('cellular_mechanisms', []))}")
-        
-        return success
+                self.diagnosis_id = diagnosis_id
+                
+                # Verify diagnosis was stored in database
+                differential_diagnoses = comprehensive_diagnosis.get('differential_diagnoses', [])
+                print(f"   Differential Diagnoses Generated: {len(differential_diagnoses)}")
+                
+                if differential_diagnoses:
+                    top_diagnosis = differential_diagnoses[0]
+                    print(f"   Primary Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"   Confidence Score: {top_diagnosis.get('confidence_score', 0):.2f}")
+                
+                # Check for comprehensive analysis components
+                explainable_ai = comprehensive_diagnosis.get('explainable_ai_analysis', {})
+                confidence_analysis = comprehensive_diagnosis.get('confidence_analysis', {})
+                mechanism_insights = comprehensive_diagnosis.get('mechanism_insights', {})
+                
+                print(f"   Explainable AI Analysis: {'✅' if explainable_ai else '❌'}")
+                print(f"   Confidence Analysis: {'✅' if confidence_analysis else '❌'}")
+                print(f"   Mechanism Insights: {'✅' if mechanism_insights else '❌'}")
+                
+                return True
+            else:
+                print(f"   ❌ CRITICAL ISSUE: No diagnosis_id found in response")
+                print(f"   Response keys: {list(response.keys())}")
+                return False
+        else:
+            print(f"   ❌ FAILED: POST /api/diagnosis/comprehensive-differential failed")
+            return False
 
     def test_advanced_differential_diagnosis_engine_status(self):
         """Test GET /api/diagnosis/engine-status - Check differential diagnosis engine status"""
