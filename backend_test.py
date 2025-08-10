@@ -1085,17 +1085,16 @@ IGF-1,180,109-284,ng/mL,Normal"""
     # 4. GET /api/diagnosis/engine-status - Should return engine status (not 404)
 
     def test_advanced_differential_diagnosis_comprehensive_differential(self):
-        """Test POST /api/diagnosis/comprehensive-differential - Generate and store diagnosis"""
-        if not self.patient_id:
-            print("❌ No patient ID available for comprehensive differential diagnosis testing")
-            return False
-
-        # Use realistic patient data as requested in review - 58-year-old female with bilateral knee pain
+        """Test POST /api/diagnosis/comprehensive-differential - CRITICAL BUG FIX VERIFICATION"""
+        print("   🎯 TESTING THE SPECIFIC FIX: 'list' object has no attribute 'get' error")
+        print("   📋 Using the EXACT test data that was failing before the fix")
+        
+        # Use the EXACT test data from the review request that was causing the error
         differential_data = {
             "patient_data": {
                 "patient_id": "test_patient_differential_123",
                 "demographics": {"age": 58, "gender": "female"},
-                "medical_history": ["Osteoarthritis", "Hypertension"], 
+                "medical_history": ["Osteoarthritis", "Hypertension"],  # This LIST format was causing the error
                 "clinical_presentation": {
                     "chief_complaint": "Bilateral knee pain",
                     "symptom_duration": "2 years",
