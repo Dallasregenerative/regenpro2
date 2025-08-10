@@ -1,0 +1,90 @@
+GENETIC TEST RESULTS - TENDON INJURY & HEALING PANEL
+
+Patient: David Chen
+DOB: August 22, 1996
+Patient ID: DC-2025-002
+Test Date: January 8, 2025
+Report Date: January 10, 2025
+
+Referring Physician: Dr. Mark Thompson, Sports Medicine
+Testing Laboratory: AthleticGenome Labs
+Sample Type: Blood
+Sample ID: AG-2025-DC002
+
+GENETIC MARKERS ANALYZED:
+
+1. COL5A1 (Collagen Type V Alpha 1) - rs12722
+   Genotype: C/T (Heterozygous)
+   Clinical Significance: INCREASED INJURY RISK
+   Impact: Associated with increased risk of tendon and ligament injuries
+   Athletic Relevance: 2.2x increased risk of Achilles tendon injuries
+
+2. COL1A1 (Collagen Type I Alpha 1) - rs1800012
+   Genotype: G/T (Heterozygous)
+   Clinical Significance: MODERATE INJURY RISK
+   Impact: Reduced collagen stability, slower healing
+   Frequency: 15% of elite athletes carry this variant
+
+3. TNC (Tenascin-C) - rs2104772
+   Genotype: A/A (Homozygous variant)
+   Clinical Significance: INCREASED INJURY RISK
+   Impact: Associated with rotator cuff tendinopathy susceptibility
+   Clinical Note: Particularly relevant for overhead athletes
+
+4. MMP3 (Matrix Metalloproteinase 3) - rs3025058
+   Genotype: 5A/6A (Heterozygous)
+   Clinical Significance: VARIABLE HEALING
+   Impact: 5A allele associated with increased MMP3 activity and tissue breakdown
+   
+5. IL6 (Interleukin 6) - rs1800795
+   Genotype: G/C (Heterozygous)
+   Clinical Significance: ENHANCED INFLAMMATION
+   Impact: Increased inflammatory response to tissue injury
+   Recovery Implication: May require longer recovery periods
+
+6. ACTN3 (Alpha-Actinin-3) - rs1815739
+   Genotype: C/C (Wild type)
+   Clinical Significance: POWER ATHLETE ADVANTAGE
+   Impact: Preserved alpha-actinin-3 ("sprint gene")
+   Athletic Performance: Beneficial for power/sprint activities
+
+OVERALL GENETIC PROFILE:
+INJURY-PRONE PHENOTYPE with Enhanced Power Capability
+
+INTERPRETATION:
+David Chen carries multiple genetic variants that predispose to tendon and soft tissue injuries, particularly relevant for overhead sports activities. The combination of COL5A1, COL1A1, and TNC variants significantly increases susceptibility to rotator cuff injuries. However, he maintains the advantageous ACTN3 genotype for explosive athletic performance.
+
+SPORTS MEDICINE RECOMMENDATIONS:
+1. Injury Prevention Protocol:
+   - Enhanced warm-up routines (minimum 20 minutes)
+   - Progressive loading programs for tendons
+   - Eccentric strengthening exercises
+   - Regular soft tissue maintenance (massage, stretching)
+
+2. Training Modifications:
+   - Reduce overhead volume during symptomatic periods
+   - Implement periodized training with adequate recovery
+   - Focus on posterior chain strengthening
+   - Monitor training load carefully
+
+3. Nutritional Support:
+   - Vitamin C supplementation for collagen synthesis
+   - Omega-3 fatty acids for anti-inflammatory effects
+   - Consider collagen peptide supplementation
+   
+4. Medical Management:
+   - Regular musculoskeletal screening
+   - Early intervention for minor injuries
+   - Consider prophylactic interventions during high-stress periods
+
+5. Career Counseling:
+   - Discuss long-term implications for competitive swimming
+   - Consider technique modifications to reduce shoulder stress
+   - Plan for injury prevention throughout career
+
+GENETIC COUNSELOR NOTES:
+Recommend sharing results with coaching staff and sports medicine team. Family history of athletic injuries should be obtained. Consider genetic testing for siblings involved in competitive sports.
+
+Genetics Director: Dr. Michael Chang, PhD, FACMG
+Sports Geneticist: Dr. Elena Rodriguez, MD, PhD
+Report Approved: January 10, 2025
