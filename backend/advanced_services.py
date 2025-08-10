@@ -13369,6 +13369,19 @@ class EnhancedExplainableAI:
             await self.db.enhanced_explanations.insert_one(enhanced_explanation)
         except Exception as e:
             logger.error(f"Failed to store enhanced explanation: {str(e)}")
+
+    def _clean_object_ids(self, obj):
+        """Clean MongoDB ObjectIds from nested dictionary/list structures"""
+        from bson import ObjectId
+        
+        if isinstance(obj, dict):
+            return {k: self._clean_object_ids(v) for k, v in obj.items() if k != '_id'}
+        elif isinstance(obj, list):
+            return [self._clean_object_ids(item) for item in obj]
+        elif isinstance(obj, ObjectId):
+            return str(obj)
+        else:
+            return obj
     
     async def _generate_fallback_explanation(
         self, model_prediction: Dict, patient_data: Dict
