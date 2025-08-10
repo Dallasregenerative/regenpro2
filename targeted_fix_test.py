@@ -256,27 +256,27 @@ class TargetedFixTester:
         
         # Test 1: POST /api/ai/enhanced-explanation
         explanation_data = {
-            "patient_id": self.patient_id,
-            "analysis_type": "comprehensive_diagnosis",
-            "clinical_context": {
+            "model_prediction": {
                 "primary_diagnosis": "Full-thickness rotator cuff tear",
                 "confidence_score": 0.92,
                 "treatment_recommendations": ["PRP injection", "BMAC procedure", "Physical therapy"],
                 "risk_factors": ["Age 52", "Occupational overuse", "Previous tendinopathy"],
                 "prognostic_factors": ["Good tissue quality", "Motivated patient", "Early intervention"]
             },
+            "patient_data": {
+                "patient_id": self.patient_id,
+                "demographic_features": {"age": 52, "gender": "female", "occupation": "surgeon"},
+                "clinical_features": {"pain_intensity": 7, "functional_limitation": 8, "symptom_duration": 8},
+                "imaging_features": {"tear_size": "large", "retraction": "moderate", "fatty_infiltration": "grade_2"},
+                "laboratory_features": {"crp": 1.8, "esr": 15}
+            },
+            "explanation_type": "comprehensive",
             "explanation_parameters": {
                 "explanation_depth": "comprehensive",
                 "include_feature_importance": True,
                 "include_visual_breakdown": True,
                 "include_counterfactuals": True,
                 "transparency_level": "high"
-            },
-            "model_inputs": {
-                "demographic_features": {"age": 52, "gender": "female", "occupation": "surgeon"},
-                "clinical_features": {"pain_intensity": 7, "functional_limitation": 8, "symptom_duration": 8},
-                "imaging_features": {"tear_size": "large", "retraction": "moderate", "fatty_infiltration": "grade_2"},
-                "laboratory_features": {"crp": 1.8, "esr": 15}
             }
         }
 
