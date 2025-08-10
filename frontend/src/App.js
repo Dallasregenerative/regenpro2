@@ -1287,57 +1287,6 @@ function App() {
               </Card>
             )}
           </TabsContent>
-                                  
-                                  <div className="space-y-2">
-                                    <h5 className="font-medium text-purple-700 flex items-center gap-1">
-                                      <TestTube className="h-4 w-4" />
-                                      Recommended Tests
-                                    </h5>
-                                    <ul className="space-y-1">
-                                      {result.recommended_tests.map((test, i) => (
-                                        <li key={i} className="flex items-start gap-2">
-                                          <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                                          <span className="text-slate-600">{test}</span>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                        </div>
-                        
-                        <div className="pt-4 border-t">
-                          <Button
-                            onClick={() => setActiveTab("protocol-generation")}
-                            className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700"
-                          >
-                            <ChevronRight className="mr-2 h-4 w-4" />
-                            Proceed to Protocol Generation
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </>
-            ) : (
-              <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
-                <CardContent className="text-center py-12">
-                  <Brain className="h-16 w-16 mx-auto text-slate-400 mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">No Patient Selected</h3>
-                  <p className="text-slate-600 mb-6">
-                    Create a new patient record or select an existing patient to begin AI-powered analysis.
-                  </p>
-                  <Button onClick={() => setActiveTab("patient-input")}>
-                    <User className="mr-2 h-4 w-4" />
-                    Create New Patient
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
 
           {/* File Upload Tab */}
           <TabsContent value="file-upload" className="space-y-6">
