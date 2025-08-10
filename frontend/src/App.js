@@ -975,47 +975,228 @@ function App() {
                     <CardTitle className="flex items-center justify-between">
                       <span className="flex items-center gap-2">
                         <Brain className="h-5 w-5 text-indigo-600" />
-                        Advanced AI Analysis
+                        AI Clinical Decision Support Engine
                       </span>
-                      <Button
-                        onClick={() => handleAnalyzePatient(selectedPatient.patient_id)}
-                        disabled={loading}
-                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Analyzing...
-                          </>
-                        ) : (
-                          <>
-                            <Microscope className="mr-2 h-4 w-4" />
-                            Run Comprehensive Analysis
-                          </>
+                      <div className="flex gap-2">
+                        {selectedPatient && (
+                          <Button
+                            onClick={() => runIntegratedAiAnalysis(selectedPatient.patient_id)}
+                            disabled={aiAnalysisLoading}
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                          >
+                            {aiAnalysisLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                AI Processing...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="mr-2 h-4 w-4" />
+                                Refresh Analysis
+                              </>
+                            )}
+                          </Button>
                         )}
-                      </Button>
+                        
+                        {patientAnalysis && !protocolGenerationLoading && (
+                          <Select value={selectedSchool} onValueChange={setSelectedSchool}>
+                            <SelectTrigger className="w-48">
+                              <SelectValue placeholder="Select approach" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(SCHOOLS_OF_THOUGHT).map(([key, school]) => (
+                                <SelectItem key={key} value={key}>
+                                  <div className="flex items-center gap-2">
+                                    <school.icon className="h-4 w-4" />
+                                    {school.name}
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                        
+                        {patientAnalysis && (
+                          <Button
+                            onClick={() => generateProtocolWithEvidence(selectedPatient.patient_id, selectedSchool)}
+                            disabled={protocolGenerationLoading}
+                            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                          >
+                            {protocolGenerationLoading ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Generating...
+                              </>
+                            ) : (
+                              <>
+                                <Pill className="mr-2 h-4 w-4" />
+                                Generate Protocol
+                              </>
+                            )}
+                          </Button>
+                        )}
+                      </div>
                     </CardTitle>
                     <CardDescription>
-                      Patient: {selectedPatient.demographics.name} • 
-                      Age: {selectedPatient.demographics.age} • 
-                      Gender: {selectedPatient.demographics.gender}
+                      <div className="flex items-center gap-4">
+                        <span>Patient: <strong>{selectedPatient.demographics.name}</strong></span>
+                        <span>Age: <strong>{selectedPatient.demographics.age}</strong></span>
+                        <span>Gender: <strong>{selectedPatient.demographics.gender}</strong></span>
+                        {aiAnalysisLoading && (
+                          <Badge className="bg-blue-100 text-blue-800 animate-pulse">
+                            <Cpu className="h-3 w-3 mr-1" />
+                            AI Processing
+                          </Badge>
+                        )}
+                      </div>
                     </CardDescription>
                   </CardHeader>
                   
                   <CardContent>
-                    {patientAnalysis && (
+                    {aiAnalysisLoading && (
+                      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                        <div className="flex items-center gap-4">
+                          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                          <div className="space-y-2">
+                            <h3 className="text-lg font-semibold">AI Clinical Analysis in Progress</h3>
+                            <p className="text-slate-600">Processing multi-modal patient data...</p>
+                          </div>
+                        </div>
+                        <div className="w-full max-w-md">
+                          <Progress value={66} className="h-2" />
+                          <p className="text-xs text-slate-500 mt-2 text-center">
+                            Running comprehensive analysis • Differential diagnosis • Explainable AI
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Advanced Differential Diagnosis Results */}
+                    {aiDifferentialDiagnosis && (
+                      <div className="space-y-6 mb-8">
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+                          <h3 className="text-xl font-bold flex items-center gap-2 mb-4">
+                            <Target className="h-5 w-5 text-blue-600" />
+                            Advanced Differential Diagnosis
+                          </h3>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {aiDifferentialDiagnosis.comprehensive_diagnoses?.slice(0, 4).map((diagnosis, index) => (
+                              <Card key={index} className="border-l-4 border-l-blue-500 bg-white/80">
+                                <CardContent className="pt-4">
+                                  <div className="flex items-start justify-between mb-3">
+                                    <div className="space-y-1">
+                                      <h4 className="text-lg font-semibold text-blue-900">{diagnosis.condition}</h4>
+                                      <p className="text-sm text-blue-700">
+                                        ICD-10: {diagnosis.icd_10_code}
+                                      </p>
+                                    </div>
+                                    <Badge className={`${getConfidenceColor(diagnosis.confidence_score)} font-medium`}>
+                                      {Math.round(diagnosis.confidence_score * 100)}%
+                                    </Badge>
+                                  </div>
+                                  
+                                  <p className="text-slate-700 mb-3 text-sm bg-slate-50 p-3 rounded">
+                                    {diagnosis.clinical_reasoning}
+                                  </p>
+                                  
+                                  <div className="space-y-2">
+                                    <h5 className="font-medium text-green-700 text-sm flex items-center gap-1">
+                                      <Dna className="h-3 w-3" />
+                                      Regenerative Targets
+                                    </h5>
+                                    <div className="flex flex-wrap gap-1">
+                                      {diagnosis.regenerative_targets?.slice(0, 3).map((target, i) => (
+                                        <Badge key={i} variant="outline" className="text-xs">
+                                          {target}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Explainable AI Results */}
+                    {explainableAiResults && (
+                      <div className="space-y-6 mb-8">
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg">
+                          <h3 className="text-xl font-bold flex items-center gap-2 mb-4">
+                            <Eye className="h-5 w-5 text-purple-600" />
+                            Explainable AI Transparency
+                          </h3>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="bg-white/80">
+                              <CardContent className="pt-4">
+                                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                                  AI Decision Factors
+                                </h4>
+                                <div className="space-y-3">
+                                  {explainableAiResults.feature_importance?.slice(0, 5).map((factor, index) => (
+                                    <div key={index} className="space-y-1">
+                                      <div className="flex justify-between items-center">
+                                        <span className="text-sm font-medium">{factor.feature}</span>
+                                        <span className="text-xs text-slate-600">
+                                          {Math.round(factor.importance * 100)}%
+                                        </span>
+                                      </div>
+                                      <Progress value={factor.importance * 100} className="h-2" />
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                            
+                            <Card className="bg-white/80">
+                              <CardContent className="pt-4">
+                                <h4 className="font-semibold mb-3 flex items-center gap-2">
+                                  <Shield className="h-4 w-4 text-green-600" />
+                                  Confidence Analysis
+                                </h4>
+                                <div className="space-y-3">
+                                  <div className="text-center">
+                                    <div className="text-2xl font-bold text-green-600 mb-1">
+                                      {Math.round(explainableAiResults.confidence_score * 100)}%
+                                    </div>
+                                    <p className="text-sm text-slate-600">Overall Confidence</p>
+                                  </div>
+                                  <div className="bg-slate-50 p-3 rounded text-sm">
+                                    <p className="font-medium mb-2">AI Reasoning:</p>
+                                    <p className="text-slate-700">
+                                      {explainableAiResults.explanation_summary || "Comprehensive analysis based on patient data, symptoms, and evidence-based medical knowledge."}
+                                    </p>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Original Analysis Results (if no advanced analysis) */}
+                    {patientAnalysis && !aiDifferentialDiagnosis && (
                       <div className="space-y-6">
                         <Alert className="bg-blue-50 border-blue-200">
                           <Brain className="h-4 w-4" />
                           <AlertDescription>
-                            AI analysis complete. {patientAnalysis.diagnostic_results.length} diagnostic possibilities identified with evidence-based reasoning.
+                            Basic AI analysis complete. {patientAnalysis.diagnostic_results.length} diagnostic possibilities identified. 
+                            <Button variant="link" className="p-0 h-auto font-normal" onClick={() => runIntegratedAiAnalysis(selectedPatient.patient_id)}>
+                              Run advanced analysis for more insights.
+                            </Button>
                           </AlertDescription>
                         </Alert>
 
                         <div className="space-y-4">
                           <h3 className="text-xl font-bold flex items-center gap-2">
                             <Target className="h-5 w-5 text-green-600" />
-                            Diagnostic Results & Regenerative Targets
+                            Basic Diagnostic Results
                           </h3>
                           
                           {patientAnalysis.diagnostic_results.map((result, index) => (
@@ -1037,7 +1218,7 @@ function App() {
                                   {result.reasoning}
                                 </p>
                                 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                   <div className="space-y-2">
                                     <h5 className="font-medium text-green-700 flex items-center gap-1">
                                       <CheckCircle className="h-4 w-4" />
@@ -1067,6 +1248,45 @@ function App() {
                                       ))}
                                     </ul>
                                   </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {!patientAnalysis && !aiAnalysisLoading && (
+                      <div className="text-center py-12">
+                        <Brain className="h-16 w-16 mx-auto text-slate-400 mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Ready for AI Analysis</h3>
+                        <p className="text-slate-600 mb-6">
+                          AI analysis will automatically process when you select a patient. 
+                          Click "Refresh Analysis" to rerun with latest data.
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                <CardContent className="pt-16 pb-16">
+                  <div className="text-center">
+                    <User className="h-16 w-16 mx-auto text-slate-400 mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">No Patient Selected</h3>
+                    <p className="text-slate-600 mb-6">
+                      Please select a patient from the Records tab to begin AI analysis.
+                    </p>
+                    <Button onClick={() => setActiveTab("patients")}>
+                      <FileText className="mr-2 h-4 w-4" />
+                      Go to Records
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
                                   
                                   <div className="space-y-2">
                                     <h5 className="font-medium text-purple-700 flex items-center gap-1">
