@@ -3929,6 +3929,355 @@ async def get_dashboard_analytics(
             "error": "Dashboard data retrieval error - showing fallback values"
         }
 
+# ==========================================
+# Phase 2: AI Clinical Intelligence - New Endpoints 
+# ==========================================
+
+@api_router.post("/ai/visual-explanation")
+async def generate_visual_explanation(
+    prediction_data: Dict[str, Any],
+    patient_data: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Generate comprehensive visual AI explanation with SHAP/LIME analysis"""
+    
+    try:
+        # Initialize Visual Explainable AI service
+        from advanced_services import VisualExplainableAI
+        visual_ai = VisualExplainableAI(db)
+        await visual_ai.initialize_visual_explainability()
+        
+        # Generate visual explanation
+        explanation_result = await visual_ai.generate_visual_explanation(
+            prediction_data, patient_data
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "visual_explanation_generated",
+            "explanation_id": explanation_result.get("visual_explanation", {}).get("explanation_id"),
+            "patient_id": patient_data.get("patient_id")
+        })
+        
+        return explanation_result
+        
+    except Exception as e:
+        logger.error(f"Visual explanation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Visual explanation failed: {str(e)}")
+
+@api_router.get("/ai/visual-explanation/{explanation_id}")
+async def get_visual_explanation(
+    explanation_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Retrieve stored visual explanation"""
+    
+    try:
+        explanation = await db.visual_explanations.find_one({"explanation_id": explanation_id})
+        
+        if not explanation:
+            raise HTTPException(status_code=404, detail="Visual explanation not found")
+        
+        # Convert ObjectId to string
+        if '_id' in explanation:
+            explanation['_id'] = str(explanation['_id'])
+        
+        return explanation
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving visual explanation: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve explanation: {str(e)}")
+
+@api_router.post("/analytics/treatment-comparison")
+async def perform_treatment_comparison(
+    comparison_request: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Perform comprehensive treatment comparison analysis"""
+    
+    try:
+        # Initialize Comparative Effectiveness Analytics service
+        from advanced_services import ComparativeEffectivenessAnalytics
+        comparison_analytics = ComparativeEffectivenessAnalytics(db)
+        await comparison_analytics.initialize_comparative_analytics()
+        
+        # Perform comparison
+        comparison_result = await comparison_analytics.perform_treatment_comparison(comparison_request)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "treatment_comparison_performed",
+            "comparison_id": comparison_result.get("comparison_report", {}).get("comparison_id"),
+            "treatments": comparison_request.get("treatments", [])
+        })
+        
+        return comparison_result
+        
+    except Exception as e:
+        logger.error(f"Treatment comparison error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Treatment comparison failed: {str(e)}")
+
+@api_router.get("/analytics/treatment-comparison/{comparison_id}")
+async def get_treatment_comparison(
+    comparison_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Retrieve stored treatment comparison analysis"""
+    
+    try:
+        comparison = await db.comparative_analyses.find_one({"comparison_id": comparison_id})
+        
+        if not comparison:
+            raise HTTPException(status_code=404, detail="Treatment comparison not found")
+        
+        # Convert ObjectId to string
+        if '_id' in comparison:
+            comparison['_id'] = str(comparison['_id'])
+        
+        return comparison
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving treatment comparison: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve comparison: {str(e)}")
+
+@api_router.get("/analytics/treatment-effectiveness/{condition}")
+async def get_treatment_effectiveness_data(
+    condition: str,
+    treatment: Optional[str] = None,
+    time_horizon: Optional[str] = "6_months",
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get treatment effectiveness data for specific condition"""
+    
+    try:
+        from advanced_services import ComparativeEffectivenessAnalytics
+        comparison_analytics = ComparativeEffectivenessAnalytics(db)
+        
+        # Build effectiveness query
+        treatments = [treatment] if treatment else ["PRP", "BMAC", "stem_cells"]
+        
+        effectiveness_data = await comparison_analytics._gather_treatment_effectiveness_data(
+            treatments, condition
+        )
+        
+        return {
+            "condition": condition,
+            "time_horizon": time_horizon,
+            "effectiveness_data": effectiveness_data,
+            "data_timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Effectiveness data error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve effectiveness data: {str(e)}")
+
+@api_router.post("/ai/risk-assessment")
+async def perform_comprehensive_risk_assessment(
+    patient_data: Dict[str, Any],
+    treatment_plan: Dict[str, Any],
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Perform comprehensive personalized risk assessment"""
+    
+    try:
+        # Initialize Personalized Risk Assessment service
+        from advanced_services import PersonalizedRiskAssessment
+        risk_assessment = PersonalizedRiskAssessment(db)
+        await risk_assessment.initialize_risk_assessment()
+        
+        # Perform risk assessment
+        risk_result = await risk_assessment.perform_comprehensive_risk_assessment(
+            patient_data, treatment_plan
+        )
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "risk_assessment_performed",
+            "assessment_id": risk_result.get("risk_assessment", {}).get("assessment_id"),
+            "patient_id": patient_data.get("patient_id"),
+            "treatment_type": treatment_plan.get("treatment_type")
+        })
+        
+        return risk_result
+        
+    except Exception as e:
+        logger.error(f"Risk assessment error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Risk assessment failed: {str(e)}")
+
+@api_router.get("/ai/risk-assessment/{assessment_id}")
+async def get_risk_assessment(
+    assessment_id: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Retrieve stored risk assessment"""
+    
+    try:
+        assessment = await db.risk_assessments.find_one({"assessment_id": assessment_id})
+        
+        if not assessment:
+            raise HTTPException(status_code=404, detail="Risk assessment not found")
+        
+        # Convert ObjectId to string
+        if '_id' in assessment:
+            assessment['_id'] = str(assessment['_id'])
+        
+        return assessment
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error retrieving risk assessment: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve assessment: {str(e)}")
+
+@api_router.post("/ai/risk-stratification")
+async def risk_stratify_patients(
+    patient_cohort: List[Dict[str, Any]],
+    treatment_type: str,
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Risk stratify a cohort of patients for treatment selection"""
+    
+    try:
+        from advanced_services import PersonalizedRiskAssessment
+        risk_assessment = PersonalizedRiskAssessment(db)
+        await risk_assessment.initialize_risk_assessment()
+        
+        # Process each patient
+        stratification_results = []
+        treatment_plan = {"treatment_type": treatment_type}
+        
+        for patient_data in patient_cohort[:20]:  # Limit to 20 patients for performance
+            try:
+                risk_result = await risk_assessment.perform_comprehensive_risk_assessment(
+                    patient_data, treatment_plan
+                )
+                
+                # Extract key risk metrics
+                risk_summary = {
+                    "patient_id": patient_data.get("patient_id"),
+                    "overall_risk_category": risk_result.get("risk_assessment", {}).get(
+                        "overall_risk_stratification", {}
+                    ).get("overall_risk_category", "moderate_risk_moderate_benefit"),
+                    "treatment_success_probability": risk_result.get("risk_assessment", {}).get(
+                        "individual_risk_assessments", {}
+                    ).get("treatment_success", {}).get("predicted_success_probability", 0.75),
+                    "adverse_event_risk": risk_result.get("risk_assessment", {}).get(
+                        "individual_risk_assessments", {}
+                    ).get("adverse_events", {}).get("overall_adverse_event_risk", 0.10),
+                    "risk_benefit_ratio": risk_result.get("risk_assessment", {}).get(
+                        "overall_risk_stratification", {}
+                    ).get("risk_benefit_ratio", 3.0)
+                }
+                
+                stratification_results.append(risk_summary)
+                
+            except Exception as patient_error:
+                logger.warning(f"Risk assessment failed for patient {patient_data.get('patient_id')}: {str(patient_error)}")
+                continue
+        
+        # Sort by risk-benefit ratio (highest first)
+        stratification_results.sort(key=lambda x: x.get("risk_benefit_ratio", 0), reverse=True)
+        
+        # Audit log
+        await db.audit_log.insert_one({
+            "timestamp": datetime.utcnow(),
+            "practitioner_id": practitioner.id,
+            "action": "patient_cohort_risk_stratified",
+            "cohort_size": len(patient_cohort),
+            "treatment_type": treatment_type,
+            "successful_assessments": len(stratification_results)
+        })
+        
+        return {
+            "stratification_results": stratification_results,
+            "cohort_size": len(patient_cohort),
+            "successful_assessments": len(stratification_results),
+            "treatment_type": treatment_type,
+            "ranking_criteria": "risk_benefit_ratio",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Risk stratification error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Risk stratification failed: {str(e)}")
+
+@api_router.get("/ai/clinical-intelligence-status")
+async def get_clinical_intelligence_status(
+    practitioner: Practitioner = Depends(get_current_practitioner)
+):
+    """Get status of all Phase 2: AI Clinical Intelligence components"""
+    
+    try:
+        # Check Visual Explainable AI status
+        try:
+            from advanced_services import VisualExplainableAI
+            visual_ai = VisualExplainableAI(db)
+            visual_status = await visual_ai.initialize_visual_explainability()
+        except Exception as e:
+            visual_status = {"status": "error", "error": str(e)}
+        
+        # Check Comparative Analytics status
+        try:
+            from advanced_services import ComparativeEffectivenessAnalytics
+            comparison_analytics = ComparativeEffectivenessAnalytics(db)
+            comparison_status = await comparison_analytics.initialize_comparative_analytics()
+        except Exception as e:
+            comparison_status = {"status": "error", "error": str(e)}
+        
+        # Check Risk Assessment status
+        try:
+            from advanced_services import PersonalizedRiskAssessment
+            risk_assessment = PersonalizedRiskAssessment(db)
+            risk_status = await risk_assessment.initialize_risk_assessment()
+        except Exception as e:
+            risk_status = {"status": "error", "error": str(e)}
+        
+        # Check database collections
+        visual_explanations_count = await db.visual_explanations.count_documents({})
+        comparative_analyses_count = await db.comparative_analyses.count_documents({})
+        risk_assessments_count = await db.risk_assessments.count_documents({})
+        
+        return {
+            "phase": "Phase 2: AI Clinical Intelligence",
+            "overall_status": "operational" if all(
+                status.get("status") in ["visual_explainability_initialized", "comparative_analytics_initialized", "risk_assessment_initialized"]
+                for status in [visual_status, comparison_status, risk_status]
+            ) else "partial",
+            "component_status": {
+                "visual_explainable_ai": visual_status,
+                "comparative_effectiveness_analytics": comparison_status,
+                "personalized_risk_assessment": risk_status
+            },
+            "usage_statistics": {
+                "visual_explanations_generated": visual_explanations_count,
+                "treatment_comparisons_performed": comparative_analyses_count,
+                "risk_assessments_completed": risk_assessments_count
+            },
+            "capabilities": [
+                "SHAP/LIME visual explanations with clinical interpretations",
+                "Multi-arm treatment comparison with cost-effectiveness analysis",
+                "Network meta-analysis for treatment ranking",
+                "Personalized risk stratification and monitoring plans",
+                "Treatment success prediction with confidence intervals",
+                "Adverse event risk assessment and prevention strategies"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Clinical intelligence status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
+
 # Include router in main app
 app.include_router(api_router)
 
