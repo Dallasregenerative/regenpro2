@@ -642,13 +642,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Phase 3: International Protocol Library System"
-    - "Phase 3: Community Collaboration Platform"
-  stuck_tasks:
-    - "Phase 3: International Protocol Library System"
-    - "Phase 3: Community Collaboration Platform"
+    - "Phase 3: Global Knowledge Engine System Integration"
+  stuck_tasks: []
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
