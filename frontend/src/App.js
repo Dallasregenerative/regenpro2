@@ -2578,7 +2578,12 @@ function App() {
                           ? 'border-l-blue-600 bg-gradient-to-r from-blue-100 to-indigo-100 shadow-md' 
                           : 'border-l-indigo-500 bg-gradient-to-r from-indigo-50 to-purple-50'
                       }`}
-                      onClick={() => handlePatientSelection(patient)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("🔬 Records card clicked for:", patient.demographics?.name);
+                        handlePatientSelection(patient);
+                      }}
                     >
                       <CardContent className="pt-4">
                         <div className="flex items-start justify-between">
