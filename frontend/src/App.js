@@ -404,16 +404,26 @@ function App() {
 
   // NEW INTEGRATED AI WORKFLOW FUNCTIONS
   const handlePatientSelection = async (patient) => {
-    console.log("🔍 Patient selected:", patient.demographics.name, patient.patient_id);
-    setSelectedPatient(patient);
-    
-    // Automatically navigate to AI Analysis and trigger analysis
-    setActiveTab("patient-analysis");
-    
-    // Add small delay for UI update
-    setTimeout(async () => {
-      await runIntegratedAiAnalysis(patient.patient_id);
-    }, 500);
+    try {
+      console.log("🔍 Patient selected:", patient.demographics?.name || patient.name, patient.patient_id);
+      console.log("🔍 Full patient object:", patient);
+      
+      setSelectedPatient(patient);
+      console.log("✅ Patient state updated");
+      
+      // Automatically navigate to AI Analysis and trigger analysis
+      setActiveTab("patient-analysis");
+      console.log("✅ Navigated to patient-analysis tab");
+      
+      // Add small delay for UI update
+      setTimeout(async () => {
+        console.log("🚀 Starting AI analysis...");
+        await runIntegratedAiAnalysis(patient.patient_id);
+      }, 500);
+      
+    } catch (error) {
+      console.error("❌ Error in handlePatientSelection:", error);
+    }
   };
 
   const runIntegratedAiAnalysis = async (patientId) => {
