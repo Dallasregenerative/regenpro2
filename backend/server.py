@@ -4376,6 +4376,15 @@ async def perform_comprehensive_differential_diagnosis(
             patient_data, practitioner_controlled
         )
         
+        # Store comprehensive diagnosis in database for retrieval
+        comprehensive_diagnosis = diagnosis_result.get("comprehensive_diagnosis", {})
+        if comprehensive_diagnosis and comprehensive_diagnosis.get("diagnosis_id"):
+            await db.comprehensive_diagnoses.replace_one(
+                {"diagnosis_id": comprehensive_diagnosis["diagnosis_id"]},
+                comprehensive_diagnosis,
+                upsert=True
+            )
+        
         # Audit log
         await db.audit_log.insert_one({
             "timestamp": datetime.utcnow(),
