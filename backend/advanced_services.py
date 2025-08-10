@@ -3639,16 +3639,25 @@ class ComparativeEffectivenessAnalytics:
             
             # Calculate summary statistics
             if success_rates:
-                metrics["mean_success_rate"] = np.mean(success_rates)
-                metrics["success_rate_ci"] = [np.percentile(success_rates, 2.5), np.percentile(success_rates, 97.5)]
+                metrics["mean_success_rate"] = float(np.mean(success_rates)) if success_rates else 0.7
+                if len(success_rates) > 1:
+                    metrics["success_rate_ci"] = [float(np.percentile(success_rates, 2.5)), float(np.percentile(success_rates, 97.5))]
+                else:
+                    metrics["success_rate_ci"] = [success_rates[0], success_rates[0]]
             
             if pain_reductions:
-                metrics["mean_pain_reduction"] = np.mean(pain_reductions)
-                metrics["pain_reduction_ci"] = [np.percentile(pain_reductions, 2.5), np.percentile(pain_reductions, 97.5)]
+                metrics["mean_pain_reduction"] = float(np.mean(pain_reductions)) if pain_reductions else 0
+                if len(pain_reductions) > 1:
+                    metrics["pain_reduction_ci"] = [float(np.percentile(pain_reductions, 2.5)), float(np.percentile(pain_reductions, 97.5))]
+                else:
+                    metrics["pain_reduction_ci"] = [pain_reductions[0], pain_reductions[0]]
             
             if functional_improvements:
-                metrics["mean_functional_improvement"] = np.mean(functional_improvements)
-                metrics["functional_improvement_ci"] = [np.percentile(functional_improvements, 2.5), np.percentile(functional_improvements, 97.5)]
+                metrics["mean_functional_improvement"] = float(np.mean(functional_improvements)) if functional_improvements else 0
+                if len(functional_improvements) > 1:
+                    metrics["functional_improvement_ci"] = [float(np.percentile(functional_improvements, 2.5)), float(np.percentile(functional_improvements, 97.5))]
+                else:
+                    metrics["functional_improvement_ci"] = [functional_improvements[0], functional_improvements[0]]
         
         # Determine evidence quality
         total_evidence = len(outcomes) + len(literature)
