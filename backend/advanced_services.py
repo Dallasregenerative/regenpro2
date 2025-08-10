@@ -13166,7 +13166,9 @@ class EnhancedExplainableAI:
             }
             
             # Store enhanced explanation
-            await self._store_enhanced_explanation(enhanced_explanation)
+            # Clean any ObjectIds before storing
+            cleaned_explanation = self._clean_object_ids(enhanced_explanation)
+            await self._store_enhanced_explanation(cleaned_explanation)
             
             return {
                 "status": "enhanced_explanation_generated",
