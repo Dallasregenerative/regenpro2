@@ -2324,11 +2324,12 @@ function App() {
                   {patients.map((patient) => (
                     <Card 
                       key={patient.patient_id} 
-                      className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-indigo-500 bg-gradient-to-r from-indigo-50 to-purple-50"
-                      onClick={() => {
-                        setSelectedPatient(patient);
-                        setActiveTab("patient-analysis");
-                      }}
+                      className={`cursor-pointer hover:shadow-md transition-all border-l-4 ${
+                        selectedPatient?.patient_id === patient.patient_id 
+                          ? 'border-l-blue-600 bg-gradient-to-r from-blue-100 to-indigo-100 shadow-md' 
+                          : 'border-l-indigo-500 bg-gradient-to-r from-indigo-50 to-purple-50'
+                      }`}
+                      onClick={() => handlePatientSelection(patient)}
                     >
                       <CardContent className="pt-4">
                         <div className="flex items-start justify-between">
