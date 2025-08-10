@@ -7745,6 +7745,68 @@ def main():
         
         return success
 
+    def run_critical_priority_features_tests(self):
+        """Run tests for the three newly implemented Critical Priority features"""
+        
+        print("\n🔥 CRITICAL PRIORITY FEATURES TESTING")
+        print("=" * 80)
+        print("Testing the three newly implemented 'Critical Priority' features:")
+        print("1. Living Evidence Engine System")
+        print("2. Advanced Differential Diagnosis System") 
+        print("3. Enhanced Explainable AI System")
+        print("=" * 80)
+        
+        # First ensure we have a patient and protocol for testing
+        print("\n📋 SETUP: Creating Test Patient and Protocol")
+        print("-" * 50)
+        patient_created = self.test_create_patient()
+        
+        if patient_created:
+            # Generate a protocol for testing
+            protocol_data = {
+                "patient_id": self.patient_id,
+                "school_of_thought": "ai_optimized"
+            }
+            
+            protocol_success, protocol_response = self.run_test(
+                "Setup: Generate Protocol for Testing",
+                "POST",
+                "protocols/generate",
+                200,
+                data=protocol_data,
+                timeout=90
+            )
+            
+            if protocol_success:
+                self.protocol_id = protocol_response.get('protocol_id')
+                print(f"   ✅ Test protocol created: {self.protocol_id}")
+            else:
+                print("   ⚠️  Protocol creation failed - some tests may be limited")
+        
+        # Living Evidence Engine System Tests
+        print("\n🧬 LIVING EVIDENCE ENGINE SYSTEM TESTS")
+        print("-" * 60)
+        self.test_living_evidence_engine_living_map()
+        self.test_living_evidence_engine_freshness_analysis()
+        self.test_living_evidence_engine_update_mapping()
+        self.test_living_evidence_engine_validate_links()
+        
+        # Advanced Differential Diagnosis System Tests
+        print("\n🩺 ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTS")
+        print("-" * 60)
+        self.test_advanced_differential_diagnosis_comprehensive()
+        self.test_advanced_differential_diagnosis_confidence_analysis()
+        self.test_advanced_differential_diagnosis_tree()
+        self.test_advanced_differential_diagnosis_precision_assessment()
+        
+        # Enhanced Explainable AI System Tests
+        print("\n🤖 ENHANCED EXPLAINABLE AI SYSTEM TESTS")
+        print("-" * 60)
+        self.test_enhanced_explainable_ai_explanation()
+        self.test_enhanced_explainable_ai_visual_breakdown()
+        self.test_enhanced_explainable_ai_feature_interactions()
+        self.test_enhanced_explainable_ai_transparency_assessment()
+
 if __name__ == "__main__":
     print("🚀 RegenMed AI Pro - Critical Priority Features Testing")
     print("=" * 80)
