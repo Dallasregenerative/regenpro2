@@ -4135,6 +4135,343 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return success1 and success2
 
+    # ========== CRITICAL PRIORITY FEATURES TESTING ==========
+    
+    def test_living_evidence_engine_protocol_mapping(self):
+        """Test Living Evidence Engine - Protocol Evidence Mapping"""
+        if not self.patient_id:
+            print("❌ No patient ID available for evidence mapping testing")
+            return False
+
+        mapping_data = {
+            "protocol_id": self.protocol_id or "test_protocol_001",
+            "condition": "osteoarthritis",
+            "intervention": "platelet rich plasma",
+            "evidence_requirements": {
+                "minimum_evidence_level": "Level II",
+                "include_recent_studies": True,
+                "include_systematic_reviews": True
+            }
+        }
+
+        print("   This may take 30-45 seconds for evidence mapping...")
+        success, response = self.run_test(
+            "Living Evidence Engine - Protocol Evidence Mapping",
+            "POST",
+            "evidence/protocol-evidence-mapping",
+            200,
+            data=mapping_data,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Mapping ID: {response.get('mapping_id', 'Unknown')}")
+            print(f"   Evidence Sources: {len(response.get('evidence_sources', []))}")
+            print(f"   Quality Score: {response.get('evidence_quality_score', 0):.2f}")
+            print(f"   Systematic Reviews: {len(response.get('systematic_reviews', []))}")
+            print(f"   Recent Studies: {len(response.get('recent_studies', []))}")
+        return success
+
+    def test_living_evidence_engine_living_reviews(self):
+        """Test Living Evidence Engine - Living Systematic Reviews"""
+        success, response = self.run_test(
+            "Living Evidence Engine - Living Systematic Reviews",
+            "GET",
+            "evidence/living-reviews/osteoarthritis",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Review ID: {response.get('review_id', 'Unknown')}")
+            print(f"   Condition: {response.get('condition', 'Unknown')}")
+            print(f"   Total Studies: {response.get('total_studies', 0)}")
+            print(f"   Last Updated: {response.get('last_updated', 'Unknown')}")
+            print(f"   Evidence Quality: {response.get('evidence_quality', 'Unknown')}")
+            print(f"   Therapy Evidence: {len(response.get('therapy_evidence', []))}")
+        return success
+
+    def test_living_evidence_engine_protocol_retrieval(self):
+        """Test Living Evidence Engine - Protocol Evidence Mapping Retrieval"""
+        protocol_id = self.protocol_id or "test_protocol_001"
+        
+        success, response = self.run_test(
+            "Living Evidence Engine - Protocol Evidence Mapping Retrieval",
+            "GET",
+            f"evidence/protocol/{protocol_id}/evidence-mapping",
+            200
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Mapping Status: {response.get('mapping_status', 'Unknown')}")
+            print(f"   Evidence Features: {len(response.get('evidence_features', []))}")
+            print(f"   Last Mapping Update: {response.get('last_mapping_update', 'Unknown')}")
+        return success
+
+    def test_living_evidence_engine_alerts(self):
+        """Test Living Evidence Engine - Evidence Change Alerts"""
+        protocol_id = self.protocol_id or "test_protocol_001"
+        
+        success, response = self.run_test(
+            "Living Evidence Engine - Evidence Change Alerts",
+            "GET",
+            f"evidence/alerts/{protocol_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Protocol ID: {response.get('protocol_id', 'Unknown')}")
+            print(f"   Alert System Status: {response.get('alert_system_status', 'Unknown')}")
+            print(f"   Active Alerts: {len(response.get('active_alerts', []))}")
+            print(f"   Evidence Changes: {len(response.get('evidence_changes', []))}")
+        return success
+
+    def test_advanced_differential_diagnosis_comprehensive(self):
+        """Test Advanced Differential Diagnosis - Comprehensive Analysis"""
+        if not self.patient_id:
+            print("❌ No patient ID available for differential diagnosis testing")
+            return False
+
+        diagnosis_data = {
+            "patient_id": self.patient_id,
+            "clinical_presentation": {
+                "chief_complaint": "bilateral knee pain and stiffness",
+                "symptoms": ["joint pain", "morning stiffness", "decreased mobility"],
+                "duration": "3 years progressive",
+                "severity": "moderate to severe"
+            },
+            "diagnostic_requirements": {
+                "include_differential_ranking": True,
+                "include_confidence_intervals": True,
+                "include_mechanism_analysis": True
+            }
+        }
+
+        print("   This may take 30-45 seconds for comprehensive differential diagnosis...")
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Comprehensive Analysis",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data=diagnosis_data,
+            timeout=60
+        )
+        
+        if success:
+            print(f"   Diagnosis ID: {response.get('diagnosis_id', 'Unknown')}")
+            print(f"   Primary Diagnosis: {response.get('primary_diagnosis', 'Unknown')}")
+            print(f"   Differential Count: {len(response.get('differential_diagnoses', []))}")
+            print(f"   Confidence Score: {response.get('confidence_score', 0):.2f}")
+            print(f"   Mechanism Insights: {len(response.get('mechanism_insights', []))}")
+            print(f"   Evidence Quality: {response.get('evidence_quality', 'Unknown')}")
+        return success
+
+    def test_advanced_differential_diagnosis_retrieval(self):
+        """Test Advanced Differential Diagnosis - Diagnosis Retrieval"""
+        # Use a test diagnosis ID
+        diagnosis_id = "test_diagnosis_001"
+        
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Diagnosis Retrieval",
+            "GET",
+            f"diagnosis/{diagnosis_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Diagnosis ID: {response.get('diagnosis_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Type: {response.get('analysis_type', 'Unknown')}")
+            print(f"   Generated At: {response.get('generated_at', 'Unknown')}")
+        return success
+
+    def test_advanced_differential_diagnosis_engine_status(self):
+        """Test Advanced Differential Diagnosis - Engine Status"""
+        success, response = self.run_test(
+            "Advanced Differential Diagnosis - Engine Status",
+            "GET",
+            "diagnosis/engine-status",
+            200
+        )
+        
+        if success:
+            print(f"   Engine Status: {response.get('engine_status', 'Unknown')}")
+            print(f"   Models Active: {response.get('models_active', 0)}")
+            print(f"   Diagnostic Capabilities: {len(response.get('diagnostic_capabilities', []))}")
+            print(f"   Last Updated: {response.get('last_updated', 'Unknown')}")
+        return success
+
+    def test_enhanced_explainable_ai_explanation(self):
+        """Test Enhanced Explainable AI - Generate Enhanced Explanation"""
+        if not self.patient_id:
+            print("❌ No patient ID available for explainable AI testing")
+            return False
+
+        explanation_data = {
+            "patient_id": self.patient_id,
+            "analysis_type": "comprehensive_diagnosis",
+            "explanation_requirements": {
+                "include_shap_analysis": True,
+                "include_lime_breakdown": True,
+                "include_feature_interactions": True,
+                "visualization_level": "detailed"
+            },
+            "model_context": {
+                "model_type": "regenerative_medicine_ai",
+                "prediction_target": "treatment_recommendation"
+            }
+        }
+
+        print("   This may take 30-45 seconds for enhanced AI explanation generation...")
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Generate Enhanced Explanation",
+            "POST",
+            "ai/enhanced-explanation",
+            200,
+            data=explanation_data,
+            timeout=60
+        )
+        
+        if success:
+            self.explanation_id = response.get('explanation_id')
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   SHAP Analysis: {response.get('shap_analysis', {}).get('status', 'Unknown')}")
+            print(f"   LIME Breakdown: {response.get('lime_breakdown', {}).get('status', 'Unknown')}")
+            print(f"   Feature Count: {len(response.get('feature_importance', []))}")
+            print(f"   Transparency Score: {response.get('transparency_score', 0):.2f}")
+            print(f"   Explanation Quality: {response.get('explanation_quality', 'Unknown')}")
+        return success
+
+    def test_enhanced_explainable_ai_retrieval(self):
+        """Test Enhanced Explainable AI - Explanation Retrieval"""
+        explanation_id = getattr(self, 'explanation_id', 'test_explanation_001')
+        
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Explanation Retrieval",
+            "GET",
+            f"ai/enhanced-explanation/{explanation_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
+            print(f"   Analysis Type: {response.get('analysis_type', 'Unknown')}")
+            print(f"   Generated At: {response.get('generated_at', 'Unknown')}")
+        return success
+
+    def test_enhanced_explainable_ai_visual_breakdown(self):
+        """Test Enhanced Explainable AI - Visual Breakdown"""
+        explanation_id = getattr(self, 'explanation_id', 'test_explanation_001')
+        
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Visual Breakdown",
+            "GET",
+            f"ai/visual-breakdown/{explanation_id}",
+            200,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Visual Components: {len(response.get('visual_components', []))}")
+            print(f"   SHAP Visualizations: {len(response.get('shap_visualizations', []))}")
+            print(f"   LIME Visualizations: {len(response.get('lime_visualizations', []))}")
+            print(f"   Interactive Elements: {response.get('interactive_elements', 0)}")
+        return success
+
+    def test_enhanced_explainable_ai_feature_interactions(self):
+        """Test Enhanced Explainable AI - Feature Interactions"""
+        interaction_data = {
+            "patient_id": self.patient_id or "test_patient_001",
+            "feature_set": [
+                "age", "diagnosis_confidence", "symptom_severity", 
+                "medical_history", "lab_results", "imaging_findings"
+            ],
+            "interaction_analysis": {
+                "include_pairwise_interactions": True,
+                "include_higher_order_interactions": True,
+                "significance_threshold": 0.05
+            }
+        }
+
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Feature Interactions",
+            "POST",
+            "ai/feature-interactions",
+            200,
+            data=interaction_data,
+            timeout=45
+        )
+        
+        if success:
+            print(f"   Analysis ID: {response.get('analysis_id', 'Unknown')}")
+            print(f"   Feature Pairs Analyzed: {len(response.get('pairwise_interactions', []))}")
+            print(f"   Significant Interactions: {len(response.get('significant_interactions', []))}")
+            print(f"   Interaction Strength: {response.get('max_interaction_strength', 0):.3f}")
+        return success
+
+    def test_enhanced_explainable_ai_transparency_assessment(self):
+        """Test Enhanced Explainable AI - Transparency Assessment"""
+        explanation_id = getattr(self, 'explanation_id', 'test_explanation_001')
+        
+        success, response = self.run_test(
+            "Enhanced Explainable AI - Transparency Assessment",
+            "GET",
+            f"ai/transparency-assessment/{explanation_id}",
+            200
+        )
+        
+        if success:
+            print(f"   Explanation ID: {response.get('explanation_id', 'Unknown')}")
+            print(f"   Transparency Score: {response.get('transparency_score', 0):.2f}")
+            print(f"   Interpretability Level: {response.get('interpretability_level', 'Unknown')}")
+            print(f"   Clinical Relevance: {response.get('clinical_relevance', 0):.2f}")
+            print(f"   Explanation Fidelity: {response.get('explanation_fidelity', 0):.2f}")
+        return success
+
+    def run_critical_priority_features_tests(self):
+        """Run tests for the three Critical Priority Features"""
+        
+        print("🚀 Starting Critical Priority Features Testing Suite")
+        print("=" * 80)
+        
+        # Living Evidence Engine System Tests
+        print("\n🔬 LIVING EVIDENCE ENGINE SYSTEM TESTS")
+        print("-" * 50)
+        self.test_living_evidence_engine_protocol_mapping()
+        self.test_living_evidence_engine_living_reviews()
+        self.test_living_evidence_engine_protocol_retrieval()
+        self.test_living_evidence_engine_alerts()
+        
+        # Advanced Differential Diagnosis System Tests
+        print("\n🧠 ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTS")
+        print("-" * 50)
+        self.test_advanced_differential_diagnosis_comprehensive()
+        self.test_advanced_differential_diagnosis_retrieval()
+        self.test_advanced_differential_diagnosis_engine_status()
+        
+        # Enhanced Explainable AI System Tests
+        print("\n🎯 ENHANCED EXPLAINABLE AI SYSTEM TESTS")
+        print("-" * 50)
+        self.test_enhanced_explainable_ai_explanation()
+        self.test_enhanced_explainable_ai_retrieval()
+        self.test_enhanced_explainable_ai_visual_breakdown()
+        self.test_enhanced_explainable_ai_feature_interactions()
+        self.test_enhanced_explainable_ai_transparency_assessment()
+        
+        # Results Summary
+        print("\n" + "=" * 80)
+        print("🏁 CRITICAL PRIORITY FEATURES TESTING COMPLETE")
+        print("=" * 80)
+        print(f"📊 Tests Run: {self.tests_run}")
+        print(f"✅ Tests Passed: {self.tests_passed}")
+        print(f"❌ Tests Failed: {self.tests_run - self.tests_passed}")
+        print(f"📈 Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
+        
+        return self.tests_passed, self.tests_run
+
     # ========== CORE MEDICAL AI FEATURES TESTING ==========
     
     def test_differential_diagnosis_generation(self):
