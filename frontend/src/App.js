@@ -1645,7 +1645,12 @@ function App() {
                       Regenerative Medicine Protocol Generator
                     </CardTitle>
                     <CardDescription>
-                      Select your preferred school of thought for evidence-based protocol generation
+                      <div className="flex items-center gap-4">
+                        <span>Patient: <strong>{selectedPatient.demographics?.name || selectedPatient.name}</strong></span>
+                        <span>Age: <strong>{selectedPatient.demographics?.age || selectedPatient.age}</strong></span>
+                        <span>Gender: <strong>{selectedPatient.demographics?.gender || selectedPatient.gender}</strong></span>
+                      </div>
+                      <p className="text-sm mt-2">Select your preferred school of thought for evidence-based protocol generation</p>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
