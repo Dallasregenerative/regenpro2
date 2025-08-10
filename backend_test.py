@@ -1193,65 +1193,14 @@ IGF-1,180,109-284,ng/mL,Normal"""
         return success
 
     def test_advanced_differential_diagnosis_retrieval(self):
-        """Test GET /api/diagnosis/{diagnosis_id} - Retrieve comprehensive diagnosis by ID"""
+        """Test GET /api/diagnosis/{diagnosis_id} - Should now retrieve stored diagnosis (not 404)"""
         # Check if we have a diagnosis_id from previous test
         if not hasattr(self, 'diagnosis_id') or not self.diagnosis_id:
-            print("❌ No diagnosis ID available from previous test - creating one first...")
-            
-            # Create a diagnosis first using rotator cuff injury case
-            if not self.patient_id:
-                print("❌ No patient ID available for diagnosis creation")
-                return False
-                
-            differential_data = {
-                "patient_id": self.patient_id,
-                "clinical_presentation": {
-                    "chief_complaint": "Right shoulder pain and weakness with overhead activities",
-                    "symptom_duration": "6 months",
-                    "pain_characteristics": {
-                        "intensity": 6,
-                        "quality": "sharp pain with overhead motion, dull ache at rest",
-                        "aggravating_factors": ["overhead reaching", "sleeping on affected side", "lifting"],
-                        "relieving_factors": ["rest", "ice application", "avoiding overhead activities"]
-                    }
-                },
-                "diagnostic_modalities": {
-                    "physical_examination": {
-                        "inspection": "mild deltoid atrophy",
-                        "palpation": "tenderness over greater tuberosity",
-                        "range_of_motion": "limited abduction to 120 degrees, painful arc 60-120 degrees",
-                        "special_tests": ["positive Hawkins test", "positive empty can test", "positive drop arm test"]
-                    },
-                    "imaging": {
-                        "mri_findings": "full-thickness rotator cuff tear involving supraspinatus tendon, mild retraction"
-                    }
-                },
-                "analysis_parameters": {
-                    "differential_count": 3,
-                    "regenerative_focus": True
-                }
-            }
-
-            create_success, create_response = self.run_test(
-                "Setup: Create Diagnosis for Retrieval Test",
-                "POST",
-                "diagnosis/comprehensive-differential",
-                200,
-                data=differential_data,
-                timeout=90
-            )
-            
-            if not create_success:
-                print("❌ Could not create diagnosis for retrieval testing")
-                return False
-            
-            self.diagnosis_id = create_response.get('diagnosis_id')
-            if not self.diagnosis_id:
-                print("❌ No diagnosis ID returned for retrieval testing")
-                return False
+            print("❌ No diagnosis ID available from previous test - cannot test retrieval")
+            return False
 
         success, response = self.run_test(
-            "Advanced Differential Diagnosis - Get Diagnosis by ID",
+            "FOCUSED TEST 3: GET /api/diagnosis/{diagnosis_id}",
             "GET",
             f"diagnosis/{self.diagnosis_id}",
             200,
@@ -1259,34 +1208,40 @@ IGF-1,180,109-284,ng/mL,Normal"""
         )
         
         if success:
+            print(f"   ✅ SUCCESS: GET {self.diagnosis_id} should return 200 (not 404)")
             print(f"   Diagnosis ID: {response.get('diagnosis_id', 'Unknown')}")
-            print(f"   Patient ID: {response.get('patient_id', 'Unknown')}")
-            print(f"   Analysis Status: {response.get('status', 'Unknown')}")
-            print(f"   Analysis Timestamp: {response.get('analysis_timestamp', 'Unknown')}")
+            print(f"   Status: {response.get('status', 'Unknown')}")
             
-            differential_diagnoses = response.get('differential_diagnoses', [])
-            print(f"   Retrieved Diagnoses: {len(differential_diagnoses)}")
-            
-            if differential_diagnoses:
-                top_diagnosis = differential_diagnoses[0]
-                print(f"   Top Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
-                print(f"   Confidence: {top_diagnosis.get('confidence_score', 0):.2f}")
-                print(f"   ICD-10 Code: {top_diagnosis.get('icd10_code', 'Unknown')}")
-            
-            # Check for comprehensive analysis components
-            multi_modal_analysis = response.get('multi_modal_analysis', {})
-            if multi_modal_analysis:
-                print(f"   Multi-Modal Data Integration: {multi_modal_analysis.get('integration_score', 0):.2f}")
-            
-            explainable_ai = response.get('explainable_ai_analysis', {})
-            if explainable_ai:
-                print(f"   Explainable AI Transparency: {explainable_ai.get('transparency_score', 0):.2f}")
-            
-            confidence_analysis = response.get('confidence_analysis', {})
-            if confidence_analysis:
-                print(f"   Diagnostic Confidence: {confidence_analysis.get('overall_confidence', 0):.2f}")
-        
-        return success
+            # Verify comprehensive diagnosis data is retrieved
+            comprehensive_diagnosis = response.get('comprehensive_diagnosis', {})
+            if comprehensive_diagnosis:
+                print(f"   Patient ID: {comprehensive_diagnosis.get('patient_id', 'Unknown')}")
+                print(f"   Analysis Timestamp: {comprehensive_diagnosis.get('analysis_timestamp', 'Unknown')}")
+                
+                differential_diagnoses = comprehensive_diagnosis.get('differential_diagnoses', [])
+                print(f"   Retrieved Diagnoses: {len(differential_diagnoses)}")
+                
+                if differential_diagnoses:
+                    top_diagnosis = differential_diagnoses[0]
+                    print(f"   Top Diagnosis: {top_diagnosis.get('diagnosis', 'Unknown')}")
+                    print(f"   Confidence: {top_diagnosis.get('confidence_score', 0):.2f}")
+                
+                # Check for comprehensive analysis components
+                multi_modal_analysis = comprehensive_diagnosis.get('multi_modal_analysis', {})
+                explainable_ai = comprehensive_diagnosis.get('explainable_ai_analysis', {})
+                confidence_analysis = comprehensive_diagnosis.get('confidence_analysis', {})
+                
+                print(f"   Multi-Modal Analysis: {'✅' if multi_modal_analysis else '❌'}")
+                print(f"   Explainable AI: {'✅' if explainable_ai else '❌'}")
+                print(f"   Confidence Analysis: {'✅' if confidence_analysis else '❌'}")
+                
+                return True
+            else:
+                print(f"   ❌ No comprehensive_diagnosis found in response")
+                return False
+        else:
+            print(f"   ❌ FAILED: GET /api/diagnosis/{self.diagnosis_id} returned error (should be 200)")
+            return False
 
     def test_advanced_differential_diagnosis_chronic_pain_case(self):
         """Test Advanced Differential Diagnosis with chronic pain case"""
