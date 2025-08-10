@@ -1335,10 +1335,33 @@ function App() {
                     <p className="text-slate-600 mb-6">
                       Please select a patient from the Records tab to begin AI analysis.
                     </p>
-                    <Button onClick={() => setActiveTab("patients")}>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Go to Records
-                    </Button>
+                    
+                    {/* DEBUG: Test button to manually set patient state */}
+                    <div className="space-y-4">
+                      <Button 
+                        onClick={async () => {
+                          const testPatient = {
+                            patient_id: "e40b1209-bdcb-49bd-b533-a9d6a56d9df2",
+                            demographics: { name: "Maria Rodriguez", age: 45, gender: "Female" },
+                            chief_complaint: "Bilateral knee pain"
+                          };
+                          console.log("🧪 Manually setting test patient:", testPatient);
+                          await handlePatientSelection(testPatient);
+                        }}
+                        className="bg-yellow-600 hover:bg-yellow-700 mb-4"
+                      >
+                        🧪 TEST: Select Maria Rodriguez
+                      </Button>
+                      
+                      <Button onClick={() => setActiveTab("patients")}>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Go to Records
+                      </Button>
+                      
+                      <div className="text-xs text-slate-500 mt-2">
+                        Debug: {selectedPatient ? `Selected: ${selectedPatient.demographics?.name}` : 'No patient selected'}
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
