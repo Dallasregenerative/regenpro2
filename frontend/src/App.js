@@ -181,7 +181,17 @@ function App() {
       const response = await axios.get(`${API}/patients`, {
         headers: { Authorization: `Bearer demo-token` }
       });
-      setPatients(response.data);
+      
+      // Deduplicate patients by patient_id to fix React key duplication issue
+      const uniquePatients = response.data.reduce((acc, patient) => {
+        if (!acc.find(p => p.patient_id === patient.patient_id)) {
+          acc.push(patient);
+        }
+        return acc;
+      }, []);
+      
+      setPatients(uniquePatients);
+      console.log(`✅ Loaded ${uniquePatients.length} unique patients (deduplicated from ${response.data.length})`);
     } catch (error) {
       console.error("Failed to load patients:", error);
     }
