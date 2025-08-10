@@ -356,51 +356,63 @@ backend:
 
   - task: "Visual Explainable AI System with SHAP/LIME"
     implemented: true
-    working: false
+    working: true
     file: "backend/advanced_services.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL: Visual explanation generation fails with error: 'list' object has no attribute 'get'. API returns fallback explanation instead of proper SHAP/LIME analysis. This prevents explanation ID generation and breaks the retrieval functionality. Code bug in advanced_services.py needs immediate fix."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: Visual Explainable AI now working perfectly. POST /api/ai/visual-explanation generates SHAP/LIME explanations successfully with proper explanation IDs. Medical history list handling bug resolved. JSON serialization issues fixed with clean_json_data function to handle NaN/infinity values. System generates comprehensive feature importance analysis and transparency scores."
 
   - task: "GET Visual Explanation Retrieval"
     implemented: true
-    working: false
+    working: true
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ FAILED: Cannot test retrieval because visual explanation generation doesn't produce valid explanation_id. Dependent on fixing the Visual Explainable AI generation bug."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: GET Visual Explanation Retrieval now working perfectly. Successfully retrieves stored visual explanations with all details including explanation ID, patient ID, analysis type, and generated timestamp. Dependent bug in Visual Explainable AI generation resolved."
 
   - task: "Comparative Effectiveness Analytics"
     implemented: true
-    working: false
+    working: true
     file: "backend/advanced_services.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL: Treatment comparison analysis returns 500 Internal Server Error. This is a server-side bug preventing head-to-head analysis, cost-effectiveness calculations, and network meta-analysis. Needs immediate debugging and fix."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: Comparative Effectiveness Analytics now working perfectly. POST /api/analytics/treatment-comparison performs comprehensive head-to-head analysis successfully with multiple treatments (PRP, BMAC, stem_cells). Numpy array handling and float conversion bugs fixed with clean_json_data function. System generates treatment rankings, cost-effectiveness analysis, and network meta-analysis."
 
   - task: "GET Treatment Comparison Retrieval"
     implemented: true
-    working: false
+    working: true
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "❌ FAILED: Cannot test retrieval because treatment comparison generation fails with 500 error. Dependent on fixing the Comparative Effectiveness Analytics bug."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: GET Treatment Comparison Retrieval now working perfectly. Successfully retrieves stored treatment comparisons with all details including comparison ID, treatments analyzed, and analysis completion timestamp. Dependent bug in Comparative Effectiveness Analytics resolved."
 
   - task: "Treatment Effectiveness Data Endpoint"
     implemented: true
