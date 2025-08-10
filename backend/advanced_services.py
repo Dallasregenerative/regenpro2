@@ -3054,7 +3054,13 @@ class VisualExplainableAI:
         
         # Medical history complexity
         history = patient_data.get("medical_history", {})
-        complexity_score = len(history.get("past_medical_history", [])) + len(history.get("medications", []))
+        # Handle case where medical_history is a list instead of dict
+        if isinstance(history, list):
+            # If it's a list, treat it as past_medical_history
+            complexity_score = len(history)
+        else:
+            # If it's a dict, use the original logic
+            complexity_score = len(history.get("past_medical_history", [])) + len(history.get("medications", []))
         if complexity_score > 5:
             shap_values["medical_history_complexity"] = 0.07
         elif complexity_score > 2:
