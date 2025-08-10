@@ -4655,63 +4655,6 @@ async def perform_diagnostic_comparative_analysis(
         logger.error(f"Comparative analysis error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to perform comparative analysis: {str(e)}")
 
-@api_router.get("/diagnosis/engine-status")
-async def get_differential_diagnosis_engine_status(
-    practitioner: Practitioner = Depends(get_current_practitioner)
-):
-    """Get status of Advanced Differential Diagnosis Engine"""
-    
-    try:
-        # Initialize Advanced Differential Diagnosis Engine
-        from advanced_services import AdvancedDifferentialDiagnosisEngine
-        diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
-        engine_status = await diagnosis_engine.initialize_differential_diagnosis_engine()
-        
-        # Check database statistics
-        diagnoses_count = await db.comprehensive_diagnoses.count_documents({})
-        explainable_analyses_count = await db.explainable_diagnoses.count_documents({})
-        
-        return {
-            "feature": "CRITICAL FEATURE 2: Advanced Multi-Modal AI Clinical Decision Support",
-            "overall_status": "operational" if engine_status.get("status") == "differential_diagnosis_engine_initialized" else "initializing",
-            "engine_status": engine_status,
-            "usage_statistics": {
-                "comprehensive_diagnoses_performed": diagnoses_count,
-                "explainable_analyses_generated": explainable_analyses_count
-            },
-            "critical_capabilities": [
-                "✅ Multi-modal AI clinical decision support integrating all patient data types",
-                "✅ Evidence-weighted differential diagnosis with Bayesian reasoning",
-                "✅ Visual SHAP/LIME explainable AI breakdowns for every recommendation",
-                "✅ Outcome confidence intervals & scenario comparison analysis",
-                "✅ Mechanism-level cellular/molecular pathway insights",
-                "✅ Head-to-head comparative effectiveness analysis"
-            ],
-            "data_modalities": [
-                "Demographics & risk factors",
-                "Clinical history & medications",
-                "Clinical presentation & symptoms",
-                "Laboratory results & biomarkers",
-                "Imaging studies & DICOM analysis", 
-                "Genomics & genetic factors"
-            ],
-            "diagnostic_reasoning": "Evidence-weighted Bayesian inference with population prevalence adjustment",
-            "explainability": "Visual breakdowns with feature importance charts and decision trees",
-            "cash_pay_value_proposition": [
-                "Provides comprehensive diagnostic assessment BEFORE protocol selection",
-                "Evidence-weighted reasoning supports defensible clinical decisions",
-                "Visual explanations enhance patient education and treatment justification",
-                "Confidence intervals help practitioners communicate uncertainty appropriately",
-                "Mechanism insights support targeted regenerative medicine approaches",
-                "Multi-modal analysis ensures no clinical data is overlooked"
-            ],
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-    except Exception as e:
-        logger.error(f"Differential diagnosis engine status error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to get engine status: {str(e)}")
-
 # ==========================================
 # CRITICAL FEATURE 3: Enhanced Explainable AI API Endpoints  
 # ==========================================
