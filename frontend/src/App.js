@@ -2565,12 +2565,39 @@ function App() {
           <TabsContent value="patients" className="space-y-6">
             <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-slate-600" />
-                  Patient Records & Outcomes
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-slate-600" />
+                    Patient Records & Outcomes
+                  </span>
+                  
+                  {/* WORKING PATIENT SELECTOR */}
+                  <div className="flex items-center gap-4">
+                    <label className="text-sm font-medium">Quick Select Patient:</label>
+                    <select
+                      onChange={(e) => {
+                        const patientId = e.target.value;
+                        if (patientId) {
+                          const patient = patients.find(p => p.patient_id === patientId);
+                          if (patient) {
+                            console.log("🎯 DROPDOWN: Patient selected:", patient.demographics?.name);
+                            handlePatientSelection(patient);
+                          }
+                        }
+                      }}
+                      className="border border-gray-300 rounded px-3 py-2 text-sm"
+                    >
+                      <option value="">Select a patient...</option>
+                      {patients.slice(0, 10).map((patient) => (
+                        <option key={patient.patient_id} value={patient.patient_id}>
+                          {patient.demographics.name} ({patient.demographics.age}y, {patient.demographics.gender})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </CardTitle>
                 <CardDescription>
-                  Comprehensive patient management with outcome tracking
+                  Comprehensive patient management with outcome tracking. Total: {patients.length} patients
                 </CardDescription>
               </CardHeader>
               <CardContent>
