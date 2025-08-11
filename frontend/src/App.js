@@ -2632,18 +2632,16 @@ function App() {
                         </div>
                         <div className="text-right space-y-2">
                           <div className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Active</div>
-                          <div
+                          <button
+                            type="button"
                             onClick={() => {
-                              console.log("🔬 DIV CLICK - Select Patient for:", patient.demographics?.name);
-                              alert(`Patient selected: ${patient.demographics?.name}`);
+                              console.log("🔬 BUTTON CLICK - Select Patient for:", patient.demographics?.name);
                               handlePatientSelection(patient);
                             }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded w-full transition-colors cursor-pointer text-center select-none"
-                            role="button"
-                            tabIndex={0}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded w-full transition-colors cursor-pointer"
                           >
                             Select Patient
-                          </div>
+                          </button>
                           <p className="text-xs text-slate-500">ID: {patient.patient_id.slice(0, 8)}...</p>
                         </div>
                       </div>
