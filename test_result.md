@@ -59,6 +59,8 @@
 ## agent_communication:
 ##     -agent: "main"  # or "testing" or "user"
 ##     -message: "Communication message between agents"
+##     -agent: "main"
+##     -message: "CRITICAL DISCOVERY: Core AI engine issue identified. OpenAI API key is set to placeholder value 'your-openai-api-key-here' in /app/backend/.env. This causes all AI analysis calls to fail and fall back to mock/placeholder data instead of generating real clinical outputs. The workflow scaffolding works but AI engine isn't producing meaningful differential diagnoses, evidence-linked protocols, or explainable AI visualizations. Need valid OpenAI API key or Emergent LLM key to fix core functionality."
 
 # Protocol Guidelines for Main agent
 #
