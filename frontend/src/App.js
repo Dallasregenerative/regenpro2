@@ -2603,13 +2603,10 @@ function App() {
                           <div
                             onClick={() => {
                               console.log("🔬 DIV CLICK - Select Patient for:", patient.demographics?.name);
+                              alert(`Patient selected: ${patient.demographics?.name}`);
                               handlePatientSelection(patient);
                             }}
-                            onMouseDown={() => {
-                              console.log("🔬 DIV MOUSEDOWN for:", patient.demographics?.name);
-                            }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded w-full transition-colors cursor-pointer text-center"
-                            style={{pointerEvents: 'auto', userSelect: 'none'}}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded w-full transition-colors cursor-pointer text-center select-none"
                             role="button"
                             tabIndex={0}
                           >
