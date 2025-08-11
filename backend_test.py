@@ -1520,6 +1520,428 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return success
 
+    # ========== CORE AI ENGINE FUNCTIONALITY TESTING ==========
+    # Testing the core AI engine functionality that was just fixed with the new OpenAI API key
+    # Focus on verifying real AI outputs instead of placeholder data
+    
+    def test_core_ai_comprehensive_differential_diagnosis(self):
+        """Test POST /api/diagnosis/comprehensive-differential with real patient scenario"""
+        
+        # Real patient scenario for testing AI engine
+        patient_data = {
+            "patient_id": "test_patient_ai_engine",
+            "demographics": {
+                "age": 45,
+                "gender": "Female",
+                "occupation": "Teacher"
+            },
+            "medical_history": ["Osteoarthritis", "Hypertension"],
+            "clinical_presentation": {
+                "chief_complaint": "Bilateral knee pain and stiffness for 2 years",
+                "pain_scale": 7,
+                "functional_limitation": "Difficulty climbing stairs and prolonged standing"
+            },
+            "physical_examination": {
+                "range_of_motion": "Limited flexion bilaterally",
+                "joint_stability": "Stable",
+                "swelling": "Mild bilateral effusion"
+            },
+            "diagnostic_data": {
+                "imaging": "X-ray shows Grade 2-3 osteoarthritis with joint space narrowing",
+                "lab_results": {
+                    "CRP": "3.2 mg/L",
+                    "ESR": "22 mm/hr"
+                }
+            },
+            "analysis_parameters": {
+                "focus_area": "regenerative_medicine",
+                "include_explainable_ai": True,
+                "confidence_threshold": 0.7
+            }
+        }
+
+        print("   Testing REAL AI-generated differential diagnoses (not placeholder data)...")
+        print("   This should produce actual clinical reasoning with realistic confidence scores...")
+        
+        success, response = self.run_test(
+            "Core AI Engine - Comprehensive Differential Diagnosis",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data=patient_data,
+            timeout=120
+        )
+        
+        if success:
+            # Verify this is real AI output, not fallback data
+            status = response.get('status', 'unknown')
+            diagnosis_id = response.get('diagnosis_id', 'none')
+            
+            print(f"   Analysis Status: {status}")
+            print(f"   Diagnosis ID Generated: {diagnosis_id != 'none'}")
+            
+            # Check for real AI analysis components
+            differential_diagnoses = response.get('differential_diagnoses', [])
+            explainable_ai = response.get('explainable_ai_analysis', {})
+            confidence_analysis = response.get('confidence_analysis', {})
+            mechanism_insights = response.get('mechanism_insights', {})
+            
+            print(f"   Differential Diagnoses: {len(differential_diagnoses)}")
+            print(f"   Explainable AI Analysis: {'present' if explainable_ai else 'missing'}")
+            print(f"   Confidence Analysis: {'present' if confidence_analysis else 'missing'}")
+            print(f"   Mechanism Insights: {'present' if mechanism_insights else 'missing'}")
+            
+            # Verify real clinical reasoning (not generic fallback)
+            if differential_diagnoses:
+                primary_diagnosis = differential_diagnoses[0]
+                diagnosis_text = primary_diagnosis.get('diagnosis', '')
+                confidence_score = primary_diagnosis.get('confidence_score', 0)
+                clinical_reasoning = primary_diagnosis.get('clinical_reasoning', '')
+                
+                print(f"   Primary Diagnosis: {diagnosis_text}")
+                print(f"   Confidence Score: {confidence_score:.3f}")
+                print(f"   Clinical Reasoning Length: {len(clinical_reasoning)} chars")
+                
+                # Check if this looks like real AI output vs fallback
+                is_real_ai = (
+                    confidence_score != 0.7 and  # Not default fallback score
+                    len(clinical_reasoning) > 50 and  # Substantial reasoning
+                    'ICD-10' in diagnosis_text or 'M' in diagnosis_text  # Proper medical coding
+                )
+                
+                print(f"   Real AI Output Detected: {is_real_ai}")
+                
+                if not is_real_ai:
+                    print("   ⚠️  WARNING: This appears to be fallback data, not real AI analysis")
+                
+                # Store diagnosis_id for follow-up tests
+                if diagnosis_id != 'none':
+                    self.ai_diagnosis_id = diagnosis_id
+            
+            # Check for realistic confidence scores (not default 0.7-0.8)
+            if confidence_analysis:
+                overall_confidence = confidence_analysis.get('overall_confidence', 0)
+                diagnostic_certainty = confidence_analysis.get('diagnostic_certainty', 0)
+                
+                print(f"   Overall Confidence: {overall_confidence:.3f}")
+                print(f"   Diagnostic Certainty: {diagnostic_certainty:.3f}")
+                
+                # Real AI should have varied, realistic confidence scores
+                realistic_confidence = (
+                    overall_confidence != 0.7 and overall_confidence != 0.8 and
+                    diagnostic_certainty != 0.7 and diagnostic_certainty != 0.8
+                )
+                print(f"   Realistic Confidence Scores: {realistic_confidence}")
+        
+        return success
+
+    def test_core_ai_enhanced_explainable_ai(self):
+        """Test POST /api/ai/enhanced-explanation to verify SHAP/LIME breakdowns"""
+        
+        # Test data for explainable AI analysis
+        explanation_request = {
+            "patient_id": "test_patient_ai_engine",
+            "analysis_type": "differential_diagnosis",
+            "model_type": "regenerative_medicine_classifier",
+            "explanation_methods": ["SHAP", "LIME"],
+            "feature_categories": [
+                "demographics",
+                "clinical_presentation", 
+                "diagnostic_data",
+                "medical_history"
+            ],
+            "explanation_depth": "comprehensive"
+        }
+
+        print("   Testing REAL SHAP/LIME explainable AI analysis...")
+        print("   This should produce actual feature importance values, not placeholder data...")
+        
+        success, response = self.run_test(
+            "Core AI Engine - Enhanced Explainable AI",
+            "POST",
+            "ai/enhanced-explanation",
+            200,
+            data=explanation_request,
+            timeout=120
+        )
+        
+        if success:
+            explanation_id = response.get('explanation_id', 'none')
+            analysis_status = response.get('analysis_status', 'unknown')
+            
+            print(f"   Explanation ID Generated: {explanation_id != 'none'}")
+            print(f"   Analysis Status: {analysis_status}")
+            
+            # Check for real SHAP/LIME analysis components
+            shap_analysis = response.get('shap_analysis', {})
+            lime_analysis = response.get('lime_analysis', {})
+            feature_importance = response.get('feature_importance', {})
+            visual_explanations = response.get('visual_explanations', {})
+            
+            print(f"   SHAP Analysis: {'present' if shap_analysis else 'missing'}")
+            print(f"   LIME Analysis: {'present' if lime_analysis else 'missing'}")
+            print(f"   Feature Importance: {'present' if feature_importance else 'missing'}")
+            print(f"   Visual Explanations: {'present' if visual_explanations else 'missing'}")
+            
+            # Verify real feature importance values
+            if feature_importance:
+                features = feature_importance.get('features', [])
+                print(f"   Feature Count: {len(features)}")
+                
+                if features:
+                    # Check first few features for realistic values
+                    for i, feature in enumerate(features[:3], 1):
+                        feature_name = feature.get('feature_name', 'unknown')
+                        importance_score = feature.get('importance_score', 0)
+                        contribution = feature.get('contribution', 'unknown')
+                        
+                        print(f"   Feature {i}: {feature_name} (importance: {importance_score:.3f}, {contribution})")
+                        
+                        # Real AI should have varied importance scores, not all 0.5 or similar
+                        if importance_score == 0.5 or importance_score == 0.0:
+                            print(f"   ⚠️  WARNING: Feature {i} has default/placeholder importance score")
+            
+            # Check SHAP analysis for real values
+            if shap_analysis:
+                base_value = shap_analysis.get('base_value', 0)
+                final_prediction = shap_analysis.get('final_prediction', 0)
+                feature_contributions = shap_analysis.get('feature_contributions', [])
+                
+                print(f"   SHAP Base Value: {base_value:.3f}")
+                print(f"   SHAP Final Prediction: {final_prediction:.3f}")
+                print(f"   SHAP Feature Contributions: {len(feature_contributions)}")
+                
+                # Real SHAP should have meaningful base value and prediction
+                realistic_shap = (
+                    base_value != 0.5 and final_prediction != 0.5 and
+                    len(feature_contributions) > 0
+                )
+                print(f"   Realistic SHAP Values: {realistic_shap}")
+            
+            # Store explanation_id for follow-up tests
+            if explanation_id != 'none':
+                self.ai_explanation_id = explanation_id
+        
+        return success
+
+    def test_core_ai_protocol_generation_with_evidence(self):
+        """Test protocol generation endpoints to ensure evidence-linked protocols"""
+        
+        if not self.patient_id:
+            print("❌ No patient ID available for protocol generation testing")
+            return False
+
+        protocol_request = {
+            "patient_id": self.patient_id,
+            "school_of_thought": "ai_optimized",
+            "evidence_requirements": {
+                "minimum_evidence_level": "Level II",
+                "include_recent_studies": True,
+                "require_citations": True
+            },
+            "protocol_parameters": {
+                "focus_regenerative_medicine": True,
+                "include_cost_analysis": True,
+                "safety_priority": "high"
+            }
+        }
+
+        print("   Testing REAL evidence-linked protocol generation...")
+        print("   This should include actual literature citations and evidence-based recommendations...")
+        
+        success, response = self.run_test(
+            "Core AI Engine - Evidence-Linked Protocol Generation",
+            "POST",
+            "protocols/generate",
+            200,
+            data=protocol_request,
+            timeout=120
+        )
+        
+        if success:
+            protocol_id = response.get('protocol_id', 'none')
+            confidence_score = response.get('confidence_score', 0)
+            ai_reasoning = response.get('ai_reasoning', '')
+            
+            print(f"   Protocol ID Generated: {protocol_id != 'none'}")
+            print(f"   AI Confidence Score: {confidence_score:.3f}")
+            print(f"   AI Reasoning Length: {len(ai_reasoning)} chars")
+            
+            # Check for evidence-based components
+            supporting_evidence = response.get('supporting_evidence', [])
+            protocol_steps = response.get('protocol_steps', [])
+            expected_outcomes = response.get('expected_outcomes', [])
+            
+            print(f"   Supporting Evidence: {len(supporting_evidence)} citations")
+            print(f"   Protocol Steps: {len(protocol_steps)}")
+            print(f"   Expected Outcomes: {len(expected_outcomes)}")
+            
+            # Verify real evidence citations (not placeholder)
+            if supporting_evidence:
+                for i, evidence in enumerate(supporting_evidence[:3], 1):
+                    citation = evidence.get('citation', '')
+                    finding = evidence.get('finding', '')
+                    evidence_level = evidence.get('evidence_level', '')
+                    
+                    print(f"   Evidence {i}: {evidence_level} - {finding[:50]}...")
+                    
+                    # Real evidence should have proper citations, not generic text
+                    has_real_citation = (
+                        'PMID' in citation or 'DOI' in citation or 
+                        'et al' in citation or len(citation) > 20
+                    )
+                    print(f"   Real Citation {i}: {has_real_citation}")
+            
+            # Check protocol steps for detailed, evidence-based content
+            if protocol_steps:
+                first_step = protocol_steps[0]
+                therapy = first_step.get('therapy', '')
+                dosage = first_step.get('dosage', '')
+                monitoring_parameters = first_step.get('monitoring_parameters', [])
+                
+                print(f"   First Step Therapy: {therapy}")
+                print(f"   Dosage Specificity: {dosage}")
+                print(f"   Monitoring Parameters: {len(monitoring_parameters)}")
+                
+                # Real AI should provide specific, detailed protocols
+                detailed_protocol = (
+                    len(therapy) > 10 and len(dosage) > 5 and
+                    len(monitoring_parameters) > 0
+                )
+                print(f"   Detailed Protocol Content: {detailed_protocol}")
+            
+            # Check AI reasoning for substantial clinical content
+            if ai_reasoning:
+                reasoning_quality = (
+                    len(ai_reasoning) > 100 and
+                    ('evidence' in ai_reasoning.lower() or 'study' in ai_reasoning.lower()) and
+                    ('patient' in ai_reasoning.lower() or 'clinical' in ai_reasoning.lower())
+                )
+                print(f"   Quality AI Reasoning: {reasoning_quality}")
+                
+                if not reasoning_quality:
+                    print("   ⚠️  WARNING: AI reasoning appears generic or insufficient")
+            
+            # Store protocol_id for follow-up tests
+            if protocol_id != 'none':
+                self.ai_protocol_id = protocol_id
+        
+        return success
+
+    def test_core_ai_real_vs_fallback_verification(self):
+        """Verify that AI endpoints are producing real outputs, not fallback data"""
+        
+        print("   VERIFYING REAL AI OUTPUTS VS FALLBACK DATA...")
+        print("   This test checks if the OpenAI API key fix resolved the core issue...")
+        
+        # Test multiple AI endpoints to verify consistent real output
+        ai_tests = []
+        
+        # Test 1: Patient analysis
+        if self.patient_id:
+            analysis_success, analysis_response = self.run_test(
+                "AI Output Verification - Patient Analysis",
+                "POST",
+                f"patients/{self.patient_id}/analyze",
+                200,
+                data={},
+                timeout=90
+            )
+            ai_tests.append(('Patient Analysis', analysis_success, analysis_response))
+        
+        # Test 2: Therapy database (should have real therapy info)
+        therapy_success, therapy_response = self.run_test(
+            "AI Output Verification - Therapy Database",
+            "GET",
+            "therapies",
+            200,
+            timeout=30
+        )
+        ai_tests.append(('Therapy Database', therapy_success, therapy_response))
+        
+        # Test 3: Dashboard analytics (should show real metrics)
+        dashboard_success, dashboard_response = self.run_test(
+            "AI Output Verification - Dashboard Analytics",
+            "GET",
+            "analytics/dashboard",
+            200,
+            timeout=30
+        )
+        ai_tests.append(('Dashboard Analytics', dashboard_success, dashboard_response))
+        
+        # Analyze results for real AI vs fallback patterns
+        real_ai_indicators = 0
+        total_tests = len(ai_tests)
+        
+        for test_name, success, response in ai_tests:
+            if not success:
+                continue
+                
+            print(f"   Analyzing {test_name}...")
+            
+            # Look for indicators of real AI processing
+            indicators = []
+            
+            # Check for varied confidence scores (not default 0.7-0.8)
+            confidence_scores = []
+            if 'diagnostic_results' in response:
+                for result in response['diagnostic_results']:
+                    if 'confidence_score' in result:
+                        confidence_scores.append(result['confidence_score'])
+            
+            if confidence_scores:
+                varied_confidence = len(set(confidence_scores)) > 1
+                non_default_confidence = not all(0.7 <= score <= 0.8 for score in confidence_scores)
+                if varied_confidence and non_default_confidence:
+                    indicators.append("varied_confidence_scores")
+            
+            # Check for substantial content (not minimal fallback)
+            content_indicators = []
+            if 'diagnostic_results' in response:
+                for result in response['diagnostic_results']:
+                    reasoning = result.get('reasoning', '')
+                    if len(reasoning) > 50:
+                        content_indicators.append("substantial_reasoning")
+            
+            if content_indicators:
+                indicators.append("substantial_content")
+            
+            # Check for specific medical terminology (indicates real AI)
+            response_text = str(response).lower()
+            medical_terms = ['icd-10', 'mechanism', 'pathophysiology', 'regenerative', 'therapy']
+            medical_term_count = sum(1 for term in medical_terms if term in response_text)
+            
+            if medical_term_count >= 3:
+                indicators.append("medical_terminology")
+            
+            # Check for realistic data structures (not minimal fallback)
+            if isinstance(response, dict) and len(response) > 3:
+                indicators.append("complex_response_structure")
+            
+            indicator_count = len(indicators)
+            print(f"   {test_name} Real AI Indicators: {indicator_count}/4 ({', '.join(indicators)})")
+            
+            if indicator_count >= 2:
+                real_ai_indicators += 1
+        
+        # Overall assessment
+        real_ai_percentage = (real_ai_indicators / total_tests) * 100 if total_tests > 0 else 0
+        
+        print(f"   REAL AI OUTPUT ASSESSMENT:")
+        print(f"   Tests Showing Real AI: {real_ai_indicators}/{total_tests} ({real_ai_percentage:.1f}%)")
+        
+        if real_ai_percentage >= 70:
+            print("   ✅ SUCCESS: AI engine is producing real clinical outputs")
+            print("   ✅ OpenAI API key fix appears to have resolved the core issue")
+        elif real_ai_percentage >= 40:
+            print("   ⚠️  PARTIAL: Some AI endpoints working, others may still use fallback")
+            print("   ⚠️  May need additional investigation")
+        else:
+            print("   ❌ CONCERN: Most endpoints still appear to use fallback/placeholder data")
+            print("   ❌ OpenAI API key fix may not have fully resolved the issue")
+        
+        return real_ai_percentage >= 70
+
     # ========== ADVANCED DIFFERENTIAL DIAGNOSIS SYSTEM TESTING ==========
     
     def test_advanced_differential_diagnosis_comprehensive_differential(self):
