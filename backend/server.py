@@ -4367,8 +4367,19 @@ async def perform_comprehensive_differential_diagnosis(
         diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
         await diagnosis_engine.initialize_differential_diagnosis_engine()
         
-        # Extract patient data
+        # Extract patient data - if patient_id provided, fetch from database
         patient_data = diagnosis_request.get("patient_data", {})
+        patient_id = diagnosis_request.get("patient_id")
+        
+        # If patient_id provided but no patient_data, fetch from database
+        if patient_id and not patient_data:
+            patient_doc = await db.patients.find_one({"patient_id": patient_id})
+            if patient_doc:
+                patient_data = patient_doc
+                patient_data["patient_id"] = patient_id
+            else:
+                raise HTTPException(status_code=404, detail=f"Patient {patient_id} not found")
+        
         practitioner_controlled = diagnosis_request.get("practitioner_controlled", True)
         
         # Perform comprehensive differential diagnosis
