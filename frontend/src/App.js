@@ -2618,6 +2618,11 @@ function App() {
                             <div className="text-xs border border-slate-300 rounded px-2 py-1">
                               {patient.demographics.age}y • {patient.demographics.gender}
                             </div>
+                            {selectedPatient?.patient_id === patient.patient_id && (
+                              <div className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-medium">
+                                ✓ SELECTED
+                              </div>
+                            )}
                           </div>
                           <p className="text-sm text-indigo-700 font-medium">{patient.chief_complaint}</p>
                           <p className="text-xs text-slate-600">
