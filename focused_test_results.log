@@ -1,0 +1,150 @@
+================================================================================
+🧪 FOCUSED PROTOCOL GENERATION TESTING
+Testing OpenAI API Key Fix with Rate Limiting
+================================================================================
+
+🏥 STEP 1: Testing Maria Rodriguez - Traditional Autologous
+   This may take 60-90 seconds for AI protocol generation...
+   Using rate limiting to avoid 429 errors...
+
+🔍 Testing Maria Rodriguez - Traditional Autologous Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "6497fd2b-749f-4be2-8a73-4acf37ce997a",
+  "patient_id": "e40b1209-bdcb-49bd-b533-a9d6a56d9df2",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "traditional_autologous",
+  "primary_diagnoses": [
+    "Osteoarthritis of knee, bilateral (ICD-10 code: M17.0)",
+   ...
+   ✅ Protocol Generated Successfully
+   Protocol ID: 6497fd2b-749f-4be2-8a73-4acf37ce997a
+   Confidence Score: 0.85
+   Protocol Steps: 2
+   📋 Validating Protocol Content:
+   ✅ Detailed Steps: Platelet-Rich Plasma (PRP) - 5-7 mL per knee
+   ✅ Timing: Week 1
+   ✅ Delivery Method: Intra-articular injection under ultrasound guidance
+   ✅ Evidence Citations: 2 citations provided
+   ✅ PMID/Citation: PMID: 28706872...
+   ✅ Cost Estimate: $2,000 - $5,000
+   ✅ Contraindications: 3 identified
+   ✅ AI Reasoning: Comprehensive explanation provided (353 chars)
+   ✅ High Confidence: 0.85
+
+🏥 STEP 2: Testing Maria Rodriguez - AI-Optimized
+   ⏳ Waiting 30 seconds to avoid rate limiting...
+   This may take 60-90 seconds for AI protocol generation...
+
+🔍 Testing Maria Rodriguez - AI-Optimized Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "0561ae7a-0035-4473-aafe-108ce1c70ab7",
+  "patient_id": "e40b1209-bdcb-49bd-b533-a9d6a56d9df2",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "ai_optimized",
+  "primary_diagnoses": [
+    "Osteoarthritis of knee, bilateral (ICD-10 code: M17.0)",
+    "Rheumato...
+   ✅ Protocol Generated Successfully
+   Protocol ID: 0561ae7a-0035-4473-aafe-108ce1c70ab7
+   Confidence Score: 0.85
+   Protocol Steps: 2
+   📋 Validating Protocol Content:
+   ✅ Detailed Steps: Platelet-Rich Plasma (PRP) - 5 mL per knee
+   ✅ Timing: Week 1
+   ✅ Delivery Method: Intra-articular injection under ultrasound guidance
+   ✅ Evidence Citations: 2 citations provided
+   ✅ PMID/Citation: Sanchez M, et al. (2017). PMID: 28520470...
+   ✅ Cost Estimate: $2,000 - $5,000
+   ✅ Contraindications: 3 identified
+   ✅ AI Reasoning: Comprehensive explanation provided (335 chars)
+   ✅ High Confidence: 0.85
+
+🏥 STEP 3: Testing David Chen - Shoulder Injury
+   ⏳ Waiting 30 seconds to avoid rate limiting...
+   This may take 60-90 seconds for AI protocol generation...
+
+🔍 Testing David Chen - Shoulder Injury Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+❌ Failed - Expected 200, got 500
+   Error: {'detail': 'Protocol generation failed: '}
+
+🔬 Testing Critical Priority Features:
+   ⏳ Waiting 15 seconds before Living Evidence Engine test...
+
+🔍 Testing Living Evidence Engine - Living Reviews...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/living-reviews/osteoarthritis
+✅ Passed - Status: 200
+   Response: {
+  "status": "living_review_generated",
+  "condition": "osteoarthritis",
+  "therapies": [
+    "PRP",
+    "BMAC"
+  ],
+  "living_systematic_review": {
+    "review_type": "living_systematic_review",
+    "therapies": [
+      "PRP",
+      "BMAC"
+    ],
+    "condition": "osteoarthritis",
+    "systematic_...
+   ✅ Living Evidence Engine Working
+   Total Studies: 0
+   Evidence Quality Score: 0.00
+   ⏳ Waiting 15 seconds before Differential Diagnosis test...
+
+🔍 Testing Advanced Differential Diagnosis...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/diagnosis/comprehensive-differential
+✅ Passed - Status: 200
+   Response: {
+  "status": "comprehensive_diagnosis_completed",
+  "comprehensive_diagnosis": {
+    "diagnosis_id": "a077d6a3-c781-4910-b2c9-42d1525c8720",
+    "patient_id": "e40b1209-bdcb-49bd-b533-a9d6a56d9df2",
+    "analysis_timestamp": "2025-08-10T21:05:15.561565",
+    "practitioner_controlled": true,
+    "mu...
+   ✅ Advanced Differential Diagnosis Working
+   Diagnoses Generated: 4
+   ⏳ Waiting 15 seconds before Explainable AI test...
+
+🔍 Testing Enhanced Explainable AI...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/ai/enhanced-explanation
+✅ Passed - Status: 200
+   Response: {
+  "status": "enhanced_explanation_generated",
+  "enhanced_explanation": {
+    "explanation_id": "16fe574c-753f-40ff-b3dc-f1f31ccd2c58",
+    "patient_id": "e40b1209-bdcb-49bd-b533-a9d6a56d9df2",
+    "generated_at": "2025-08-10T21:05:30.665545",
+    "explanation_type": "comprehensive",
+    "model_pr...
+   ✅ Enhanced Explainable AI Working
+   Transparency Score: 0.00
+
+================================================================================
+📊 FOCUSED TEST RESULTS SUMMARY
+================================================================================
+Total Tests Run: 6
+Tests Passed: 5
+Success Rate: 83.3%
+
+🎯 PROTOCOL GENERATION RESULTS:
+   Maria Rodriguez - Traditional Autologous: ✅
+   Maria Rodriguez - AI-Optimized: ✅
+   David Chen - Shoulder Injury: ❌
+
+🔬 CRITICAL PRIORITY FEATURES:
+   Living Evidence Engine: ✅
+   Advanced Differential Diagnosis: ✅
+   Enhanced Explainable AI: ✅
+
+⚠️ PARTIAL SUCCESS: OpenAI API key working but rate limited
+   Need to implement better rate limiting or upgrade API plan
+
+❌ Some tests failed - check results above

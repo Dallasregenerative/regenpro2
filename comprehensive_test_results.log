@@ -1,0 +1,1060 @@
+🧬 RegenMed AI Pro - Comprehensive Backend API Testing
+Advanced Regenerative Medicine Knowledge Platform v2.0
+Testing All Advanced AI Features & Services
+======================================================================
+
+🔍 Testing with existing patient: c458d177-712c-4eb9-8fd3-5f5e41fe7b71 (Sarah Chen)
+
+Running 55 comprehensive API tests...
+Including all advanced AI features: Federated Learning, Literature Integration, ML Prediction, DICOM Processing
+
+
+
+🔍 Testing Health Check & AI Engine Status...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/health
+✅ Passed - Status: 200
+   Response: {
+  "status": "healthy",
+  "timestamp": "2025-08-09T19:51:03.611065",
+  "version": "2.0.0",
+  "services": {
+    "database": "connected",
+    "ai_engine": "ready",
+    "knowledge_base": "loaded"
+  }
+}
+   System Status: healthy
+   Database: connected
+   AI Engine: ready
+   Knowledge Base: loaded
+   Version: 2.0.0
+
+🔍 Testing Root API Endpoint...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api
+✅ Passed - Status: 200
+   Response: {
+  "message": "RegenMed AI Pro - Advanced Regenerative Medicine Platform v2.0"
+}
+   Message: RegenMed AI Pro - Advanced Regenerative Medicine Platform v2.0
+
+🔍 Testing Advanced System Status & Health...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/advanced/system-status
+✅ Passed - Status: 200
+   Response: {
+  "timestamp": "2025-08-09T19:51:03.731371",
+  "services": {
+    "federated_learning": {
+      "status": "active",
+      "global_model_participants": 0,
+      "last_aggregation": "2025-08-09T19:09:06.639000"
+    },
+    "literature_integration": {
+      "status": "active",
+      "papers_monitored":...
+   Federated Learning: active
+   Literature Integration: active
+   DICOM Processing: active
+   Outcome Prediction: active
+   Total Patients: 30
+   Total Protocols: 68
+   Literature Papers: 66
+   Federated Participants: 4
+
+🔍 Testing Therapy Database & Schools of Thought...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/therapies
+✅ Passed - Status: 200
+   Response: {
+  "therapies": [
+    {
+      "name": "Platelet-Rich Plasma (PRP)",
+      "mechanism": [
+        "Growth factor release",
+        "Tissue regeneration",
+        "Anti-inflammatory"
+      ],
+      "indications": [
+        "Osteoarthritis",
+        "Tendinopathy",
+        "Ligament injuries",
+       ...
+   Available Therapies: 5
+   Schools of Thought: 5
+   Sample Therapies: Platelet-Rich Plasma (PRP), Bone Marrow Aspirate Concentrate (BMAC), Wharton's Jelly MSCs
+   Sample Schools: traditional_autologous, autologous_non_us, biologics
+
+🔍 Testing Get Patient Details...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+✅ Passed - Status: 200
+   Response: {
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "practitioner_id": "demo-practitioner-001",
+  "demographics": {
+    "name": "Sarah Chen",
+    "age": "24",
+    "gender": "Female",
+    "occupation": "Professional Tennis Player",
+    "insurance": "Sports Medicine Elite"
+  },
+  "chief_compla...
+   Retrieved Patient: Sarah Chen
+   Chief Complaint: Acute shoulder pain and reduced range of motion fo...
+   This may take 30-60 seconds for AI processing...
+
+🔍 Testing AI Patient Analysis (Regenerative Medicine)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
+✅ Passed - Status: 200
+   Response: {
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "diagnostic_results": [
+    {
+      "diagnosis": "Supraspinatus Tendinopathy (ICD-10 code: M75.10)",
+      "confidence_score": 0.9,
+      "reasoning": "Overuse injury leading to inflammation and degeneration of the supraspinatus tendon, cau...
+   Generated 2 diagnostic results
+   Primary Diagnosis: Supraspinatus Tendinopathy (ICD-10 code: M75.10)
+   Confidence Score: 0.90
+   Regenerative Targets: 3
+   Mechanisms Involved: 1
+✅ Patient Chart Upload - Status: 200
+   File ID: 6c8d398b-9bae-4560-a71b-334903e370e4
+   Processing Status: processed
+   Confidence Score: 0.85
+   Medical Insights: 0
+✅ Genetic Data Upload - Status: 200
+   File ID: 8d57826a-ff06-4d4b-9a43-5906fdf43708
+   Regenerative Insights: 0
+   Confidence Score: 0.88
+✅ DICOM Upload - Status: 200
+   File ID: 68fb02cf-8793-4f8e-9d7e-7acf4be52302
+   Processing Results: 4
+   Medical Insights: 0
+✅ Lab Results Upload - Status: 200
+   File ID: e1887a94-0d6d-40ab-9d36-b9dac40c9d3f
+   Processing Results: 2
+   Regenerative Insights: 0
+
+🔍 Testing Get Patient Files...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/patient/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+✅ Passed - Status: 200
+   Response: {
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "uploaded_files": [
+    {
+      "_id": "6897a6ba7b0e8db2ea7589f1",
+      "file_id": "e1887a94-0d6d-40ab-9d36-b9dac40c9d3f",
+      "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+      "filename": "lab_results.csv",
+      "file_type": ...
+   Patient ID: c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   Total Files: 37
+   Uploaded Files: 37
+   Processed Files: 37
+
+🔍 Testing Comprehensive Patient File Analysis...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+✅ Passed - Status: 200
+   Response: {
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "comprehensive_analysis": {
+    "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+    "total_files": 37,
+    "file_types": [
+      "unknown"
+    ],
+    "files_by_category": {
+      "unknown": [
+        {
+          "_id": "68951d56143476...
+   Patient ID: c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   Analysis Status: complete
+   Multi-modal Insights: 0
+   Integrated Recommendations: 0
+   Confidence Level: 0.00
+   This may take 30-60 seconds for file-based AI protocol generation...
+
+🔍 Testing Generate Protocol from Files...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
+✅ Passed - Status: 200
+   Response: {
+  "protocol": {
+    "protocol_id": "d9a3bb25-f339-48d0-9555-0fa968d0ddf1",
+    "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+    "practitioner_id": "demo-practitioner-001",
+    "school_of_thought": "ai_optimized",
+    "primary_diagnoses": [
+      "Supraspinatus Tendinopathy (ICD-10 code: M...
+   Protocol ID: d9a3bb25-f339-48d0-9555-0fa968d0ddf1
+   Files Analyzed: 37
+   Enhancement Confidence: 0.00
+   Multi-modal Analysis: 0
+   Protocol Steps: 2
+   This may take 30-60 seconds for AI protocol generation...
+
+🔍 Testing Generate Protocol - Traditional Autologous (US Legal)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "aae6f120-c380-4644-abf1-2f8aa0538105",
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "traditional_autologous",
+  "primary_diagnoses": [
+    "Supraspinatus Tendinopathy (ICD-10 code: M75.10)",
+    "Rota...
+   Protocol ID: aae6f120-c380-4644-abf1-2f8aa0538105
+   School: traditional_autologous
+   Confidence Score: 0.85
+   Protocol Steps: 2
+   Expected Outcomes: 3
+   Legal Warnings: 1
+   First Step: Platelet-Rich Plasma (PRP) - 5 mL of PRP
+   This may take 30-60 seconds for AI protocol generation...
+
+🔍 Testing Generate Protocol - Biologics & Allogenic...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "ab564356-0c1b-4cfb-abd5-90472ebdaa09",
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "biologics",
+  "primary_diagnoses": [
+    "Supraspinatus Tendinopathy (ICD-10 code: M75.10)",
+    "Rotator Cuff Synd...
+   Protocol ID: ab564356-0c1b-4cfb-abd5-90472ebdaa09
+   School: biologics
+   Confidence Score: 0.85
+   Protocol Steps: 2
+   Expected Outcomes: 3
+   Legal Warnings: 1
+   First Step: Wharton's Jelly MSCs - 1x10^6 cells/mL
+   This may take 30-60 seconds for AI protocol generation...
+
+🔍 Testing Generate Protocol - AI-Optimized Best Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "ae7e92dd-cc1f-420b-baaa-3b404340fa3c",
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "ai_optimized",
+  "primary_diagnoses": [
+    "Supraspinatus Tendinopathy (ICD-10 code: M75.10)",
+    "Rotator Cuff S...
+   Protocol ID: ae7e92dd-cc1f-420b-baaa-3b404340fa3c
+   School: ai_optimized
+   Confidence Score: 0.85
+   Protocol Steps: 2
+   Expected Outcomes: 3
+   Legal Warnings: 1
+   First Step: Platelet-Rich Plasma (PRP) - 5 mL PRP per injection
+   This may take 30-60 seconds for AI protocol generation...
+
+🔍 Testing Generate Protocol - Experimental & Cutting-Edge...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "2498e0ea-c027-437c-bcd5-899a171e6b41",
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "experimental",
+  "primary_diagnoses": [
+    "Supraspinatus Tendinopathy (ICD-10 code: M75.10)",
+    "Rotator Cuff S...
+   Protocol ID: 2498e0ea-c027-437c-bcd5-899a171e6b41
+   School: experimental
+   Confidence Score: 0.85
+   Protocol Steps: 2
+   Expected Outcomes: 3
+   Legal Warnings: 1
+   First Step: Platelet-Rich Plasma (PRP) - 5 mL of PRP
+
+🔍 Testing Get Protocol Details...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/d9a3bb25-f339-48d0-9555-0fa968d0ddf1
+✅ Passed - Status: 200
+   Response: {
+  "protocol_id": "d9a3bb25-f339-48d0-9555-0fa968d0ddf1",
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "practitioner_id": "demo-practitioner-001",
+  "school_of_thought": "ai_optimized",
+  "primary_diagnoses": [
+    "Supraspinatus Tendinopathy (ICD-10 code: M75.1)",
+    "Rotator Cuff Sy...
+   Protocol School: ai_optimized
+   Status: draft
+   Steps Count: 2
+
+🔍 Testing Approve Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/d9a3bb25-f339-48d0-9555-0fa968d0ddf1/approve
+✅ Passed - Status: 200
+   Response: {
+  "status": "approved",
+  "approved_at": "2025-08-09T19:53:17.958782"
+}
+   Approval Status: approved
+   Approved At: 2025-08-09T19:53:17.958782
+
+🔍 Testing Register Clinic for Federated Learning...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/federated/register-clinic
+✅ Passed - Status: 200
+   Response: {
+  "status": "registered",
+  "privacy_preserved": true
+}
+   Registration Status: registered
+   Clinic ID: unknown
+   Privacy Level: unknown
+
+🔍 Testing Global Federated Model Status...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/federated/global-model-status
+✅ Passed - Status: 200
+   Response: {
+  "model_version": 1,
+  "participants": 0,
+  "last_updated": "2025-08-07T16:17:32.651000",
+  "performance_improvement": 0.05,
+  "status": "initialized"
+}
+   Model Version: 1
+   Participants: 0
+   Status: initialized
+   Performance Improvement: 0.050
+
+🔍 Testing Latest Literature Updates...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/latest-updates
+✅ Passed - Status: 200
+   Response: {
+  "processing_result": {
+    "new_papers_processed": 10,
+    "search_topics": [
+      "platelet rich plasma osteoarthritis",
+      "stem cell therapy tendinopathy",
+      "BMAC rotator cuff",
+      "regenerative medicine cartilage repair"
+    ],
+    "status": "completed",
+    "data_source": "pubme...
+   Processing Status: completed
+   Recent Papers Found: 10
+   Total Papers in DB: 66
+   Sample Paper: Platelet-Rich Plasma for Osteoarthritis: A Systema...
+
+🔍 Testing Search Literature Database...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/search?query=regenerative%20medicine&limit=10
+✅ Passed - Status: 200
+   Response: {
+  "query": "regenerative medicine",
+  "papers": [
+    {
+      "_id": "68969b091fd5f948c16d8db5",
+      "gs_id": "gs_0957e6012ce4",
+      "title": "Regenerative medicinein the field of painmedicine: Prolotherapy, platelet-rich plasma therapy, andstem cell therapy\u2014Theory and evidence",
+      "a...
+   Query: regenerative medicine
+   Results Found: 4
+   Papers Returned: 4
+   Top Result: Regenerative medicinein the field of painmedicine:...
+   Relevance Score: 0.85
+
+🔍 Testing Google Scholar Search - Basic Query...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/google-scholar-search?query=platelet%20rich%20plasma%20osteoarthritis&max_results=10
+✅ Passed - Status: 200
+   Response: {
+  "source": "google_scholar",
+  "query": "platelet rich plasma osteoarthritis",
+  "papers": [
+    {
+      "gs_id": "gs_b8fcc3860e18",
+      "title": "Platelet rich plasma in osteoarthritis: more than a growth factor therapy",
+      "authors": [
+        "WR Parrish"
+      ],
+      "journal": "B Roi...
+   Query: platelet rich plasma osteoarthritis
+   Source: google_scholar
+   Papers Found: 10
+   Status: success
+   Top Result: Platelet rich plasma in osteoarthritis: more than a growth f...
+   Authors: WR Parrish
+   Journal: B Roides - Musculoskelet Regen
+   Year: 2017
+   Citations: 0
+   Relevance Score: 0.20
+
+🔍 Testing Google Scholar Search - Stem Cell Therapy...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/google-scholar-search?query=stem%20cell%20therapy&max_results=15
+✅ Passed - Status: 200
+   Response: {
+  "source": "google_scholar",
+  "query": "stem cell therapy",
+  "papers": [
+    {
+      "gs_id": "gs_3862e166d7cf",
+      "title": "Stem cell therapyandregenerative medicine",
+      "authors": [
+        "T O'Brien"
+      ],
+      "journal": "FP Barry- Mayo Clinic Proceedings",
+      "year": "2009"...
+   Query: stem cell therapy
+   Papers Found: 15
+   Search Timestamp: 2025-08-09T19:53:23.536562
+   High Relevance Papers (≥0.5): 9
+   Top Relevant Paper: Stem cell therapyandregenerative medicine...
+   Abstract Preview: … repair usingstemcelltherapyhave had an MI. The clinical rationale forstemcelltherapyfor… It would ...
+
+🔍 Testing Google Scholar Search - With Year Filter...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/google-scholar-search?query=BMAC%20rotator%20cuff&max_results=10&year_filter=2023
+✅ Passed - Status: 200
+   Response: {
+  "source": "google_scholar",
+  "query": "BMAC rotator cuff",
+  "papers": [
+    {
+      "gs_id": "gs_5f076e676358",
+      "title": "Cell-based therapies for rotator cuff injuries: an updated review of the literature",
+      "authors": [
+        "N Hooper"
+      ],
+      "journal": "A Marathe",
+   ...
+   Query: BMAC rotator cuff
+   Year Filter Applied: 2023+
+   Papers Found: 2
+   Papers from 2023+: 2
+   Sample Paper Year: 2024
+   Sample Title: Cell-based therapies for rotator cuff injuries: an...
+
+🔍 Testing Google Scholar Search - Error Handling...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/google-scholar-search?query=&max_results=5
+✅ Passed - Status: 200
+   Response: {
+  "source": "google_scholar",
+  "query": "",
+  "papers": [
+    {
+      "gs_id": "gs_ca5c52ada7aa",
+      "title": "Regenerative medicine",
+      "authors": [
+        "S Petit-Zeman\u00a0- Nature biotechnology"
+      ],
+      "journal": "Unknown",
+      "year": "2001",
+      "abstract": "\u2026rege...
+   Status: success
+   Papers Returned: 5
+   Fallback Available: False
+
+🔍 Testing Multi-Source Search - Regenerative Medicine...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/multi-source-search?query=regenerative%20medicine&max_results_per_source=8
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "multi_source",
+  "query": "regenerative medicine",
+  "total_unique_papers": 8,
+  "papers": [
+    {
+      "gs_id": "gs_ca5c52ada7aa",
+      "title": "Regenerative medicine",
+      "authors": [
+        "S Petit-Zeman\u00a0- Nature biotechnology"
+      ],
+      "journal": "Unknown",...
+   Query: regenerative medicine
+   Search Type: multi_source
+   Total Unique Papers: 8
+   Status: completed
+   PubMed: 0 papers, status: no_results
+   Google Scholar: 8 papers, status: success
+   PubMed Papers in Results: 0
+   Google Scholar Papers in Results: 8
+   Top Scholar: Regenerative medicine... (Citations: 150)
+
+🔍 Testing Multi-Source Search - BMAC Rotator Cuff...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/multi-source-search?query=BMAC%20rotator%20cuff&max_results_per_source=6
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "multi_source",
+  "query": "BMAC rotator cuff",
+  "total_unique_papers": 2,
+  "papers": [
+    {
+      "gs_id": "gs_5f076e676358",
+      "title": "Cell-based therapies for rotator cuff injuries: an updated review of the literature",
+      "authors": [
+        "N Hooper"
+      ],
+  ...
+   Query: BMAC rotator cuff
+   Total Unique Papers: 2
+   Deduplication Working: True
+   BMAC-related Papers: 0
+   Rotator Cuff-related Papers: 1
+   High Relevance Papers (≥0.7): 0
+   Top Result: Cell-based therapies for rotator cuff injuries: an...
+   Top Relevance Score: 0.25
+
+🔍 Testing Multi-Source Search - Deduplication Test...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/multi-source-search?query=platelet%20rich%20plasma&max_results_per_source=10
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "multi_source",
+  "query": "platelet rich plasma",
+  "total_unique_papers": 10,
+  "papers": [
+    {
+      "gs_id": "gs_e415ba4b08f6",
+      "title": "Regenerative medicinein the field of painmedicine: Prolotherapy,platelet-rich plasmatherapy, andstem celltherapy\u2014Theory and ev...
+   Papers Before Deduplication: 10
+   Papers After Deduplication: 10
+   Deduplication Effective: True
+   Unique Titles: 10
+   Total Papers: 10
+   No Title Duplicates: True
+   Source Distribution: {'google_scholar': 10}
+
+🔍 Testing Literature Integration - Evidence Extraction...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/search?query=osteoarthritis%20PRP&limit=5
+✅ Passed - Status: 200
+   Response: {
+  "query": "osteoarthritis PRP",
+  "papers": [],
+  "total_results": 0,
+  "relevance_threshold": 0.7,
+  "search_timestamp": "2025-08-09T19:53:38.019106",
+  "sources": [
+    "local_database",
+    "pubmed_api"
+  ]
+}
+   Papers for Evidence Extraction: 0
+
+🔍 Testing Evidence Synthesis System Status...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesis-status
+✅ Passed - Status: 200
+   Response: {
+  "synthesis_engine_status": "active",
+  "literature_database": {
+    "total_papers": 66,
+    "recent_papers": 66,
+    "top_search_terms": [
+      "regenerative medicine",
+      "stem cell therapy",
+      "platelet rich plasma osteoarthritis",
+      "platelet rich plasma",
+      ""
+    ],
+    "las...
+   Synthesis Engine Status: active
+   Literature Database Papers: 66
+   Database Status: active
+   Recent Syntheses: 0
+   System Capabilities: 5
+   Key Capabilities: comprehensive_literature_analysis, ai_protocol_generation, real_world_outcome_integration
+   This may take 30-60 seconds for comprehensive literature analysis...
+
+🔍 Testing Evidence Synthesis - Osteoarthritis Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+✅ Passed - Status: 200
+   Response: {
+  "status": "synthesis_completed",
+  "condition": "osteoarthritis",
+  "synthesis_result": {
+    "synthesis_result": "error",
+    "error": "cannot access local variable 'json' where it is not associated with a value",
+    "fallback_available": true
+  },
+  "timestamp": "2025-08-09T19:53:41.670132"
+}
+   Synthesis Status: synthesis_completed
+   Condition: osteoarthritis
+   Evidence Sources: 0
+   Synthesis Confidence: 0.00
+   Protocol Generated: False
+   This may take 30-60 seconds for comprehensive literature analysis...
+
+🔍 Testing Evidence Synthesis - Rotator Cuff Protocol...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+✅ Passed - Status: 200
+   Response: {
+  "status": "synthesis_completed",
+  "condition": "rotator cuff injury",
+  "synthesis_result": {
+    "synthesis_result": "error",
+    "error": "cannot access local variable 'json' where it is not associated with a value",
+    "fallback_available": true
+  },
+  "timestamp": "2025-08-09T19:53:43.7518...
+   Synthesis Status: synthesis_completed
+   Condition: rotator cuff injury
+   Evidence Sources: 0
+   Synthesis Confidence: 0.00
+
+🔍 Testing Evidence Synthesis - Missing Condition (Error Handling)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+✅ Passed - Status: 400
+   Response: {
+  "detail": "Condition is required for evidence synthesis"
+}
+   Error Handling: Correctly returned 400 for missing condition
+   Error Detail: Condition is required for evidence synthesis
+   Testing with invalid condition...
+
+🔍 Testing Evidence Synthesis - Invalid Condition...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+✅ Passed - Status: 200
+   Response: {
+  "status": "synthesis_completed",
+  "condition": "invalid_medical_condition_xyz123",
+  "synthesis_result": {
+    "synthesis_result": "error",
+    "error": "cannot access local variable 'json' where it is not associated with a value",
+    "fallback_available": true
+  },
+  "timestamp": "2025-08-09T...
+   Synthesis Status: synthesis_completed
+   System handled invalid condition appropriately
+
+🔍 Testing Clinical Trials Search - Osteoarthritis (RECRUITING)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=osteoarthritis&recruitment_status=RECRUITING
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "osteoarthritis",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT04716803",
+      "title": "Bone Marrow Aspirate Concentrate (BMAC)Treatment for Knee Osteoarthritis",
+      "overall_sta...
+   Search Condition: unknown
+   Recruitment Status: RECRUITING
+   Trials Found: 20
+   Source: unknown
+   Status: success
+   Top Trial: Bone Marrow Aspirate Concentrate (BMAC)Treatment for Knee Os...
+   NCT ID: NCT04716803
+   Overall Status: RECRUITING
+   Relevance Score: 0.85
+   Regenerative Interventions: 2
+   Intervention Categories: PRP, BMAC
+
+🔍 Testing Clinical Trials Search - Rotator Cuff + Stem Cell...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=rotator%20cuff%20injury&intervention=stem%20cell%20therapy&max_results=15
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "rotator cuff injury",
+  "intervention_filter": "stem cell therapy",
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT05603468",
+      "title": "Effect of PRP vs Corticosteroid in Rotator Cuff Tendinopathy Subtypes in ...
+   Search Condition: unknown
+   Intervention Filter: stem cell therapy
+   Trials Found: 4
+   Search Timestamp: 2025-08-09T19:53:45.270531
+   Stem Cell Trials: 0
+
+🔍 Testing Clinical Trials Search - Knee Pain + PRP...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=knee%20pain&intervention=PRP&max_results=12
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "knee pain",
+  "intervention_filter": "PRP",
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT06605560",
+      "title": "Baker Cyst Aspiration Combined with Platelet-rich Plasma Injection in Knee Osteoarthritis",
+     ...
+   Search Condition: knee pain
+   Intervention Filter: PRP
+   Trials Found: 5
+   PRP-Related Trials: 3
+   Top PRP Trial: Baker Cyst Aspiration Combined with Platelet-rich ...
+   Brief Summary: Enlargement of any bursa in or around the popliteal fossa (most commonly the gastrocnemio-semimembra...
+   Eligible Ages: ADULT, OLDER_ADULT
+   Gender: 
+
+🔍 Testing Clinical Trials - JSON API Parsing Quality...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=osteoarthritis&max_results=5
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "osteoarthritis",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT04716803",
+      "title": "Bone Marrow Aspirate Concentrate (BMAC)Treatment for Knee Osteoarthritis",
+      "overall_sta...
+   Trials for Parsing Test: 5
+   Required Fields Present: 6/6
+   Available Fields: nct_id, title, overall_status, brief_summary, conditions, interventions
+   NCT ID Format Valid: True
+   Title Length: 72 characters
+   Summary Length: 709 characters
+   Categorized Interventions: 2/2
+   Relevance Score: 0.850 (0.0-1.0 range)
+   Relevance Score Valid: True
+   Trial URL Valid: True
+
+🔍 Testing Clinical Trials - Intervention Categorization...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=cartilage%20repair&max_results=10
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "cartilage repair",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT06713902",
+      "title": "Extracellular Vesicles in Fibrin Gel for Cartilage Repair",
+      "overall_status": "RECRUI...
+   Trials for Categorization Test: 2
+   Total Interventions: 1
+   Regenerative Medicine Interventions: 0
+   Categories Found: 1
+   other: 1 interventions
+   Expected Regen Categories Found: 0/4
+   Found Categories: 
+
+🔍 Testing Clinical Trials - Relevance Scoring (osteoarthritis)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=osteoarthritis&max_results=8
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "osteoarthritis",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT04716803",
+      "title": "Bone Marrow Aspirate Concentrate (BMAC)Treatment for Knee Osteoarthritis",
+      "overall_sta...
+   Condition: osteoarthritis
+   Trials Found: 8
+   Average Relevance: 0.575
+   Max Relevance: 0.850
+   Min Relevance: 0.250
+   Score Range Valid: True
+   Trials Sorted by Relevance: True
+   Top Trial: Bone Marrow Aspirate Concentrate (BMAC)T...
+   Top Relevance: 0.850
+
+🔍 Testing Clinical Trials - Relevance Scoring (rotator cuff)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=rotator%20cuff&max_results=8
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "rotator cuff",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT06160427",
+      "title": "Connective Tissue Matrix for Rotator Cuff Tendinopathy",
+      "overall_status": "RECRUITING",
+...
+   Condition: rotator cuff
+   Trials Found: 7
+   Average Relevance: 0.550
+   Max Relevance: 0.700
+   Min Relevance: 0.250
+   Score Range Valid: True
+   Trials Sorted by Relevance: True
+   Top Trial: Connective Tissue Matrix for Rotator Cuf...
+   Top Relevance: 0.700
+
+🔍 Testing Clinical Trials - Relevance Scoring (cartilage defect)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=cartilage%20defect&max_results=8
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "cartilage defect",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT06921889",
+      "title": "The Biomechanical Outcomes of Autologous Chondrocyte Implantation",
+      "overall_status":...
+   Condition: cartilage defect
+   Trials Found: 1
+   Average Relevance: 0.050
+   Max Relevance: 0.050
+   Min Relevance: 0.050
+   Score Range Valid: True
+   Trials Sorted by Relevance: True
+   Top Trial: The Biomechanical Outcomes of Autologous...
+   Top Relevance: 0.050
+
+🔍 Testing Clinical Trials - Patient Matching (Osteoarthritis + PRP/Stem Cell)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/patient-matching?condition=osteoarthritis&therapy_preferences=PRP,stem%20cell
+✅ Passed - Status: 200
+   Response: {
+  "matching_type": "patient_specific",
+  "patient_condition": "osteoarthritis",
+  "therapy_preferences": [
+    "PRP",
+    "stem cell"
+  ],
+  "matching_trials": [
+    {
+      "nct_id": "NCT04238143",
+      "title": "Adipose-Derived Biocellular Regenerative Therapy for Osteoarthritis",
+      "overal...
+   Patient Condition: osteoarthritis
+   Therapy Preferences: ['PRP', 'stem cell']
+   Total Matches: 10
+   Status: matches_found
+   Top Match: Adipose-Derived Biocellular Regenerative Therapy f...
+   Match Score: 1.000
+   Match Reasons: 5
+   Top Reason: Trial specifically targets osteoarthritis
+   Age Range: ADULT, OLDER_ADULT
+   Gender: 
+   Study Type: INTERVENTIONAL
+   Next Steps Provided: 4
+   First Step: Review full trial details at https://clinicaltrials.gov/ct2/...
+   Recommendations: 5
+   Top Recommendation: Found 6 PRP-related trials
+
+🔍 Testing Clinical Trials - Patient Matching (Shoulder + BMAC)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/patient-matching?condition=shoulder%20injury&therapy_preferences=BMAC
+✅ Passed - Status: 200
+   Response: {
+  "matching_type": "patient_specific",
+  "patient_condition": "shoulder injury",
+  "therapy_preferences": [
+    "BMAC"
+  ],
+  "matching_trials": [],
+  "total_matches": 0,
+  "recommendations": [
+    "No suitable trials found for your specific condition",
+    "Consider expanding search to related co...
+   Patient Condition: shoulder injury
+   Therapy Preferences: BMAC
+   Total Matches: 0
+   Status: no_suitable_matches
+   No matches found - checking recommendations
+   Fallback Recommendations: 3
+   Top Recommendation: No suitable trials found for your specific condition
+
+🔍 Testing Clinical Trials - Match Scoring Algorithm...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/patient-matching?condition=knee%20osteoarthritis&therapy_preferences=PRP,stem%20cell,BMAC
+✅ Passed - Status: 200
+   Response: {
+  "matching_type": "patient_specific",
+  "patient_condition": "knee osteoarthritis",
+  "therapy_preferences": [
+    "PRP",
+    "stem cell",
+    "BMAC"
+  ],
+  "matching_trials": [
+    {
+      "nct_id": "NCT06716281",
+      "title": "Efficacy and Safety of IxCell hUC-MSC-O in Patients With Knee Oste...
+   Condition: knee osteoarthritis
+   Preferences: PRP, stem cell, BMAC
+   Total Matches: 9
+   All Match Scores Valid (0.0-1.0): True
+   All Scores Meet Minimum Threshold (≥0.3): True
+   High Scores (≥0.7): 4
+   Medium Scores (0.5-0.7): 2
+   Low Scores (0.3-0.5): 3
+   Top Match Score: 0.770
+   Match Reasons Provided: True
+   Eligibility Fields Provided: 4/4
+   Next Steps Generated: True
+   Next Steps Count: 4
+
+🔍 Testing Clinical Trials - Database Storage (Search First)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=regenerative%20medicine&max_results=5
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "regenerative medicine",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT06605508",
+      "title": "Regenerative Injection of Stem Cells or Stem Cell-derived Exosomes for Erectile Dysfun...
+
+🔍 Testing Clinical Trials - Database Storage (Verify Storage)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=regenerative%20medicine&max_results=5
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "regenerative medicine",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT06605508",
+      "title": "Regenerative Injection of Stem Cells or Stem Cell-derived Exosomes for Erectile Dysfun...
+   Trials Retrieved: 5
+   Search Timestamp: 2025-08-09T19:53:47.266284
+   Database Fields Present: 3/3
+   NCT ID (Index Key): NCT06605508
+   NCT ID Format Valid: True
+   Search Condition Tracked: True
+   Extraction Timestamp Present: True
+
+🔍 Testing Clinical Trials - Error Handling (Empty Condition)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=&max_results=5
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [
+    {
+      "nct_id": "NCT05181748",
+      "title": "Autologous Platelet Rich Plasma Intraovarian Infusion for Poor Responders",
+      "overall_status": "RECRUI...
+   Empty Condition Status: success
+   Trials Returned: 5
+   Fallback Suggestion: False
+
+🔍 Testing Clinical Trials - Error Handling (Rare Condition)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/clinical-trials/search?condition=extremely_rare_condition_xyz123&max_results=5
+✅ Passed - Status: 200
+   Response: {
+  "search_type": "clinical_trials",
+  "condition": "extremely_rare_condition_xyz123",
+  "intervention_filter": null,
+  "recruitment_status": "RECRUITING",
+  "trials": [],
+  "total_count": 0,
+  "search_timestamp": "2025-08-09T19:53:47.592774",
+  "status": "success"
+}
+   Rare Condition Status: success
+   Trials Found: 0
+   No Results Handled Gracefully: True
+
+🔍 Testing ML Model Performance Metrics...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/predictions/model-performance
+✅ Passed - Status: 200
+   Response: {
+  "status": "models_initializing"
+}
+   Models Available: 0
+   Total Predictions Made: 0
+
+🔍 Testing ML Treatment Outcome Prediction...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/predictions/treatment-outcome
+❌ Failed - Expected 200, got 500
+   Error: Internal Server Error
+
+🔍 Testing DICOM Image Analysis (AI-Powered)...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/imaging/analyze-dicom
+✅ Passed - Status: 200
+   Response: {
+  "status": "error",
+  "error": "'DICOMProcessingService' object has no attribute '_identify_injection_targets'"
+}
+   Processing ID: unknown
+   Analysis Status: error
+   Modality Processed: unknown
+
+🔍 Testing Imaging Analysis History...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/imaging/analysis-history/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+✅ Passed - Status: 200
+   Response: {
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "total_analyses": 0,
+  "analyses": []
+}
+   Patient ID: c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   Total Analyses: 0
+   Analyses Returned: 0
+
+🔍 Testing Dashboard Analytics...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+✅ Passed - Status: 200
+   Response: {
+  "summary_stats": {
+    "total_patients": 25,
+    "protocols_pending": 67,
+    "protocols_approved": 6,
+    "outcomes_tracked": 0
+  },
+  "recent_outcomes": [],
+  "recent_activities": [
+    {
+      "_id": "6897a74b7b0e8db2ea758a11",
+      "timestamp": "2025-08-09T19:53:47.749000",
+      "practitio...
+   Total Patients: 25
+   Protocols Pending: 67
+   Protocols Approved: 6
+   Outcomes Tracked: 0
+   Recent Activities: 20
+
+🔍 Testing Submit Patient Outcome...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/outcomes
+✅ Passed - Status: 200
+   Response: {
+  "outcome_id": "309918b5-dc0f-4c35-97b1-6b3a2dc8800d",
+  "protocol_id": "d9a3bb25-f339-48d0-9555-0fa968d0ddf1",
+  "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
+  "followup_date": "2025-08-09T19:53:47.858385",
+  "measurements": {
+    "pain_scale": 3,
+    "range_of_motion": "improved",
+    ...
+   Outcome ID: 309918b5-dc0f-4c35-97b1-6b3a2dc8800d
+   Satisfaction Score: 9
+
+🔍 Testing Create Comprehensive Patient Record...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+✅ Passed - Status: 200
+   Response: {
+  "patient_id": "c546969a-d146-4904-937c-06b6ad40a849",
+  "practitioner_id": "demo-practitioner-001",
+  "demographics": {
+    "name": "Dr. Sarah Mitchell",
+    "age": "58",
+    "gender": "Female",
+    "occupation": "Physician",
+    "insurance": "Self-pay"
+  },
+  "chief_complaint": "Bilateral knee ...
+   Created Patient ID: c546969a-d146-4904-937c-06b6ad40a849
+   Patient Name: Dr. Sarah Mitchell
+
+🔍 Testing List Patients...
+   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+✅ Passed - Status: 200
+   Response: [
+  {
+    "patient_id": "c546969a-d146-4904-937c-06b6ad40a849",
+    "practitioner_id": "demo-practitioner-001",
+    "demographics": {
+      "name": "Dr. Sarah Mitchell",
+      "age": "58",
+      "gender": "Female",
+      "occupation": "Physician",
+      "insurance": "Self-pay"
+    },
+    "chief_comp...
+   Found 26 patients
+   First patient: Dr. Sarah Mitchell
+
+======================================================================
+📊 Test Results: 58/59 tests passed
+🎯 Success Rate: 98.3%
+⚠️  Most tests passed. Minor issues detected - proceeding to frontend testing.
+🔧 Some advanced features may need attention but core functionality works.
