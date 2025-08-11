@@ -4516,8 +4516,19 @@ async def generate_explainable_ai_analysis(
         from advanced_services import AdvancedDifferentialDiagnosisEngine
         diagnosis_engine = AdvancedDifferentialDiagnosisEngine(db)
         
-        # Extract data
+        # Extract data - if patient_id provided, fetch from database
         patient_data = analysis_request.get("patient_data", {})
+        patient_id = analysis_request.get("patient_id")
+        
+        # If patient_id provided but no patient_data, fetch from database
+        if patient_id and not patient_data:
+            patient_doc = await db.patients.find_one({"patient_id": patient_id})
+            if patient_doc:
+                patient_data = patient_doc
+                patient_data["patient_id"] = patient_id
+            else:
+                raise HTTPException(status_code=404, detail=f"Patient {patient_id} not found")
+        
         differential_diagnoses = analysis_request.get("differential_diagnoses", [])
         
         # Generate explainable AI analysis
