@@ -593,49 +593,100 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Header with Logo and Dropdown Menu */}
+        <header className="flex items-center justify-between bg-white/90 backdrop-blur-sm shadow-sm rounded-xl p-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+              <Dna className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-900">RegenMed AI Pro</h1>
+              <p className="text-sm text-slate-600">Regenerative Medicine Clinical Decision Support</p>
+            </div>
+          </div>
+          
+          {/* Dropdown Menu */}
+          <div className="relative">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2 min-w-[140px] justify-between">
+                  <div className="flex items-center gap-2">
+                    {activeTab === "dashboard" && <ChartBar className="h-4 w-4" />}
+                    {activeTab === "patient-input" && <User className="h-4 w-4" />}
+                    {activeTab === "file-upload" && <Upload className="h-4 w-4" />}
+                    {activeTab === "patient-analysis" && <Brain className="h-4 w-4" />}
+                    {activeTab === "protocol-generation" && <Pill className="h-4 w-4" />}
+                    {activeTab === "outcome-prediction" && <BarChart3 className="h-4 w-4" />}
+                    {activeTab === "imaging-ai" && <Image className="h-4 w-4" />}
+                    {activeTab === "literature" && <BookOpen className="h-4 w-4" />}
+                    {activeTab === "federated-learning" && <Network className="h-4 w-4" />}
+                    {activeTab === "patients" && <FileText className="h-4 w-4" />}
+                    <span className="text-sm font-medium">
+                      {activeTab === "dashboard" && "Dashboard"}
+                      {activeTab === "patient-input" && "Patient Input"}
+                      {activeTab === "file-upload" && "File Upload"}
+                      {activeTab === "patient-analysis" && "AI Analysis"}
+                      {activeTab === "protocol-generation" && "Protocol Gen"}
+                      {activeTab === "outcome-prediction" && "ML Prediction"}
+                      {activeTab === "imaging-ai" && "Imaging AI"}
+                      {activeTab === "literature" && "Literature"}
+                      {activeTab === "federated-learning" && "Fed Learning"}
+                      {activeTab === "patients" && "Records"}
+                    </span>
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuItem onClick={() => setActiveTab("dashboard")} className="flex items-center gap-2">
+                  <ChartBar className="h-4 w-4" />
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setActiveTab("patient-input")} className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Patient Input
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("file-upload")} className="flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  File Upload
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("patients")} className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Patient Records
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setActiveTab("patient-analysis")} className="flex items-center gap-2">
+                  <Brain className="h-4 w-4" />
+                  AI Analysis
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("protocol-generation")} className="flex items-center gap-2">
+                  <Pill className="h-4 w-4" />
+                  Protocol Generation
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("outcome-prediction")} className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  ML Prediction
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setActiveTab("imaging-ai")} className="flex items-center gap-2">
+                  <Image className="h-4 w-4" />
+                  Imaging AI
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("literature")} className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Literature
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("federated-learning")} className="flex items-center gap-2">
+                  <Network className="h-4 w-4" />
+                  Federated Learning
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-10 bg-white/80 backdrop-blur-sm shadow-sm text-xs">
-            <TabsTrigger value="dashboard" className="flex items-center gap-1 text-slate-800 font-medium data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900">
-              <ChartBar className="h-3 w-3" />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger value="patient-input" className="flex items-center gap-1">
-              <User className="h-3 w-3" />
-              Patient Input
-            </TabsTrigger>
-            <TabsTrigger value="file-upload" className="flex items-center gap-1">
-              <Upload className="h-3 w-3" />
-              File Upload
-            </TabsTrigger>
-            <TabsTrigger value="patient-analysis" className="flex items-center gap-1">
-              <Brain className="h-3 w-3" />
-              AI Analysis
-            </TabsTrigger>
-            <TabsTrigger value="protocol-generation" className="flex items-center gap-1">
-              <Pill className="h-3 w-3" />
-              Protocol Gen
-            </TabsTrigger>
-            <TabsTrigger value="outcome-prediction" className="flex items-center gap-1">
-              <BarChart3 className="h-3 w-3" />
-              ML Prediction
-            </TabsTrigger>
-            <TabsTrigger value="imaging-ai" className="flex items-center gap-1">
-              <Image className="h-3 w-3" />
-              Imaging AI
-            </TabsTrigger>
-            <TabsTrigger value="literature" className="flex items-center gap-1">
-              <BookOpen className="h-3 w-3" />
-              Literature
-            </TabsTrigger>
-            <TabsTrigger value="federated-learning" className="flex items-center gap-1">
-              <Network className="h-3 w-3" />
-              Fed Learning
-            </TabsTrigger>
-            <TabsTrigger value="patients" className="flex items-center gap-1">
-              <FileText className="h-3 w-3" />
-              Records
-            </TabsTrigger>
-          </TabsList>
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
