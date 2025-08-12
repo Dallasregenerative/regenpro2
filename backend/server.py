@@ -407,17 +407,37 @@ Format all responses as valid JSON focused on regenerative medicine applications
         
         prompt += """
 
-**REQUIRED ANALYSIS FORMAT:**
+**REGENERATIVE MEDICINE CLINICAL QUESTION:**
+This patient is seeking regenerative medicine alternatives to traditional treatments. Analyze this case specifically for:
+1. Regenerative medicine differential diagnosis (conditions that respond to PRP, BMAC, stem cells)
+2. Treatment suitability scoring (0-1.0) based on regenerative medicine success rates
+3. Specific injection targets and therapeutic approaches
+4. Success probability predictions with confidence intervals
 
-Provide comprehensive analysis in this exact JSON structure:
+**REQUIRED REGENERATIVE MEDICINE ANALYSIS FORMAT:**
+
+Provide analysis in this exact JSON structure focused on regenerative medicine applications:
 
 {
+    "regenerative_medicine_assessment": {
+        "overall_suitability": 0.85,
+        "primary_regenerative_targets": ["intra-articular space", "peritendinous region", "muscle-tendon junction"],
+        "contraindications": ["none identified"],
+        "healing_capacity_score": 0.78
+    },
     "differential_diagnosis": [
         {
-            "diagnosis": "Primary diagnosis with ICD-10 code",
+            "diagnosis": "Grade 3 Knee Osteoarthritis (M17.1)",
+            "regenerative_suitability": 0.82,
             "probability": 0.85,
-            "supporting_evidence": ["Clinical evidence 1", "Multi-modal finding 2", "Literature support 3"],
-            "mechanism": "Detailed pathophysiological mechanism",
+            "supporting_evidence": ["MRI shows grade 3 changes", "Failed conservative management", "Good joint space preservation"],
+            "mechanism": "Cartilage degradation, synovial inflammation, subchondral bone changes",
+            "regenerative_targets": ["intra-articular PRP injection", "subchondral BMAC treatment", "synovial membrane therapy"],
+            "recommended_therapy": "PRP series + BMAC combination",
+            "success_probability": 0.75,
+            "evidence_level": "Level 2 (Multiple RCTs)",
+            "estimated_improvement": "60-80% pain reduction, 40-60% function improvement"
+        }
             "regenerative_targets": ["Specific tissue target", "Cellular mechanism", "Molecular pathway"]
         },
         {
