@@ -10788,72 +10788,123 @@ class AdvancedDifferentialDiagnosisEngine:
         return evidence_weighted_diagnoses[:5]  # Return top 5 diagnoses
 
     async def _generate_potential_diagnoses(self, diagnostic_clues: List[str], patient_data: Dict) -> List[Dict]:
-        """Generate potential diagnoses based on diagnostic clues"""
+        """Generate potential diagnoses focused on regenerative medicine conditions"""
         
         # Extract key information
         age_category = self._categorize_age(patient_data.get("demographics", {}).get("age", 50))
         chief_complaint = patient_data.get("clinical_presentation", {}).get("chief_complaint", "").lower()
+        symptoms = [s.lower() for s in patient_data.get("symptoms", [])]
+        all_text = " ".join([chief_complaint] + symptoms).lower()
         
-        # Generate diagnosis candidates based on patterns
+        # Generate regenerative medicine-focused diagnosis candidates
         potential_diagnoses = []
         
-        # Osteoarthritis
-        if any(clue in ["degenerative_conditions", "chronic_degenerative", "mechanical_pattern"] for clue in diagnostic_clues) or \
-           any(term in chief_complaint for term in ["knee pain", "joint pain", "stiffness"]):
+        # Grade 1-4 Knee Osteoarthritis (Primary regenerative medicine target)
+        if any(term in all_text for term in ["knee pain", "osteoarthritis", "joint pain", "stiffness", "cartilage"]):
             potential_diagnoses.append({
-                "diagnosis_name": "Osteoarthritis",
-                "icd_10_code": "M17.9",  # Osteoarthritis of knee, unspecified
-                "pattern_match": True
+                "diagnosis_name": "Knee Osteoarthritis with Cartilage Loss",
+                "icd_10_code": "M17.1",  # Unilateral primary osteoarthritis of knee
+                "regenerative_suitability": 0.85,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP", "BMAC", "MSC therapy"]
             })
         
-        # Rheumatoid Arthritis  
-        if any(clue in ["autoimmune_predisposition", "inflammatory_pattern", "elevated_inflammatory_markers"] for clue in diagnostic_clues) or \
-           any(term in chief_complaint for term in ["joint swelling", "morning stiffness"]):
+        # Rotator Cuff Tendinopathy (Excellent PRP response)
+        if any(term in all_text for term in ["shoulder pain", "rotator cuff", "arm weakness", "tendon", "impingement"]):
             potential_diagnoses.append({
-                "diagnosis_name": "Rheumatoid Arthritis",
-                "icd_10_code": "M06.9",  # Rheumatoid arthritis, unspecified
-                "pattern_match": True
+                "diagnosis_name": "Rotator Cuff Tendinopathy with Partial Tears",
+                "icd_10_code": "M75.30",  # Calcific tendinitis of shoulder
+                "regenerative_suitability": 0.88,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP", "Collagen scaffold", "Growth factors"]
             })
         
-        # Rotator Cuff Injury
-        if any(clue in ["post_traumatic_sequelae", "overuse_injuries"] for clue in diagnostic_clues) or \
-           any(term in chief_complaint for term in ["shoulder pain", "rotator cuff", "arm weakness"]):
+        # Chronic Achilles Tendinopathy (High PRP success rate)
+        if any(term in all_text for term in ["achilles", "heel pain", "tendon pain", "running injury"]):
             potential_diagnoses.append({
-                "diagnosis_name": "Rotator Cuff Injury",
-                "icd_10_code": "M75.30",  # Calcific tendinitis of unspecified shoulder
-                "pattern_match": True
+                "diagnosis_name": "Chronic Achilles Tendinopathy",
+                "icd_10_code": "M76.60",  # Achilles tendinitis
+                "regenerative_suitability": 0.82,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP", "Tenotomy", "Sclerotherapy"]
             })
         
-        # Fibromyalgia
-        if any(clue in ["chronic_degenerative", "nerve_involvement"] for clue in diagnostic_clues) or \
-           any(term in chief_complaint for term in ["widespread pain", "tender points", "fatigue"]):
+        # Tennis Elbow / Lateral Epicondylitis (Classic PRP indication)
+        if any(term in all_text for term in ["elbow pain", "tennis elbow", "lateral epicondylitis", "grip weakness"]):
             potential_diagnoses.append({
-                "diagnosis_name": "Fibromyalgia",
-                "icd_10_code": "M79.3",  # Panniculitis, unspecified
-                "pattern_match": True
+                "diagnosis_name": "Lateral Epicondylitis (Tennis Elbow)",
+                "icd_10_code": "M77.1",  # Lateral epicondylitis
+                "regenerative_suitability": 0.90,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP", "Tenex procedure", "Dry needling"]
             })
         
-        # Tendinopathy
-        if any(clue in ["overuse_injuries", "mechanical_pattern"] for clue in diagnostic_clues) or \
-           any(term in chief_complaint for term in ["tendon pain", "activity pain", "chronic pain"]):
+        # Plantar Fasciitis (Good regenerative response)
+        if any(term in all_text for term in ["plantar fasciitis", "heel pain", "foot pain", "morning pain"]):
             potential_diagnoses.append({
-                "diagnosis_name": "Chronic Tendinopathy",
-                "icd_10_code": "M76.9",  # Enthesopathy, unspecified
-                "pattern_match": True
+                "diagnosis_name": "Chronic Plantar Fasciitis",
+                "icd_10_code": "M72.2",  # Plantar fascial fibromatosis
+                "regenerative_suitability": 0.78,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP", "Shockwave", "Tenex"]
             })
         
-        # If no specific patterns match, add general musculoskeletal diagnoses
+        # Hip Osteoarthritis (Emerging regenerative target)
+        if any(term in all_text for term in ["hip pain", "groin pain", "hip stiffness", "walking difficulty"]):
+            potential_diagnoses.append({
+                "diagnosis_name": "Hip Osteoarthritis with Labral Pathology",
+                "icd_10_code": "M16.1",  # Unilateral primary osteoarthritis of hip
+                "regenerative_suitability": 0.75,
+                "pattern_match": True,
+                "preferred_therapies": ["BMAC", "MSC therapy", "Viscosupplementation"]
+            })
+        
+        # Lumbar Disc Degeneration (BMAC target)
+        if any(term in all_text for term in ["back pain", "disc", "sciatica", "lumbar", "nerve pain"]):
+            potential_diagnoses.append({
+                "diagnosis_name": "Lumbar Disc Degeneration with Radiculopathy",
+                "icd_10_code": "M51.36",  # Other intervertebral disc degeneration
+                "regenerative_suitability": 0.70,
+                "pattern_match": True,
+                "preferred_therapies": ["BMAC", "Disc regeneration", "Growth factors"]
+            })
+        
+        # Patellar Tendinopathy (Jumper's Knee)
+        if any(term in all_text for term in ["patellar tendon", "jumper's knee", "kneecap pain", "tendinitis"]):
+            potential_diagnoses.append({
+                "diagnosis_name": "Patellar Tendinopathy (Jumper's Knee)",
+                "icd_10_code": "M76.50",  # Patellar tendinitis
+                "regenerative_suitability": 0.85,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP", "Tenex", "Eccentric training"]
+            })
+        
+        # Carpal Tunnel Syndrome (Emerging regenerative target)
+        if any(term in all_text for term in ["carpal tunnel", "wrist pain", "numbness", "tingling", "median nerve"]):
+            potential_diagnoses.append({
+                "diagnosis_name": "Carpal Tunnel Syndrome with Nerve Compression",
+                "icd_10_code": "G56.00",  # Carpal tunnel syndrome
+                "regenerative_suitability": 0.65,
+                "pattern_match": True,
+                "preferred_therapies": ["PRP injection", "Nerve hydrodissection", "Perineural therapy"]
+            })
+        
+        # If no specific regenerative patterns match, add general musculoskeletal diagnoses
         if not potential_diagnoses:
             potential_diagnoses.extend([
                 {
-                    "diagnosis_name": "Chronic Musculoskeletal Pain",
+                    "diagnosis_name": "Chronic Musculoskeletal Pain Syndrome",
                     "icd_10_code": "M79.3",  # Other specified soft tissue disorders
-                    "pattern_match": False
+                    "regenerative_suitability": 0.60,
+                    "pattern_match": False,
+                    "preferred_therapies": ["PRP", "Prolotherapy", "Trigger point injections"]
                 },
                 {
-                    "diagnosis_name": "Joint Degeneration",
-                    "icd_10_code": "M19.90",  # Unspecified osteoarthritis, unspecified site
-                    "pattern_match": False
+                    "diagnosis_name": "Degenerative Joint Disease",
+                    "icd_10_code": "M19.90",  # Unspecified osteoarthritis
+                    "regenerative_suitability": 0.70,
+                    "pattern_match": False,
+                    "preferred_therapies": ["BMAC", "Viscosupplementation", "PRP"]
                 }
             ])
         
