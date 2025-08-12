@@ -1750,7 +1750,14 @@ IGF-1,180,109-284,ng/mL,Normal"""
         if success:
             diagnosis_id = response.get('diagnosis_id')
             status = response.get('status', 'unknown')
-            differential_diagnoses = response.get('differential_diagnoses', [])
+            
+            # Handle the actual response structure
+            comprehensive_diagnosis = response.get('comprehensive_diagnosis', {})
+            if comprehensive_diagnosis:
+                diagnosis_id = comprehensive_diagnosis.get('diagnosis_id')
+                differential_diagnoses = comprehensive_diagnosis.get('differential_diagnoses', [])
+            else:
+                differential_diagnoses = response.get('differential_diagnoses', [])
             
             print(f"   ✅ Diagnosis Status: {status}")
             print(f"   Diagnosis ID: {diagnosis_id}")
