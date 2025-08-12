@@ -753,6 +753,8 @@ Always format responses as valid JSON with complete protocol details."""
         primary_therapy = therapies[0] if therapies else "PRP"
         
         # Generate realistic protocol based on condition and school
+        protocol_data = None  # Initialize protocol_data
+        
         if condition_type == "knee_osteoarthritis":
             if school == SchoolOfThought.TRADITIONAL_AUTOLOGOUS:
                 protocol_data = {
