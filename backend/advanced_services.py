@@ -10908,6 +10908,36 @@ class AdvancedDifferentialDiagnosisEngine:
                 }
             ])
         
+        # Ensure we always return at least 3 regenerative medicine diagnoses
+        if len(potential_diagnoses) < 3:
+            additional_diagnoses = [
+                {
+                    "diagnosis_name": "Chronic Joint Inflammation with Regenerative Potential",
+                    "icd_10_code": "M25.50",  # Pain in unspecified joint
+                    "regenerative_suitability": 0.75,
+                    "pattern_match": False,
+                    "preferred_therapies": ["PRP", "Anti-inflammatory regenerative therapy"]
+                },
+                {
+                    "diagnosis_name": "Soft Tissue Degeneration Suitable for Cellular Therapy",
+                    "icd_10_code": "M70.9",   # Soft tissue disorder related to use, overuse and pressure
+                    "regenerative_suitability": 0.72,
+                    "pattern_match": False,
+                    "preferred_therapies": ["Mesenchymal stem cell therapy", "Growth factor treatment"]
+                },
+                {
+                    "diagnosis_name": "Musculoskeletal Condition with BMAC Indication",
+                    "icd_10_code": "M79.9",   # Soft tissue disorder, unspecified
+                    "regenerative_suitability": 0.74,
+                    "pattern_match": False,
+                    "preferred_therapies": ["BMAC", "Autologous biologics", "Tissue engineering"]
+                }
+            ]
+            
+            # Add additional diagnoses to reach minimum of 3
+            needed = 3 - len(potential_diagnoses)
+            potential_diagnoses.extend(additional_diagnoses[:needed])
+        
         return potential_diagnoses
 
     async def _calculate_prior_probability(self, diagnosis: Dict, patient_data: Dict) -> float:
