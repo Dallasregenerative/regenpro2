@@ -12877,3 +12877,20 @@ if __name__ == "__main__":
     print("This test validates the specific fix requested in the review")
     print()
     
+
+if __name__ == "__main__":
+    tester = RegenMedAIProTester()
+    
+    # Run the specific protocol generation 500 error fix validation
+    print("🎯 RUNNING PROTOCOL GENERATION 500 ERROR FIX VALIDATION")
+    print("This test validates the specific fix requested in the review")
+    print()
+    
+    success = tester.run_protocol_generation_500_error_fix_validation()
+    
+    if success:
+        print("\n🎉 VALIDATION COMPLETE - PROTOCOL GENERATION 500 ERROR FIX SUCCESSFUL!")
+        sys.exit(0)
+    else:
+        print("\n❌ VALIDATION FAILED - PROTOCOL GENERATION 500 ERROR STILL EXISTS")
+        sys.exit(1)
