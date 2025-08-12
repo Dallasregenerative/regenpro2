@@ -955,48 +955,53 @@ Always format responses as valid JSON with complete protocol details."""
                     "protocol_steps": [
                         {
                             "step_number": 1,
-                            "step_title": "AI-Guided Assessment & Personalization",
-                            "description": "Comprehensive evaluation using AI algorithms to optimize therapy selection based on patient-specific factors, imaging patterns, and biomarkers.",
+                            "therapy": "AI-Guided Assessment & Personalization",
+                            "dosage": "Comprehensive evaluation protocol",
                             "timing": "Day 0",
-                            "duration": "120 minutes",
-                            "requirements": ["AI assessment software", "Biomarker panel", "3D imaging analysis"],
-                            "ai_optimization": "Machine learning algorithm analyzes 15+ variables to predict optimal therapy combination"
+                            "delivery_method": "AI algorithms and biomarker analysis",
+                            "monitoring_parameters": ["AI assessment software", "Biomarker panel", "3D imaging analysis"],
+                            "expected_outcome": "Optimal therapy selection based on patient-specific factors",
+                            "timeframe": "120 minutes"
                         },
                         {
                             "step_number": 2,
-                            "step_title": "Personalized PRP + BMAC Combination",
-                            "description": "AI-determined optimal ratio of PRP and BMAC based on patient profile. Typical combination: 4ml PRP + 2ml BMAC with growth factor optimization.",
+                            "therapy": "Personalized PRP + BMAC Combination",
+                            "dosage": "4ml PRP + 2ml BMAC with growth factor optimization",
                             "timing": "Day 0",
-                            "duration": "90 minutes",
-                            "requirements": ["Dual processing system", "Growth factor analysis", "AI-guided injection mapping"],
-                            "ai_optimization": "Platelet concentration and MSC dose personalized based on patient age, activity level, and disease severity"
+                            "delivery_method": "AI-guided injection mapping",
+                            "monitoring_parameters": ["Dual processing system", "Growth factor analysis", "Injection site monitoring"],
+                            "expected_outcome": "Optimal platelet and MSC delivery",
+                            "timeframe": "90 minutes"
                         },
                         {
                             "step_number": 3,
-                            "step_title": "Smart Monitoring & Adaptive Dosing",
-                            "description": "Wearable sensor monitoring of activity, pain patterns, and inflammation markers. AI algorithm adjusts follow-up timing and dosing.",
+                            "therapy": "Smart Monitoring & Adaptive Dosing",
+                            "dosage": "Continuous monitoring protocol",
                             "timing": "Weeks 1-8",
-                            "duration": "Continuous",
-                            "requirements": ["Wearable devices", "Mobile app integration", "Real-time data analysis"],
-                            "ai_optimization": "Machine learning tracks 500+ data points to predict optimal retreatment timing"
+                            "delivery_method": "Wearable sensor monitoring",
+                            "monitoring_parameters": ["Activity patterns", "Pain levels", "Inflammation markers"],
+                            "expected_outcome": "Real-time treatment optimization",
+                            "timeframe": "Continuous"
                         },
                         {
                             "step_number": 4,
-                            "step_title": "AI-Triggered Booster Therapy",
-                            "description": "Secondary injection triggered by AI algorithm when data indicates optimal biological window. May be PRP, BMAC, or exosome based on response pattern.",
+                            "therapy": "AI-Triggered Booster Therapy",
+                            "dosage": "Variable based on AI analysis (PRP, BMAC, or exosome)",
                             "timing": "AI-determined (typically 4-8 weeks)",
-                            "duration": "45 minutes",
-                            "requirements": ["AI decision support", "Real-time biomarker analysis"],
-                            "ai_optimization": "Treatment type and timing optimized for 89% success rate vs 72% for standard protocols"
+                            "delivery_method": "AI decision support guided injection",
+                            "monitoring_parameters": ["Real-time biomarker analysis", "Response pattern assessment"],
+                            "expected_outcome": "Optimized retreatment timing and type",
+                            "timeframe": "45 minutes"
                         },
                         {
                             "step_number": 5,
-                            "step_title": "Predictive Outcome Modeling",
-                            "description": "AI-powered long-term outcome prediction with personalized maintenance schedule. Continuous learning from treatment response.",
+                            "therapy": "Predictive Outcome Modeling",
+                            "dosage": "AI-powered outcome prediction",
                             "timing": "Month 3-6",
-                            "duration": "30 minutes monthly",
-                            "requirements": ["AI outcome prediction", "Patient-reported outcome measures"],
-                            "ai_optimization": "Predictive accuracy >90% for 2-year outcomes based on 3-month data"
+                            "delivery_method": "AI outcome prediction algorithms",
+                            "monitoring_parameters": ["Patient-reported outcome measures", "Long-term tracking"],
+                            "expected_outcome": "Personalized maintenance schedule",
+                            "timeframe": "30 minutes monthly"
                         }
                     ],
                     "supporting_evidence": [
