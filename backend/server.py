@@ -765,48 +765,53 @@ Always format responses as valid JSON with complete protocol details."""
                     "protocol_steps": [
                         {
                             "step_number": 1,
-                            "step_title": "Initial Assessment & Preparation",
-                            "description": "Complete clinical assessment with imaging review. Obtain informed consent and establish baseline pain/function scores.",
+                            "therapy": "Initial Assessment & Preparation",
+                            "dosage": "Complete clinical assessment protocol",
                             "timing": "Day 0",
-                            "duration": "60 minutes",
-                            "requirements": ["Informed consent", "VAS pain score", "WOMAC questionnaire"],
-                            "contraindications_check": ["Active infection", "Anticoagulation therapy"]
+                            "delivery_method": "Clinical assessment with imaging review",
+                            "monitoring_parameters": ["Informed consent", "VAS pain score", "WOMAC questionnaire"],
+                            "expected_outcome": "Baseline assessment and treatment planning",
+                            "timeframe": "60 minutes"
                         },
                         {
                             "step_number": 2,
-                            "step_title": "PRP Preparation & Injection #1",
-                            "description": "Draw 60ml venous blood, process with dual-spin technique to achieve 3-5x platelet concentration. Intra-articular injection of 5-7ml PRP under ultrasound guidance.",
+                            "therapy": "PRP Preparation & Injection #1",
+                            "dosage": "5-7ml PRP (3-5x platelet concentration)",
                             "timing": "Day 0",
-                            "duration": "45 minutes",
-                            "requirements": ["Ultrasound guidance", "Sterile technique", "22-gauge needle"],
-                            "post_procedure": ["Ice application", "Activity modification for 48 hours"]
+                            "delivery_method": "Intra-articular injection under ultrasound guidance",
+                            "monitoring_parameters": ["Ultrasound guidance", "Sterile technique", "22-gauge needle"],
+                            "expected_outcome": "Initial PRP delivery and tissue regeneration initiation",
+                            "timeframe": "45 minutes"
                         },
                         {
                             "step_number": 3,
-                            "step_title": "Follow-up & Assessment",
-                            "description": "Clinical assessment of response, pain levels, and functional improvement. Document any adverse reactions.",
+                            "therapy": "Follow-up & Assessment",
+                            "dosage": "Clinical evaluation",
                             "timing": "Week 2",
-                            "duration": "30 minutes",
-                            "requirements": ["Pain assessment", "Range of motion testing"],
-                            "next_steps": ["Schedule second injection if appropriate"]
+                            "delivery_method": "Clinical assessment and monitoring",
+                            "monitoring_parameters": ["Pain assessment", "Range of motion testing"],
+                            "expected_outcome": "Treatment response evaluation",
+                            "timeframe": "30 minutes"
                         },
                         {
                             "step_number": 4,
-                            "step_title": "PRP Injection #2 (if indicated)",  
-                            "description": "Second PRP injection if initial response is positive but incomplete. Same preparation and injection technique.",
+                            "therapy": "PRP Injection #2 (if indicated)",
+                            "dosage": "5-7ml PRP (second injection)",
                             "timing": "Week 4-6",
-                            "duration": "45 minutes",
-                            "requirements": ["Positive initial response", "Continued symptoms"],
-                            "post_procedure": ["Continue activity modification", "Progressive rehabilitation"]
+                            "delivery_method": "Same preparation and injection technique",
+                            "monitoring_parameters": ["Positive initial response", "Continued symptoms"],
+                            "expected_outcome": "Enhanced treatment response",
+                            "timeframe": "45 minutes"
                         },
                         {
                             "step_number": 5,
-                            "step_title": "Outcome Assessment",
-                            "description": "Comprehensive outcome evaluation with validated scoring systems. Document success rate and patient satisfaction.",
+                            "therapy": "Outcome Assessment",
+                            "dosage": "Comprehensive outcome evaluation",
                             "timing": "Week 12",
-                            "duration": "30 minutes",
-                            "requirements": ["WOMAC questionnaire", "Patient satisfaction survey"],
-                            "outcomes_measured": ["Pain reduction", "Functional improvement", "Quality of life"]
+                            "delivery_method": "Validated scoring systems and documentation",
+                            "monitoring_parameters": ["WOMAC questionnaire", "Patient satisfaction survey"],
+                            "expected_outcome": "Treatment success documentation",
+                            "timeframe": "30 minutes"
                         }
                     ],
                     "supporting_evidence": [
