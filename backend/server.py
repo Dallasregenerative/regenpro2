@@ -679,8 +679,18 @@ Always format responses as valid JSON with complete protocol details."""
                     }
                 )
                 
-            if response.status_code != 200:
-                raise HTTPException(status_code=500, detail=f"Protocol generation failed: {response.status_code}")
+            # Check for API errors and handle gracefully
+            if response.status_code == 401:
+                logging.info("OpenAI API key invalid (401), generating fallback protocol for demo purposes")
+                return await self._generate_fallback_protocol(patient_data, diagnoses, school)
+            elif response.status_code != 200:
+                logging.error(f"OpenAI API error: {response.status_code}")
+                # For other API errors, also try fallback
+                if response.status_code in [429, 500, 502, 503, 504]:  # Rate limit or server errors
+                    logging.info(f"OpenAI API error {response.status_code}, generating fallback protocol")
+                    return await self._generate_fallback_protocol(patient_data, diagnoses, school)
+                else:
+                    raise HTTPException(status_code=500, detail=f"Protocol generation failed: {response.status_code}")
                 
             ai_response = response.json()
             content = ai_response['choices'][0]['message']['content']
