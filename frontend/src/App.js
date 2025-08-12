@@ -1103,26 +1103,44 @@ function App() {
                   </CardHeader>
                   
                   <CardContent>
+                    {/* Progressive Status Display */}
                     {aiAnalysisLoading && (
-                      <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                        <div className="flex items-center gap-4">
-                          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-                          <div className="space-y-2">
-                            <h3 className="text-lg font-semibold">AI Clinical Analysis in Progress</h3>
-                            <p className="text-slate-600">Processing multi-modal patient data...</p>
-                          </div>
+                      <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+                          <h3 className="font-semibold text-blue-900">AI Analysis in Progress</h3>
                         </div>
-                        <div className="w-full max-w-md">
-                          <Progress value={66} className="h-2" />
-                          <p className="text-xs text-slate-500 mt-2 text-center">
-                            Running comprehensive analysis • Differential diagnosis • Explainable AI
-                          </p>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            {patientAnalysis && patientAnalysis.status !== "analyzing" ? (
+                              <Badge className="bg-green-100 text-green-800">✓</Badge>
+                            ) : (
+                              <Loader2 className="h-3 w-3 animate-spin text-blue-600" />
+                            )}
+                            <span>Patient Analysis</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {aiDifferentialDiagnosis && aiDifferentialDiagnosis.status !== "analyzing" ? (
+                              <Badge className="bg-green-100 text-green-800">✓</Badge>
+                            ) : (
+                              <Loader2 className="h-3 w-3 animate-spin text-blue-600" />
+                            )}
+                            <span>Differential Diagnosis</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {explainableAiResults && explainableAiResults.status !== "analyzing" ? (
+                              <Badge className="bg-green-100 text-green-800">✓</Badge>
+                            ) : (
+                              <Loader2 className="h-3 w-3 animate-spin text-blue-600" />
+                            )}
+                            <span>Explainable AI</span>
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {/* Advanced Differential Diagnosis Results */}
-                    {aiDifferentialDiagnosis && (
+                    {aiDifferentialDiagnosis && aiDifferentialDiagnosis.comprehensive_diagnosis && (
                       <div className="space-y-6 mb-8">
                         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
                           <h3 className="text-xl font-bold flex items-center gap-2 mb-4">
@@ -1131,23 +1149,23 @@ function App() {
                           </h3>
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {aiDifferentialDiagnosis.comprehensive_diagnoses?.slice(0, 4).map((diagnosis, index) => (
+                            {aiDifferentialDiagnosis.comprehensive_diagnosis.differential_diagnoses?.slice(0, 4).map((diagnosis, index) => (
                               <Card key={index} className="border-l-4 border-l-blue-500 bg-white/80">
                                 <CardContent className="pt-4">
                                   <div className="flex items-start justify-between mb-3">
                                     <div className="space-y-1">
-                                      <h4 className="text-lg font-semibold text-blue-900">{diagnosis.condition}</h4>
+                                      <h4 className="text-lg font-semibold text-blue-900">{diagnosis.diagnosis}</h4>
                                       <p className="text-sm text-blue-700">
                                         ICD-10: {diagnosis.icd_10_code}
                                       </p>
                                     </div>
-                                    <Badge className={`${getConfidenceColor(diagnosis.confidence_score)} font-medium`}>
-                                      {Math.round(diagnosis.confidence_score * 100)}%
+                                    <Badge className={`${getConfidenceColor(diagnosis.posterior_probability)} font-medium`}>
+                                      {Math.round(diagnosis.posterior_probability * 100)}%
                                     </Badge>
                                   </div>
                                   
                                   <p className="text-slate-700 mb-3 text-sm bg-slate-50 p-3 rounded">
-                                    {diagnosis.clinical_reasoning}
+                                    {diagnosis.diagnostic_reasoning}
                                   </p>
                                   
                                   <div className="space-y-2">
