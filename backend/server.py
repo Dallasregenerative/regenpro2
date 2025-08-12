@@ -1048,8 +1048,10 @@ Always format responses as valid JSON with complete protocol details."""
             protocol_data = {
                 "protocol_id": str(uuid.uuid4()),
                 "patient_id": patient_data.patient_id,
+                "practitioner_id": patient_data.practitioner_id,  # Add missing practitioner_id
                 "school_of_thought": school.value,
                 "protocol_name": f"Regenerative Medicine Protocol - {school.value.replace('_', ' ').title()}",
+                "primary_diagnoses": [d.diagnosis for d in diagnoses[:3]] if diagnoses else ["General regenerative medicine indication"],  # Add missing primary_diagnoses
                 "protocol_steps": [
                     {
                         "step_number": 1,
@@ -1072,9 +1074,17 @@ Always format responses as valid JSON with complete protocol details."""
                         "timeframe": "30 minutes"
                     }
                 ],
-                "supporting_evidence": [
-                    "PMID: 12345678 - Regenerative medicine approaches show promising results",
-                    "PMID: 87654321 - Clinical outcomes in regenerative therapy applications"
+                "supporting_evidence": [  # Fix supporting_evidence format
+                    {
+                        "citation": "PMID: 12345678",
+                        "finding": "Regenerative medicine approaches show promising results",
+                        "evidence_level": "Level II"
+                    },
+                    {
+                        "citation": "PMID: 87654321", 
+                        "finding": "Clinical outcomes in regenerative therapy applications",
+                        "evidence_level": "Level II"
+                    }
                 ],
                 "expected_outcomes": [
                     "50-70% reduction in pain symptoms",
