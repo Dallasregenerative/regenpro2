@@ -1203,6 +1203,9 @@ function App() {
                             Explainable AI Transparency
                           </h3>
                           
+                          {/* Debug logging */}
+                          {console.log("🔍 Debug - explainableAiResults:", explainableAiResults)}
+                          
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card className="bg-white/80">
                               <CardContent className="pt-4">
@@ -1211,15 +1214,17 @@ function App() {
                                   AI Decision Factors
                                 </h4>
                                 <div className="space-y-3">
-                                  {explainableAiResults.enhanced_explanation.feature_importance?.features?.slice(0, 5).map((factor, index) => (
+                                  {(explainableAiResults.enhanced_explanation.feature_importance?.features || []).slice(0, 5).map((factor, index) => (
                                     <div key={index} className="space-y-1">
                                       <div className="flex justify-between items-center">
-                                        <span className="text-sm font-medium">{factor.feature_name}</span>
+                                        <span className="text-sm font-medium">
+                                          {factor.feature_name || factor.feature || `Feature ${index + 1}`}
+                                        </span>
                                         <span className="text-xs text-slate-600">
-                                          {Math.round(factor.importance_score * 100)}%
+                                          {Math.round((factor.importance_score || factor.importance || 0) * 100)}%
                                         </span>
                                       </div>
-                                      <Progress value={factor.importance_score * 100} className="h-2" />
+                                      <Progress value={(factor.importance_score || factor.importance || 0) * 100} className="h-2" />
                                     </div>
                                   ))}
                                 </div>
