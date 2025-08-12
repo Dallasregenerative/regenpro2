@@ -1204,10 +1204,6 @@ function App() {
                             <Eye className="h-5 w-5 text-purple-600" />
                             Explainable AI Transparency
                           </h3>
-                          
-                          {/* Debug logging */}
-                          {console.log("🔍 Debug - explainableAiResults:", explainableAiResults)}
-                          
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Card className="bg-white/80">
                               <CardContent className="pt-4">
