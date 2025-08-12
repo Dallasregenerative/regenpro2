@@ -859,48 +859,53 @@ Always format responses as valid JSON with complete protocol details."""
                     "protocol_steps": [
                         {
                             "step_number": 1,
-                            "step_title": "Comprehensive Assessment & MSC Source Selection",
-                            "description": "Complete evaluation with MRI assessment of cartilage status. Select optimal MSC source (Wharton's jelly vs umbilical cord) based on patient factors.",
+                            "therapy": "Comprehensive Assessment & MSC Source Selection",
+                            "dosage": "Complete evaluation protocol",
                             "timing": "Day 0",
-                            "duration": "90 minutes",
-                            "requirements": ["Recent MRI", "Complete blood work", "Informed consent for cellular therapy"],
-                            "contraindications_check": ["Malignancy history", "Immunosuppression", "Active infection"]
+                            "delivery_method": "MRI assessment and clinical evaluation",
+                            "monitoring_parameters": ["Recent MRI", "Complete blood work", "Informed consent for cellular therapy"],
+                            "expected_outcome": "Optimal MSC source selection",
+                            "timeframe": "90 minutes"
                         },
                         {
                             "step_number": 2,
-                            "step_title": "Wharton's Jelly MSC Injection",
-                            "description": "Intra-articular injection of 2-4 million Wharton's jelly-derived mesenchymal stem cells in hyaluronic acid carrier. Ultrasound-guided delivery to ensure optimal placement.",
+                            "therapy": "Wharton's Jelly MSC Injection",
+                            "dosage": "2-4 million Wharton's jelly-derived mesenchymal stem cells",
                             "timing": "Day 0",
-                            "duration": "60 minutes",
-                            "requirements": ["Sterile surgical suite", "MSC viability >85%", "Ultrasound guidance"],
-                            "post_procedure": ["48-hour activity restriction", "Anti-inflammatory protocol"]
+                            "delivery_method": "Intra-articular injection with ultrasound guidance",
+                            "monitoring_parameters": ["Sterile surgical suite", "MSC viability >85%", "Ultrasound guidance"],
+                            "expected_outcome": "Optimal MSC delivery and engraftment",
+                            "timeframe": "60 minutes"
                         },
                         {
                             "step_number": 3,
-                            "step_title": "Exosome Boost Therapy",
-                            "description": "Additional injection of MSC-derived exosomes to enhance paracrine signaling and tissue regeneration. 1 billion particle dose.",
+                            "therapy": "Exosome Boost Therapy",
+                            "dosage": "1 billion particle dose MSC-derived exosomes",
                             "timing": "Week 4",
-                            "duration": "30 minutes",
-                            "requirements": ["Documented initial MSC engraftment", "No adverse reactions"],
-                            "rationale": "Exosomes provide sustained growth factor delivery and anti-inflammatory effects"
+                            "delivery_method": "Targeted injection for paracrine signaling",
+                            "monitoring_parameters": ["Documented initial MSC engraftment", "No adverse reactions"],
+                            "expected_outcome": "Enhanced tissue regeneration and growth factor delivery",
+                            "timeframe": "30 minutes"
                         },
                         {
                             "step_number": 4,
-                            "step_title": "Progressive Monitoring & Rehabilitation",
-                            "description": "Structured rehabilitation program with regular imaging to monitor tissue regeneration and functional improvement.",
+                            "therapy": "Progressive Monitoring & Rehabilitation",
+                            "dosage": "Structured rehabilitation program",
                             "timing": "Weeks 2-16",
-                            "duration": "Ongoing",
-                            "requirements": ["Weekly PT sessions", "Monthly clinical assessments"],
-                            "milestones": ["Week 4: Inflammation resolution", "Week 8: Early regeneration signs", "Week 16: Functional improvements"]
+                            "delivery_method": "Regular imaging and functional monitoring",
+                            "monitoring_parameters": ["Weekly PT sessions", "Monthly clinical assessments"],
+                            "expected_outcome": "Tissue regeneration and functional improvement",
+                            "timeframe": "Ongoing"
                         },
                         {
                             "step_number": 5,
-                            "step_title": "Comprehensive Outcome Analysis",
-                            "description": "MRI assessment of cartilage regeneration, functional testing, and long-term outcome prediction.",
+                            "therapy": "Comprehensive Outcome Analysis",
+                            "dosage": "Complete outcome evaluation",
                             "timing": "Month 6",
-                            "duration": "60 minutes",
-                            "requirements": ["Repeat MRI with T2 mapping", "Functional capacity testing"],
-                            "outcomes_measured": ["Cartilage thickness", "T2 relaxation times", "Functional scores"]
+                            "delivery_method": "MRI assessment and functional testing",
+                            "monitoring_parameters": ["Repeat MRI with T2 mapping", "Functional capacity testing"],
+                            "expected_outcome": "Long-term outcome prediction and assessment",
+                            "timeframe": "60 minutes"
                         }
                     ],
                     "supporting_evidence": [
