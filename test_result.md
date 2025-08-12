@@ -407,12 +407,15 @@ backend:
 
   - task: "Protocol Generation System"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 3
     priority: "high"
     needs_retesting: false
     status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE CONFIRMED - Protocol generation 500 error validation completed. Root cause identified: Invalid OpenAI API key ('your-ope************here' placeholder) causing 401 Unauthorized errors from OpenAI API. Fallback mechanism exists in code (_generate_fallback_protocol method) but fails silently instead of providing production-quality protocols. Tested Sarah Johnson (44-year-old with shoulder tendinopathy) as specified in review request: (1) ❌ Traditional Autologous (PRP Protocol) - 500 error, (2) ❌ Biologics (MSC/Exosome Protocol) - 500 error, (3) ❌ AI-Optimized (AI-guided Combination) - 500 error. Backend logs show 'Protocol generation failed:' with empty error message. This matches exactly the critical production blocker described in the review request. The fallback system needs to be fixed to properly handle OpenAI API failures and provide realistic protocol data with specific dosages, costs, timelines, evidence citations, and PMID references."
       - working: true
         agent: "testing"
         comment: "✅ PASSED - All protocol generation schools working: Traditional Autologous (PRP/BMAC), Biologics (Wharton's Jelly MSCs), AI-Optimized, and Experimental. Protocols include detailed steps, dosing, timing, evidence integration, cost estimates, and confidence scores (0.85). Protocol approval workflow functional."
