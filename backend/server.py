@@ -854,16 +854,7 @@ Always format responses as valid JSON with complete protocol details."""
                         "Obtain proper informed consent documenting off-label use",
                         "Document medical necessity and failed conservative treatments"
                     ],
-                    "cost_estimate": {
-                        "total_cost": "$2000-4000",
-                        "breakdown": {
-                            "PRP preparation": "$800-1200 per injection",
-                            "Injection procedure": "$400-600 per session",
-                            "Ultrasound guidance": "$200-300 per session",
-                            "Follow-up visits": "$150-250 per visit"
-                        },
-                        "insurance_coverage": "Typically not covered - cash pay procedure"
-                    },
+                    "cost_estimate": "$2,000 - $4,000",
                     "confidence_score": 0.85,
                     "ai_reasoning": "High-quality protocol based on current evidence for PRP in knee osteoarthritis. Traditional autologous approach focuses on proven, FDA-compliant therapies with strong safety profile. Expected success rate of 70-80% for appropriate candidates."
                 }
