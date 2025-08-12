@@ -5200,7 +5200,7 @@ class PersonalizedRiskAssessment:
 class RegenerativeMedicineAI:
     def __init__(self):
         self.base_url = "https://api.openai.com/v1"
-        self.api_key = "your-api-key-here"  # In production, use environment variable
+        self.api_key = os.getenv('OPENAI_API_KEY', 'your-api-key-here')  # Load from environment
 
 # Federated Learning Models
 class FederatedLearningService:
