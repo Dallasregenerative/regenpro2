@@ -12880,10 +12880,10 @@ if __name__ == "__main__":
     success = tester.run_protocol_generation_500_error_fix_validation()
     
     if success:
-        print("
+        print("\
 🎉 VALIDATION COMPLETE - PROTOCOL GENERATION 500 ERROR FIX SUCCESSFUL!")
         sys.exit(0)
     else:
-        print("
+        print("\
 ❌ VALIDATION FAILED - PROTOCOL GENERATION 500 ERROR STILL EXISTS")
         sys.exit(1)
