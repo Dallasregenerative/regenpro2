@@ -1200,8 +1200,8 @@ function App() {
                       </div>
                     )}
 
-                    {/* Explainable AI Results */}
-                    {explainableAiResults && explainableAiResults.enhanced_explanation && (
+                    {/* Explainable AI Results - Multiple Data Structure Support */}
+                    {explainableAiResults && (
                       <div className="space-y-6 mb-8">
                         <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg">
                           <h3 className="text-xl font-bold flex items-center gap-2 mb-4">
@@ -1220,17 +1220,22 @@ function App() {
                                   AI Decision Factors
                                 </h4>
                                 <div className="space-y-3">
-                                  {(explainableAiResults.enhanced_explanation.feature_importance?.features || []).slice(0, 5).map((factor, index) => (
+                                  {(
+                                    explainableAiResults.enhanced_explanation?.feature_importance?.features ||
+                                    explainableAiResults.feature_importance?.features ||
+                                    explainableAiResults.feature_importance ||
+                                    []
+                                  ).slice(0, 5).map((factor, index) => (
                                     <div key={index} className="space-y-1">
                                       <div className="flex justify-between items-center">
                                         <span className="text-sm font-medium">
-                                          {factor.feature_name || factor.feature || `Feature ${index + 1}`}
+                                          {factor.feature_name || factor.feature || `Factor ${index + 1}`}
                                         </span>
                                         <span className="text-xs text-slate-600">
-                                          {Math.round((factor.importance_score || factor.importance || 0) * 100)}%
+                                          {Math.round((factor.importance_score || factor.importance || 0.5) * 100)}%
                                         </span>
                                       </div>
-                                      <Progress value={(factor.importance_score || factor.importance || 0) * 100} className="h-2" />
+                                      <Progress value={(factor.importance_score || factor.importance || 0.5) * 100} className="h-2" />
                                     </div>
                                   ))}
                                 </div>
