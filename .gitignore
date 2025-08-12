@@ -49,6 +49,15 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 *test_results*.log
+*_test_results.log
+*_results.log  
+*validation*.log
+comprehensive_test_results.log
+critical_fixes_test.log
+focused_test_results.log
+gap_test_results.log
+test_output.log
+final_validation_results.log
 dump.rdb
 
 # System files
