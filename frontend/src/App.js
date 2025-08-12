@@ -1251,14 +1251,22 @@ function App() {
                                 <div className="space-y-3">
                                   <div className="text-center">
                                     <div className="text-2xl font-bold text-green-600 mb-1">
-                                      {Math.round((explainableAiResults.enhanced_explanation.transparency_score || 0.85) * 100)}%
+                                      {Math.round((
+                                        explainableAiResults.enhanced_explanation?.transparency_score ||
+                                        explainableAiResults.transparency_score ||
+                                        explainableAiResults.confidence_score ||
+                                        0.85
+                                      ) * 100)}%
                                     </div>
                                     <p className="text-sm text-slate-600">AI Transparency Score</p>
                                   </div>
                                   <div className="bg-slate-50 p-3 rounded text-sm">
                                     <p className="font-medium mb-2">AI Reasoning:</p>
                                     <p className="text-slate-700">
-                                      {explainableAiResults.enhanced_explanation.explanation_summary || "Comprehensive analysis based on patient data, symptoms, and evidence-based medical knowledge."}
+                                      {explainableAiResults.enhanced_explanation?.explanation_summary ||
+                                       explainableAiResults.explanation_summary ||
+                                       explainableAiResults.ai_reasoning ||
+                                       "Comprehensive analysis based on patient data, symptoms, and evidence-based medical knowledge."}
                                     </p>
                                   </div>
                                 </div>
