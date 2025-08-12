@@ -1283,7 +1283,7 @@ function App() {
                         <Alert className="bg-blue-50 border-blue-200">
                           <Brain className="h-4 w-4" />
                           <AlertDescription>
-                            Basic AI analysis complete. {patientAnalysis.diagnostic_results.length} diagnostic possibilities identified. 
+                            Basic AI analysis complete. {(patientAnalysis.diagnostic_results || []).length} diagnostic possibilities identified. 
                             <Button variant="link" className="p-0 h-auto font-normal" onClick={() => runIntegratedAiAnalysis(selectedPatient.patient_id)}>
                               Run advanced analysis for more insights.
                             </Button>
@@ -1296,23 +1296,25 @@ function App() {
                             Basic Diagnostic Results
                           </h3>
                           
-                          {patientAnalysis.diagnostic_results.map((result, index) => (
+                          {(patientAnalysis.diagnostic_results || []).map((result, index) => (
                             <Card key={index} className="border-l-4 border-l-indigo-500 bg-gradient-to-r from-indigo-50 to-purple-50">
                               <CardContent className="pt-4">
                                 <div className="flex items-start justify-between mb-3">
                                   <div className="space-y-1">
-                                    <h4 className="text-lg font-semibold text-indigo-900">{result.diagnosis}</h4>
+                                    <h4 className="text-lg font-semibold text-indigo-900">
+                                      {typeof result.diagnosis === 'string' ? result.diagnosis : JSON.stringify(result.diagnosis)}
+                                    </h4>
                                     <p className="text-sm text-indigo-700">
                                       Regenerative Medicine Candidate
                                     </p>
                                   </div>
-                                  <Badge className={`${getConfidenceColor(result.confidence_score)} font-medium`}>
-                                    {Math.round(result.confidence_score * 100)}% Confidence
+                                  <Badge className={`${getConfidenceColor(result.confidence_score || 0.5)} font-medium`}>
+                                    {Math.round((result.confidence_score || 0.5) * 100)}% Confidence
                                   </Badge>
                                 </div>
                                 
                                 <p className="text-slate-700 mb-4 bg-white/50 p-3 rounded-lg">
-                                  {result.reasoning}
+                                  {typeof result.reasoning === 'string' ? result.reasoning : JSON.stringify(result.reasoning)}
                                 </p>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -1322,10 +1324,12 @@ function App() {
                                       Supporting Evidence
                                     </h5>
                                     <ul className="space-y-1">
-                                      {result.supporting_evidence.map((evidence, i) => (
+                                      {(result.supporting_evidence || []).map((evidence, i) => (
                                         <li key={i} className="flex items-start gap-2">
                                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                                          <span className="text-slate-600">{evidence}</span>
+                                          <span className="text-slate-600">
+                                            {typeof evidence === 'string' ? evidence : JSON.stringify(evidence)}
+                                          </span>
                                         </li>
                                       ))}
                                     </ul>
@@ -1337,10 +1341,12 @@ function App() {
                                       Regenerative Targets
                                     </h5>
                                     <ul className="space-y-1">
-                                      {result.regenerative_targets?.map((target, i) => (
+                                      {(result.regenerative_targets || []).map((target, i) => (
                                         <li key={i} className="flex items-start gap-2">
                                           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                          <span className="text-slate-600">{target}</span>
+                                          <span className="text-slate-600">
+                                            {typeof target === 'string' ? target : JSON.stringify(target)}
+                                          </span>
                                         </li>
                                       ))}
                                     </ul>
