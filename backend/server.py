@@ -1113,18 +1113,19 @@ Always format responses as valid JSON with complete protocol details."""
         # Create RegenerativeProtocol object
         protocol = RegenerativeProtocol(
             protocol_id=protocol_data["protocol_id"],
-            patient_id=protocol_data["patient_id"],
-            school_of_thought=protocol_data["school_of_thought"],
-            protocol_name=protocol_data["protocol_name"],
-            protocol_steps=[ProtocolStep(**step) for step in protocol_data["protocol_steps"]],
-            supporting_evidence=protocol_data["supporting_evidence"],
-            expected_outcomes=protocol_data["expected_outcomes"],
-            timeline_predictions=protocol_data["timeline_predictions"],
-            contraindications=protocol_data["contraindications"],
-            legal_warnings=protocol_data["legal_warnings"],
-            cost_estimate=protocol_data["cost_estimate"],
-            confidence_score=protocol_data["confidence_score"],
-            ai_reasoning=protocol_data["ai_reasoning"]
+            patient_id=patient_data.patient_id,
+            practitioner_id=patient_data.practitioner_id,
+            school_of_thought=school,
+            primary_diagnoses=protocol_data.get("primary_diagnoses", [d.diagnosis for d in diagnoses[:3]] if diagnoses else ["General regenerative medicine indication"]),
+            protocol_steps=[ProtocolStep(**step) for step in protocol_data.get('protocol_steps', [])],
+            supporting_evidence=protocol_data.get('supporting_evidence', []),
+            expected_outcomes=protocol_data.get('expected_outcomes', []),
+            timeline_predictions=protocol_data.get('timeline_predictions', {}),
+            contraindications=protocol_data.get('contraindications', []),
+            legal_warnings=protocol_data.get('legal_warnings', []),
+            cost_estimate=protocol_data.get('cost_estimate'),
+            confidence_score=protocol_data.get('confidence_score', 0.8),
+            ai_reasoning=protocol_data.get('ai_reasoning', 'Protocol generated based on current evidence and best practices.')
         )
         
         return protocol
