@@ -1139,8 +1139,8 @@ function App() {
                       </div>
                     )}
 
-                    {/* Advanced Differential Diagnosis Results */}
-                    {aiDifferentialDiagnosis && aiDifferentialDiagnosis.comprehensive_diagnosis && (
+                    {/* Advanced Differential Diagnosis Results - Multiple Data Structure Support */}
+                    {aiDifferentialDiagnosis && (
                       <div className="space-y-6 mb-8">
                         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
                           <h3 className="text-xl font-bold flex items-center gap-2 mb-4">
@@ -1152,16 +1152,22 @@ function App() {
                           {console.log("🔍 Debug - aiDifferentialDiagnosis:", aiDifferentialDiagnosis)}
                           
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {aiDifferentialDiagnosis.comprehensive_diagnosis.differential_diagnoses?.slice(0, 4).map((diagnosis, index) => (
+                            {/* Handle multiple possible data structures */}
+                            {(
+                              aiDifferentialDiagnosis.comprehensive_diagnosis?.differential_diagnoses ||
+                              aiDifferentialDiagnosis.differential_diagnoses ||
+                              aiDifferentialDiagnosis.comprehensive_diagnoses ||
+                              []
+                            ).slice(0, 4).map((diagnosis, index) => (
                               <Card key={index} className="border-l-4 border-l-blue-500 bg-white/80">
                                 <CardContent className="pt-4">
                                   <div className="flex items-start justify-between mb-3">
                                     <div className="space-y-1">
                                       <h4 className="text-lg font-semibold text-blue-900">
-                                        {typeof diagnosis.diagnosis === 'string' ? diagnosis.diagnosis : JSON.stringify(diagnosis.diagnosis)}
+                                        {diagnosis.diagnosis || diagnosis.condition || `Diagnosis ${index + 1}`}
                                       </h4>
                                       <p className="text-sm text-blue-700">
-                                        ICD-10: {diagnosis.icd_10_code || 'N/A'}
+                                        ICD-10: {diagnosis.icd_10_code || diagnosis.icd_code || 'N/A'}
                                       </p>
                                     </div>
                                     <Badge className={`${getConfidenceColor(diagnosis.posterior_probability || diagnosis.confidence_score || 0.5)} font-medium`}>
@@ -1170,7 +1176,7 @@ function App() {
                                   </div>
                                   
                                   <p className="text-slate-700 mb-3 text-sm bg-slate-50 p-3 rounded">
-                                    {diagnosis.diagnostic_reasoning || diagnosis.reasoning || 'Clinical reasoning not available'}
+                                    {diagnosis.diagnostic_reasoning || diagnosis.reasoning || diagnosis.clinical_reasoning || 'Clinical reasoning being processed...'}
                                   </p>
                                   
                                   <div className="space-y-2">
@@ -1181,7 +1187,7 @@ function App() {
                                     <div className="flex flex-wrap gap-1">
                                       {(diagnosis.regenerative_targets || []).slice(0, 3).map((target, i) => (
                                         <Badge key={i} variant="outline" className="text-xs">
-                                          {typeof target === 'string' ? target : JSON.stringify(target)}
+                                          {typeof target === 'string' ? target : 'Target ' + (i + 1)}
                                         </Badge>
                                       ))}
                                     </div>
