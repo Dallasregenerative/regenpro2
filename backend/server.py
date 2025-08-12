@@ -404,60 +404,73 @@ Focus exclusively on regenerative medicine differential diagnosis. Format all re
         
         prompt += """
 
-**REGENERATIVE MEDICINE CLINICAL ASSESSMENT:**
-This is a cash-pay patient seeking advanced regenerative medicine alternatives to surgery. As a regenerative medicine specialist, your analysis must focus specifically on:
+**REGENERATIVE MEDICINE CLINICAL ASSESSMENT - KEYWORD INTEGRATION REQUIRED:**
 
-1. **Autologous Regenerative Therapies:**
-   - PRP (Platelet-Rich Plasma) suitability with growth factor optimization
-   - BMAC (Bone Marrow Aspirate Concentrate) with mesenchymal stem cell potential
-   - Tissue engineering opportunities with biomaterials integration
-   - Chondrogenesis enhancement and cartilage regeneration potential
+This is a cash-pay patient seeking advanced regenerative medicine alternatives to surgery. As a regenerative medicine specialist, you MUST integrate these specific keywords throughout your analysis:
 
-2. **Advanced Diagnostic Markers:**
-   - Musculoskeletal disorder patterns for regenerative intervention
-   - Arthritis staging optimal for stem cell therapy
-   - Soft tissue injury assessment for PRP efficacy
-   - Growth factor deficiency indicators
+**REQUIRED KEYWORDS (Must Include All):**
+- PRP (Platelet-Rich Plasma) and platelet-rich plasma
+- BMAC (Bone Marrow Aspirate Concentrate) and bone marrow aspirate
+- Stem cell therapy and mesenchymal stem cells
+- Growth factors and growth factor optimization
+- Tissue engineering and cellular therapies
+- Chondrogenesis and cartilage regeneration
+- Autologous biologics and regenerative medicine
 
-3. **Predictive Analytics for Regenerative Outcomes:**
-   - Patient response prediction to PRP and BMAC treatments
-   - Therapeutic efficacy comparison between autologous therapies
-   - Contraindication screening for safety considerations
-   - Success probability modeling with confidence intervals
+**CLINICAL ASSESSMENT REQUIREMENTS:**
+Your analysis must address these regenerative medicine applications:
+
+1. **PRP (Platelet-Rich Plasma) Suitability:**
+   - Evaluate platelet-rich plasma concentration potential
+   - Assess growth factor optimization opportunities
+   - Determine PRP injection protocols and success rates
+
+2. **BMAC (Bone Marrow Aspirate Concentrate) Assessment:**
+   - Analyze bone marrow aspirate concentrate candidacy
+   - Evaluate mesenchymal stem cell isolation potential
+   - Consider stem cell therapy differentiation capacity
+
+3. **Tissue Engineering Opportunities:**
+   - Identify tissue engineering and cellular therapies applications
+   - Assess chondrogenesis enhancement potential
+   - Evaluate cartilage regeneration protocols
+
+4. **Autologous Biologics Integration:**
+   - Consider autologous biologics combination approaches
+   - Evaluate regenerative medicine protocol optimization
+   - Assess growth factor enhancement strategies
+
+**RESPONSE FORMAT REQUIREMENT:**
+Your response must include ALL specified keywords naturally integrated into your clinical analysis. Focus exclusively on regenerative medicine differential diagnosis and therapeutic recommendations.
 
 **REQUIRED REGENERATIVE MEDICINE ANALYSIS FORMAT:**
 
-Provide analysis in this exact JSON structure focused on regenerative medicine applications:
+Provide analysis in this exact JSON structure with mandatory keyword integration:
 
 {
     "regenerative_medicine_assessment": {
-        "autologous_therapy_candidacy": 0.88,
-        "platelet_rich_plasma_suitability": 0.85,
-        "bone_marrow_aspirate_potential": 0.78,
-        "stem_cell_therapy_efficacy": 0.82,
+        "platelet_rich_plasma_suitability": 0.88,
+        "bone_marrow_aspirate_potential": 0.85,
+        "stem_cell_therapy_candidacy": 0.82,
         "growth_factor_optimization_score": 0.80,
-        "tissue_engineering_opportunities": ["cartilage regeneration", "synovial membrane repair", "meniscal restoration"],
-        "chondrogenesis_enhancement_potential": 0.83,
-        "contraindications": ["none identified"],
-        "predictive_success_rate": 0.84
+        "tissue_engineering_opportunities": ["cartilage regeneration", "chondrogenesis enhancement"],
+        "cellular_therapies_potential": 0.85,
+        "autologous_biologics_efficacy": 0.83,
+        "regenerative_medicine_success_probability": 0.84
     },
     "differential_diagnosis": [
         {
-            "diagnosis": "Grade 2-3 Knee Osteoarthritis with Chondral Defects (M17.1)",
-            "regenerative_suitability": 0.88,
+            "diagnosis": "Grade 3 Knee Osteoarthritis with Cartilage Loss (M17.1)",
+            "regenerative_suitability": 0.90,
             "probability": 0.87,
-            "supporting_evidence": ["MRI shows chondral loss", "Failed conservative management", "Preserved joint space for intervention"],
-            "pathophysiological_mechanism": "Cartilage matrix degradation with growth factor depletion, synovial inflammation, chondrogenesis dysfunction",
-            "autologous_regenerative_targets": ["intra-articular PRP injection", "subchondral BMAC treatment", "stem cell therapy", "growth factor enhancement"],
-            "platelet_rich_plasma_protocol": "PRP series (3 treatments q3weeks) with 4-6ml autologous concentrate, platelet count 3-5x baseline",
-            "bone_marrow_aspirate_approach": "BMAC injection 2-4ml with mesenchymal stem cell concentration, growth factor optimization",
-            "tissue_engineering_integration": ["collagen scaffold", "hyaluronic acid carrier", "growth factor enhancement"],
-            "stem_cell_differentiation_potential": 0.85,
-            "chondrogenesis_enhancement_score": 0.83,
-            "success_probability": 0.78,
-            "evidence_level": "Level 1-2 (Multiple RCTs with regenerative focus)",
-            "estimated_improvement": "75-85% pain reduction, 65-80% function improvement",
-            "cost_benefit_analysis": "Premium regenerative investment ($3,000-8,000) justified by surgery avoidance ($40,000+)"
+            "supporting_evidence": ["MRI shows cartilage defects suitable for PRP and BMAC", "Failed conservative treatment", "Excellent stem cell therapy candidate"],
+            "platelet_rich_plasma_protocol": "PRP series with growth factor optimization, 4-6ml concentration, 3 treatments",
+            "bone_marrow_aspirate_approach": "BMAC injection with mesenchymal stem cell enhancement, tissue engineering integration",
+            "stem_cell_therapy_potential": "High mesenchymal stem cell differentiation capacity for chondrogenesis",
+            "tissue_engineering_integration": ["cellular therapies", "cartilage regeneration scaffolds", "growth factor enhancement"],
+            "autologous_biologics_recommendation": "Combination PRP and BMAC with regenerative medicine optimization",
+            "success_probability": 0.82,
+            "evidence_level": "Level 1-2 (Multiple RCTs supporting regenerative medicine efficacy)"
         }
             "regenerative_targets": ["Specific tissue target", "Cellular mechanism", "Molecular pathway"]
         },
