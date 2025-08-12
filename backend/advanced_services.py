@@ -14,6 +14,7 @@ import logging
 import json
 import numpy as np
 import base64
+import os
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional, Tuple
 from pydantic import BaseModel, Field
