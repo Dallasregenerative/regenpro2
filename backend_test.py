@@ -1520,6 +1520,131 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return success
 
+    # ========== DEBUGGING COMPREHENSIVE DIFFERENTIAL DIAGNOSIS ==========
+    # Specific debugging test for the comprehensive differential diagnosis endpoint
+    # Focus on capturing exact error details and identifying the root cause
+    
+    def test_debug_comprehensive_differential_diagnosis(self):
+        """Debug test for POST /api/diagnosis/comprehensive-differential with detailed error logging"""
+        
+        # Use the exact minimal patient data from the review request
+        patient_data = {
+            "patient_id": "test_debug_patient",
+            "patient_data": {
+                "demographics": {"age": 45, "gender": "Female"},
+                "medical_history": ["Osteoarthritis"],
+                "clinical_presentation": {"chief_complaint": "Knee pain"}
+            }
+        }
+        
+        print("   🔍 DEBUGGING COMPREHENSIVE DIFFERENTIAL DIAGNOSIS ENDPOINT")
+        print("   Testing with minimal patient data to identify specific error...")
+        print(f"   Patient Data: {json.dumps(patient_data, indent=2)}")
+        
+        try:
+            url = f"{self.api_url}/diagnosis/comprehensive-differential"
+            print(f"   URL: {url}")
+            
+            response = requests.post(
+                url,
+                json=patient_data,
+                headers=self.headers,
+                timeout=90
+            )
+            
+            print(f"   Response Status Code: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
+            
+            # Capture response content regardless of status code
+            try:
+                response_data = response.json()
+                print(f"   Response JSON: {json.dumps(response_data, indent=2)}")
+                
+                # Check for specific error patterns
+                if response.status_code == 500:
+                    print("   ❌ 500 INTERNAL SERVER ERROR DETECTED")
+                    
+                    # Look for specific error details
+                    if 'detail' in response_data:
+                        error_detail = response_data['detail']
+                        print(f"   Error Detail: {error_detail}")
+                        
+                        # Check for specific method errors
+                        if 'has no attribute' in str(error_detail):
+                            print("   🔍 MISSING METHOD ERROR DETECTED")
+                            print(f"   Missing Method: {error_detail}")
+                        elif 'list index out of range' in str(error_detail):
+                            print("   🔍 LIST INDEX ERROR DETECTED")
+                            print("   Issue: Array/list access problem in implementation")
+                        elif 'get' in str(error_detail) and 'list' in str(error_detail):
+                            print("   🔍 LIST/DICT ACCESS ERROR DETECTED")
+                            print("   Issue: Trying to call .get() on a list instead of dict")
+                        else:
+                            print(f"   🔍 OTHER ERROR TYPE: {error_detail}")
+                    
+                    # Check for traceback information
+                    if 'traceback' in response_data:
+                        print(f"   Traceback: {response_data['traceback']}")
+                    
+                    return False
+                    
+                elif response.status_code == 200:
+                    print("   ✅ REQUEST SUCCESSFUL")
+                    
+                    # Check if it's returning real analysis or fallback
+                    if 'status' in response_data:
+                        status = response_data['status']
+                        print(f"   Analysis Status: {status}")
+                        
+                        if status == 'comprehensive_diagnosis_completed':
+                            print("   ✅ REAL COMPREHENSIVE ANALYSIS COMPLETED")
+                            
+                            # Check for diagnosis_id generation
+                            if 'diagnosis_id' in response_data:
+                                diagnosis_id = response_data['diagnosis_id']
+                                print(f"   Diagnosis ID Generated: {diagnosis_id}")
+                                
+                                # Check for differential diagnoses
+                                if 'differential_diagnoses' in response_data:
+                                    diagnoses = response_data['differential_diagnoses']
+                                    print(f"   Differential Diagnoses Count: {len(diagnoses)}")
+                                    
+                                    if diagnoses:
+                                        first_diagnosis = diagnoses[0]
+                                        print(f"   First Diagnosis: {first_diagnosis.get('diagnosis', 'Unknown')}")
+                                        print(f"   Confidence Score: {first_diagnosis.get('confidence_score', 0)}")
+                                
+                                return True
+                            else:
+                                print("   ⚠️ No diagnosis_id generated - may be using fallback")
+                                
+                        elif status == 'diagnosis_failed':
+                            print("   ❌ DIAGNOSIS FAILED - Using fallback response")
+                            return False
+                        else:
+                            print(f"   ⚠️ Unknown status: {status}")
+                    
+                    return True
+                    
+                else:
+                    print(f"   ❌ UNEXPECTED STATUS CODE: {response.status_code}")
+                    return False
+                    
+            except json.JSONDecodeError as e:
+                print(f"   ❌ JSON DECODE ERROR: {str(e)}")
+                print(f"   Raw Response: {response.text}")
+                return False
+                
+        except requests.exceptions.Timeout:
+            print("   ❌ REQUEST TIMEOUT - Endpoint may be hanging")
+            return False
+        except requests.exceptions.ConnectionError as e:
+            print(f"   ❌ CONNECTION ERROR: {str(e)}")
+            return False
+        except Exception as e:
+            print(f"   ❌ UNEXPECTED ERROR: {str(e)}")
+            return False
+
     # ========== CORE AI ENGINE FUNCTIONALITY TESTING ==========
     # Testing the core AI engine functionality that was just fixed with the new OpenAI API key
     # Focus on verifying real AI outputs instead of placeholder data
