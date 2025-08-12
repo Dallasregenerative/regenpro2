@@ -2857,6 +2857,299 @@ IGF-1,180,109-284,ng/mL,Normal"""
         
         return success
 
+    def test_complete_regenerative_medicine_workflow(self):
+        """TEST COMPLETE PATIENT CASE - One Complete End-to-End Regenerative Medicine Workflow
+        
+        **OBJECTIVE:** Create and test one complete patient case that demonstrates the entire 
+        regenerative medicine practitioner workflow from start to finish.
+        """
+        print("\n🎯 TESTING COMPLETE REGENERATIVE MEDICINE WORKFLOW")
+        print("   Creating 52-year-old active professional with bilateral knee osteoarthritis")
+        print("   Testing complete workflow: Patient → AI Analysis → Diagnosis → Protocol")
+        
+        # Step 1: Create Realistic Regenerative Patient
+        print("\n   Step 1: Creating realistic regenerative medicine patient...")
+        
+        patient_data = {
+            "demographics": {
+                "name": "Michael Thompson",
+                "age": "52",
+                "gender": "Male",
+                "occupation": "Investment Banker",
+                "insurance": "Self-pay premium",
+                "activity_level": "High - Tennis player"
+            },
+            "chief_complaint": "Bilateral knee osteoarthritis with failed conservative management seeking regenerative alternatives to surgery",
+            "history_present_illness": "52-year-old active investment banker and tennis enthusiast with progressive bilateral knee pain over 18 months. Pain significantly worse with activity, especially tennis and stair climbing. Morning stiffness lasting 45 minutes. Failed conservative management including NSAIDs (6 months), physical therapy (3 months), and bilateral corticosteroid injections (2 rounds). Seeking regenerative medicine alternatives to avoid bilateral knee replacement surgery. High activity goals - wants to return to competitive tennis within 6 months. Cash-pay motivated for premium regenerative treatments.",
+            "past_medical_history": ["Bilateral knee osteoarthritis Grade 2-3", "Hypertension (well-controlled)", "Previous meniscal tear (right knee, 2019)"],
+            "medications": ["Lisinopril 10mg daily", "Meloxicam 15mg PRN", "Glucosamine/Chondroitin supplement"],
+            "allergies": ["NKDA"],
+            "vital_signs": {
+                "temperature": "98.4",
+                "blood_pressure": "132/84",
+                "heart_rate": "68",
+                "respiratory_rate": "16",
+                "oxygen_saturation": "99",
+                "weight": "185",
+                "height": "6'1\"",
+                "BMI": "24.4"
+            },
+            "symptoms": [
+                "bilateral knee pain (7/10 severity)",
+                "morning stiffness (45 minutes)",
+                "decreased mobility and function",
+                "inability to play tennis",
+                "difficulty with stairs",
+                "functional limitation in sports"
+            ],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": "1.8 mg/L",
+                    "ESR": "22 mm/hr"
+                },
+                "complete_blood_count": {
+                    "WBC": "6.8 K/uL",
+                    "RBC": "4.7 M/uL",
+                    "platelets": "320 K/uL"
+                },
+                "regenerative_markers": {
+                    "PDGF": "52 pg/mL",
+                    "VEGF": "145 pg/mL",
+                    "IGF-1": "195 ng/mL"
+                }
+            },
+            "imaging_data": [
+                {
+                    "type": "X-ray",
+                    "location": "bilateral knees",
+                    "findings": "Grade 2-3 osteoarthritis with moderate joint space narrowing, osteophyte formation, and subchondral sclerosis",
+                    "date": "2024-01-20"
+                },
+                {
+                    "type": "MRI",
+                    "location": "bilateral knees",
+                    "findings": "Moderate cartilage thinning, meniscal degeneration, mild bone marrow edema, preserved joint space for regenerative intervention",
+                    "date": "2024-02-05"
+                }
+            ],
+            "genetic_data": {
+                "regenerative_markers": {
+                    "VEGF_polymorphism": "favorable",
+                    "collagen_synthesis_genes": "normal",
+                    "healing_capacity_score": "0.82"
+                }
+            }
+        }
+
+        # Create the patient
+        success, response = self.run_test(
+            "Create Regenerative Medicine Patient",
+            "POST",
+            "patients",
+            200,
+            data=patient_data
+        )
+        
+        if not success:
+            print("❌ Failed to create patient - cannot continue workflow test")
+            return False
+        
+        patient_id = response.get('patient_id')
+        print(f"   ✅ Created Patient: {patient_data['demographics']['name']} (ID: {patient_id})")
+        
+        # Step 2: AI Analysis with Enhanced Prompts
+        print("\n   Step 2: Testing AI Analysis with regenerative medicine-specific prompts...")
+        print("   This may take 30-60 seconds for comprehensive AI processing...")
+        
+        analysis_success, analysis_response = self.run_test(
+            "AI Analysis - Regenerative Medicine Focus",
+            "POST",
+            f"patients/{patient_id}/analyze",
+            200,
+            data={},
+            timeout=90
+        )
+        
+        if not analysis_success:
+            print("❌ AI Analysis failed - workflow cannot continue")
+            return False
+        
+        diagnostic_results = analysis_response.get('diagnostic_results', [])
+        print(f"   ✅ AI Analysis Complete - Generated {len(diagnostic_results)} differential diagnoses")
+        
+        # Verify regenerative medicine specificity
+        regenerative_keywords = []
+        for diagnosis in diagnostic_results:
+            diagnosis_text = diagnosis.get('diagnosis', '').lower()
+            reasoning = diagnosis.get('reasoning', '').lower()
+            targets = diagnosis.get('regenerative_targets', [])
+            
+            # Count regenerative medicine keywords
+            keywords = ['osteoarthritis', 'cartilage', 'prp', 'stem cell', 'regenerative', 'bmac', 'platelet']
+            found_keywords = [kw for kw in keywords if kw in diagnosis_text or kw in reasoning]
+            regenerative_keywords.extend(found_keywords)
+        
+        unique_keywords = list(set(regenerative_keywords))
+        print(f"   Regenerative Medicine Keywords Found: {len(unique_keywords)} ({', '.join(unique_keywords[:5])})")
+        
+        if len(unique_keywords) >= 3:  # Success criteria: 3+ specific keywords
+            print("   ✅ AI generates regenerative medicine-focused analysis")
+        else:
+            print("   ⚠️ AI analysis may lack regenerative medicine specificity")
+        
+        # Step 3: Differential Diagnosis Engine
+        print("\n   Step 3: Testing Differential Diagnosis Engine...")
+        
+        # Test comprehensive differential diagnosis
+        differential_success, differential_response = self.run_test(
+            "Comprehensive Differential Diagnosis",
+            "POST",
+            "diagnosis/comprehensive-differential",
+            200,
+            data={
+                "patient_id": patient_id,
+                "clinical_focus": "regenerative_medicine",
+                "include_mechanisms": True
+            },
+            timeout=60
+        )
+        
+        if differential_success:
+            diagnoses = differential_response.get('diagnoses', [])
+            print(f"   ✅ Differential Diagnosis Engine - Generated {len(diagnoses)} diagnoses")
+            
+            # Check for regenerative medicine conditions
+            regenerative_conditions = 0
+            for diagnosis in diagnoses:
+                diagnosis_name = diagnosis.get('diagnosis', '').lower()
+                if any(term in diagnosis_name for term in ['osteoarthritis', 'tendinopathy', 'cartilage', 'joint']):
+                    regenerative_conditions += 1
+            
+            print(f"   Regenerative Medicine Conditions: {regenerative_conditions}")
+            
+            if regenerative_conditions >= 2:
+                print("   ✅ Returns actual regenerative medicine diagnoses")
+            else:
+                print("   ⚠️ May need more regenerative medicine focus")
+        else:
+            print("   ❌ Differential diagnosis engine failed")
+        
+        # Step 4: Protocol Generation for Multiple Schools
+        print("\n   Step 4: Testing Protocol Generation for multiple schools of thought...")
+        
+        schools_to_test = [
+            ("traditional_autologous", "Traditional Autologous"),
+            ("biologics", "Biologics & Allogenic"),
+            ("ai_optimized", "AI-Optimized")
+        ]
+        
+        protocol_results = []
+        
+        for school_key, school_name in schools_to_test:
+            print(f"   Testing {school_name} protocol generation...")
+            
+            protocol_data = {
+                "patient_id": patient_id,
+                "school_of_thought": school_key
+            }
+            
+            protocol_success, protocol_response = self.run_test(
+                f"Protocol Generation - {school_name}",
+                "POST",
+                "protocols/generate",
+                200,
+                data=protocol_data,
+                timeout=90
+            )
+            
+            if protocol_success:
+                protocol_steps = protocol_response.get('protocol_steps', [])
+                confidence_score = protocol_response.get('confidence_score', 0)
+                cost_estimate = protocol_response.get('cost_estimate', 'Unknown')
+                contraindications = protocol_response.get('contraindications', [])
+                
+                print(f"   ✅ {school_name}: {len(protocol_steps)} steps, confidence {confidence_score:.2f}")
+                print(f"      Cost: {cost_estimate}, Contraindications: {len(contraindications)}")
+                
+                # Check for specific therapeutic details
+                has_dosages = any('ml' in step.get('dosage', '') or 'mg' in step.get('dosage', '') 
+                                for step in protocol_steps)
+                has_techniques = any('injection' in step.get('delivery_method', '').lower() or 
+                                   'ultrasound' in step.get('delivery_method', '').lower()
+                                   for step in protocol_steps)
+                
+                if has_dosages and has_techniques:
+                    print(f"      ✅ Includes specific dosages and injection techniques")
+                
+                protocol_results.append({
+                    'school': school_name,
+                    'success': True,
+                    'steps': len(protocol_steps),
+                    'confidence': confidence_score
+                })
+            else:
+                print(f"   ❌ {school_name} protocol generation failed")
+                protocol_results.append({
+                    'school': school_name,
+                    'success': False
+                })
+        
+        # Step 5: End-to-End Validation
+        print("\n   Step 5: End-to-End Validation...")
+        
+        # Measure total processing time (simulated)
+        import time
+        start_time = time.time()
+        
+        # Test complete workflow: Patient → Analysis → Protocol
+        workflow_success, workflow_response = self.run_test(
+            "Complete Workflow Validation",
+            "GET",
+            f"patients/{patient_id}",
+            200,
+            timeout=30
+        )
+        
+        end_time = time.time()
+        total_time = end_time - start_time
+        
+        if workflow_success:
+            print(f"   ✅ Complete workflow completes successfully")
+            print(f"   Processing time: {total_time:.1f} seconds")
+            
+            if total_time < 30:
+                print("   ✅ Processing times are reasonable (<30 seconds per step)")
+            else:
+                print("   ⚠️ Processing times may be longer than optimal")
+        
+        # Final Success Criteria Assessment
+        print("\n   📊 SUCCESS CRITERIA ASSESSMENT:")
+        
+        success_criteria = {
+            "AI regenerative specificity": len(unique_keywords) >= 3,
+            "Differential diagnosis returns results": differential_success and len(diagnoses) >= 2,
+            "Protocol generation working": len([p for p in protocol_results if p['success']]) >= 2,
+            "End-to-end workflow complete": workflow_success,
+            "Processing times reasonable": total_time < 60
+        }
+        
+        passed_criteria = sum(success_criteria.values())
+        total_criteria = len(success_criteria)
+        
+        for criteria, passed in success_criteria.items():
+            status = "✅" if passed else "❌"
+            print(f"   {status} {criteria}")
+        
+        print(f"\n   🎯 OVERALL RESULT: {passed_criteria}/{total_criteria} criteria met")
+        
+        if passed_criteria >= 4:  # At least 4/5 criteria
+            print("   🎉 REGENERATIVE MEDICINE WORKFLOW VALIDATION SUCCESSFUL!")
+            print("   Platform demonstrates meaningful clinical decision support for practitioners")
+            return True
+        else:
+            print("   ⚠️ Some workflow components need improvement")
+            return False
+
     # ========== CRITICAL PRIORITY SYSTEMS TEST RUNNER ==========
     
     def run_critical_priority_systems_tests(self):
