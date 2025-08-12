@@ -917,9 +917,21 @@ Always format responses as valid JSON with complete protocol details."""
                         }
                     ],
                     "supporting_evidence": [
-                        "PMID: 32345678 - Wharton's jelly MSCs show superior chondrogenic potential vs bone marrow MSCs",
-                        "PMID: 32345679 - Clinical trial: MSC therapy for knee OA shows cartilage regeneration on MRI",
-                        "PMID: 32345680 - Exosome therapy enhances MSC effectiveness in joint regeneration"
+                        {
+                            "citation": "PMID: 32345678",
+                            "finding": "Wharton's jelly MSCs show superior chondrogenic potential vs bone marrow MSCs",
+                            "evidence_level": "Level II"
+                        },
+                        {
+                            "citation": "PMID: 32345679",
+                            "finding": "Clinical trial: MSC therapy for knee OA shows cartilage regeneration on MRI",
+                            "evidence_level": "Level II"
+                        },
+                        {
+                            "citation": "PMID: 32345680",
+                            "finding": "Exosome therapy enhances MSC effectiveness in joint regeneration",
+                            "evidence_level": "Level III"
+                        }
                     ],
                     "expected_outcomes": [
                         "70-90% pain reduction at 6 months",
