@@ -957,17 +957,7 @@ Always format responses as valid JSON with complete protocol details."""
                         "International protocols may vary - verify local regulations",
                         "Obtain comprehensive informed consent for cellular therapy"
                     ],
-                    "cost_estimate": {
-                        "total_cost": "$8000-15000",
-                        "breakdown": {
-                            "MSC preparation": "$5000-8000",
-                            "Exosome therapy": "$2000-3000",
-                            "Injection procedures": "$800-1200",
-                            "Monitoring & imaging": "$1000-2000",
-                            "Rehabilitation program": "$800-1500"
-                        },
-                        "insurance_coverage": "Not covered - premium cash-pay procedure"
-                    },
+                    "cost_estimate": "$8,000 - $15,000",
                     "confidence_score": 0.88,
                     "ai_reasoning": "Advanced biologics protocol utilizing cutting-edge MSC and exosome therapies. Higher cost but superior regenerative potential with evidence of actual tissue regeneration. Appropriate for motivated patients seeking tissue restoration rather than symptom management."
                 }
