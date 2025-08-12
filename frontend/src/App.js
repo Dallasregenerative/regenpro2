@@ -11,6 +11,7 @@ import { Separator } from "./components/ui/separator";
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./components/ui/dropdown-menu";
 import { Progress } from "./components/ui/progress";
 import { 
   Brain, 
