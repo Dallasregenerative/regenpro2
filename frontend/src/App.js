@@ -439,12 +439,17 @@ function App() {
   const runIntegratedAiAnalysis = async (patientId) => {
     console.log("🔬 Starting integrated AI analysis for patient:", patientId);
     setAiAnalysisLoading(true);
-    setPatientAnalysis(null);
-    setAiDifferentialDiagnosis(null);
-    setExplainableAiResults(null);
+    
+    // Clear previous results but show immediate feedback
+    setPatientAnalysis({ status: "analyzing", message: "Analyzing patient data..." });
+    setAiDifferentialDiagnosis({ status: "pending", message: "Waiting for analysis..." });
+    setExplainableAiResults({ status: "pending", message: "Waiting for analysis..." });
     
     try {
       console.log("📊 Running comprehensive patient analysis...");
+      // Update status for each step to show progress
+      setPatientAnalysis({ status: "analyzing", message: "Running comprehensive patient analysis..." });
+      
       // Run comprehensive patient analysis
       const analysisResponse = await axios.post(`${API}/patients/${patientId}/analyze`, {
         analysis_type: "comprehensive",
@@ -457,6 +462,9 @@ function App() {
       console.log("✅ Patient analysis completed");
 
       console.log("🧠 Running advanced differential diagnosis...");
+      // Update status to show differential diagnosis is starting
+      setAiDifferentialDiagnosis({ status: "analyzing", message: "Generating differential diagnosis..." });
+      
       // Run advanced differential diagnosis
       const diagnosisResponse = await axios.post(`${API}/diagnosis/comprehensive-differential`, {
         patient_id: patientId,
@@ -469,6 +477,9 @@ function App() {
       console.log("✅ Differential diagnosis completed");
 
       console.log("🔍 Running explainable AI analysis...");
+      // Update status to show explainable AI is starting
+      setExplainableAiResults({ status: "analyzing", message: "Generating explainable AI analysis..." });
+      
       // Run explainable AI analysis
       const explainableResponse = await axios.post(`${API}/ai/enhanced-explanation`, {
         patient_id: patientId,
@@ -482,6 +493,10 @@ function App() {
 
     } catch (error) {
       console.error("❌ Integrated AI analysis failed:", error);
+      // Set error states for better user feedback
+      setPatientAnalysis({ status: "error", message: "Analysis failed. Please try again." });
+      setAiDifferentialDiagnosis({ status: "error", message: "Diagnosis failed. Please try again." });
+      setExplainableAiResults({ status: "error", message: "Explanation failed. Please try again." });
       alert("AI analysis failed. Please try again.");
     } finally {
       setAiAnalysisLoading(false);
