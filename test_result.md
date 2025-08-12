@@ -656,8 +656,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Advanced Differential Diagnosis System"
-    - "Core AI Engine Comprehensive Differential Diagnosis"
+    - "Regenerative Medicine Practitioner Workflow"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
