@@ -1255,8 +1255,12 @@ function App() {
                                   <div className="bg-slate-50 p-3 rounded text-sm">
                                     <p className="font-medium mb-2">AI Reasoning:</p>
                                     <p className="text-slate-700">
-                                      {explainableAiResults.enhanced_explanation?.explanation_summary ||
-                                       explainableAiResults.explanation_summary ||
+                                      {(typeof (explainableAiResults.enhanced_explanation?.explanation_summary) === 'string' 
+                                        ? explainableAiResults.enhanced_explanation?.explanation_summary 
+                                        : explainableAiResults.enhanced_explanation?.explanation_summary?.clinical_insights?.[0]) ||
+                                       (typeof explainableAiResults.explanation_summary === 'string' 
+                                        ? explainableAiResults.explanation_summary 
+                                        : explainableAiResults.explanation_summary?.clinical_insights?.[0]) ||
                                        explainableAiResults.ai_reasoning ||
                                        "Comprehensive analysis based on patient data, symptoms, and evidence-based medical knowledge."}
                                     </p>
