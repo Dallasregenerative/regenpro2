@@ -669,8 +669,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Regenerative Medicine Practitioner Workflow"
-  stuck_tasks: []
+    - "Frontend AI Analysis State Management"
+  stuck_tasks:
+    - "Frontend AI Analysis State Management"
   test_all: false
   test_priority: "high_first"
 
