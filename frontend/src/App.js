@@ -1147,10 +1147,6 @@ function App() {
                             <Target className="h-5 w-5 text-blue-600" />
                             Advanced Differential Diagnosis
                           </h3>
-                          
-                          {/* Debug logging */}
-                          {console.log("🔍 Debug - aiDifferentialDiagnosis:", aiDifferentialDiagnosis)}
-                          
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Handle multiple possible data structures */}
                             {(
