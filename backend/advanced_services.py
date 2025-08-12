@@ -10315,10 +10315,13 @@ class AdvancedDifferentialDiagnosisEngine:
             }
             
         except Exception as e:
+            import traceback
             logger.error(f"Comprehensive differential diagnosis error: {str(e)}")
+            logger.error(f"Full traceback: {traceback.format_exc()}")
             return {
                 "status": "diagnosis_failed",
                 "error": str(e),
+                "error_details": traceback.format_exc()[:500],  # First 500 chars of traceback
                 "fallback_diagnosis": await self._generate_fallback_diagnosis(patient_data)
             }
 
