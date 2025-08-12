@@ -10926,3 +10926,36 @@ if __name__ == "__main__":
             print("\n🚨 ATTENTION NEEDED! Multiple critical features test failures detected.")
         
         print("\n" + "=" * 80)
+if __name__ == "__main__":
+    # Initialize tester with production URL
+    tester = RegenMedAIProTester()
+    
+    # Run the complete regenerative medicine practitioner workflow test
+    print("🏥 REGENERATIVE MEDICINE PRACTITIONER WORKFLOW TESTING")
+    print("="*80)
+    print("Testing complete end-to-end workflow as requested in review:")
+    print("1. Patient Input → 2. AI Analysis (Diagnosis) → 3. Practitioner Approval → 4. AI Protocol Generation")
+    print("="*80)
+    
+    # Execute the workflow test
+    workflow_success = tester.test_regenerative_medicine_workflow_complete()
+    
+    # Print final summary
+    print("\n" + "="*80)
+    print("🏁 REGENERATIVE MEDICINE WORKFLOW TEST COMPLETE")
+    print(f"Tests Run: {tester.tests_run}")
+    print(f"Tests Passed: {tester.tests_passed}")
+    print(f"Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
+    
+    if workflow_success:
+        print("🎉 WORKFLOW SUCCESS: Complete regenerative medicine practitioner workflow functional!")
+        print("✅ Patient Input - Regenerative medicine condition created")
+        print("✅ AI Analysis - Comprehensive differential diagnosis generated")
+        print("✅ Practitioner Approval - Specific diagnosis approved")
+        print("✅ AI Protocol Generation - Tailored protocol created")
+        print("✅ System ready for regenerative medicine clinical decision support")
+    else:
+        print("❌ WORKFLOW FAILED: One or more steps in the workflow did not complete successfully")
+        print("Review the detailed output above for specific issues")
+    
+    print("="*80)
