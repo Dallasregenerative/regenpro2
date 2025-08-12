@@ -12881,7 +12881,7 @@ if __name__ == "__main__":
     
     if success:
         print("\
-🎉 VALIDATION COMPLETE - PROTOCOL GENERATION 500 ERROR FIX SUCCESSFUL!")
+n🎉 VALIDATION COMPLETE - PROTOCOL GENERATION 500 ERROR FIX SUCCESSFUL!")
         sys.exit(0)
     else:
         print("\
