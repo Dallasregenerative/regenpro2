@@ -11,7 +11,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
 
 
 🔍 Testing Health Check & AI Engine Status...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/health
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/health
 ✅ Passed - Status: 200
    Response: {
   "status": "healthy",
@@ -30,7 +30,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Version: 2.0.0
 
 🔍 Testing Root API Endpoint...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api
 ✅ Passed - Status: 200
    Response: {
   "message": "RegenMed AI Pro - Advanced Regenerative Medicine Platform v2.0"
@@ -38,7 +38,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Message: RegenMed AI Pro - Advanced Regenerative Medicine Platform v2.0
 
 🔍 Testing Advanced System Status & Health...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/advanced/system-status
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/advanced/system-status
 ✅ Passed - Status: 200
    Response: {
   "timestamp": "2025-08-08T20:44:55.693071",
@@ -61,7 +61,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Federated Participants: 3
 
 🔍 Testing Therapy Database & Schools of Thought...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/therapies
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/therapies
 ✅ Passed - Status: 200
    Response: {
   "therapies": [
@@ -83,7 +83,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Sample Schools: traditional_autologous, autologous_non_us, biologics
 
 🔍 Testing Get Patient Details...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
@@ -101,7 +101,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for AI processing...
 
 🔍 Testing AI Patient Analysis (Regenerative Medicine)...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
@@ -134,7 +134,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Regenerative Insights: 0
 
 🔍 Testing Get Patient Files...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/patient/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/files/patient/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
@@ -151,7 +151,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Processed Files: 21
 
 🔍 Testing Comprehensive Patient File Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
@@ -173,7 +173,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for file-based AI protocol generation...
 
 🔍 Testing Generate Protocol from Files...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
 ✅ Passed - Status: 200
    Response: {
   "protocol": {
@@ -191,7 +191,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - Traditional Autologous (US Legal)...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "f3fda78e-ddf8-4188-b915-c030736ec4f8",
@@ -211,7 +211,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - Biologics & Allogenic...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "7e53de80-ad2e-4811-adc6-30824b6c575d",
@@ -231,7 +231,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - AI-Optimized Best Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "1695e739-e350-480a-990c-7c8ed01cf424",
@@ -251,7 +251,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - Experimental & Cutting-Edge...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "3e6d7d0e-d2fe-4d93-93e5-522759c2a539",
@@ -270,7 +270,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    First Step: Platelet-Rich Plasma (PRP) - 5 mL PRP per injection
 
 🔍 Testing Get Protocol Details...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/967d9051-8f0b-4572-8792-455f427eb8a0
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/967d9051-8f0b-4572-8792-455f427eb8a0
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "967d9051-8f0b-4572-8792-455f427eb8a0",
@@ -285,7 +285,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Steps Count: 2
 
 🔍 Testing Approve Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/967d9051-8f0b-4572-8792-455f427eb8a0/approve
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/967d9051-8f0b-4572-8792-455f427eb8a0/approve
 ✅ Passed - Status: 200
    Response: {
   "status": "approved",
@@ -295,7 +295,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Approved At: 2025-08-08T20:47:24.504384
 
 🔍 Testing Register Clinic for Federated Learning...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/federated/register-clinic
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/federated/register-clinic
 ✅ Passed - Status: 200
    Response: {
   "status": "registered",
@@ -306,7 +306,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Privacy Level: unknown
 
 🔍 Testing Global Federated Model Status...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/federated/global-model-status
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/federated/global-model-status
 ✅ Passed - Status: 200
    Response: {
   "model_version": 1,
@@ -321,7 +321,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Performance Improvement: 0.050
 
 🔍 Testing Latest Literature Updates...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/latest-updates
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/literature/latest-updates
 ✅ Passed - Status: 200
    Response: {
   "processing_result": {
@@ -340,7 +340,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Sample Paper: Platelet-Rich Plasma for Osteoarthritis: A Systema...
 
 🔍 Testing Search Literature Database...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/search?query=regenerative%20medicine&limit=10
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/literature/search?query=regenerative%20medicine&limit=10
 ✅ Passed - Status: 200
    Response: {
   "query": "regenerative medicine",
@@ -358,7 +358,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Papers Returned: 0
 
 🔍 Testing Evidence Synthesis System Status...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesis-status
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/evidence/synthesis-status
 ✅ Passed - Status: 200
    Response: {
   "synthesis_engine_status": "active",
@@ -380,7 +380,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for comprehensive literature analysis...
 
 🔍 Testing Evidence Synthesis - Osteoarthritis Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/evidence/synthesize-protocol
 ✅ Passed - Status: 200
    Response: {
   "status": "synthesis_completed",
@@ -400,7 +400,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    This may take 30-60 seconds for comprehensive literature analysis...
 
 🔍 Testing Evidence Synthesis - Rotator Cuff Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/evidence/synthesize-protocol
 ✅ Passed - Status: 200
    Response: {
   "status": "synthesis_completed",
@@ -417,7 +417,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Synthesis Confidence: 0.00
 
 🔍 Testing Evidence Synthesis - Missing Condition (Error Handling)...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/evidence/synthesize-protocol
 ✅ Passed - Status: 400
    Response: {
   "detail": "Condition is required for evidence synthesis"
@@ -427,7 +427,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Testing with invalid condition...
 
 🔍 Testing Evidence Synthesis - Invalid Condition...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/synthesize-protocol
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/evidence/synthesize-protocol
 ✅ Passed - Status: 200
    Response: {
   "status": "synthesis_completed",
@@ -442,7 +442,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    System handled invalid condition appropriately
 
 🔍 Testing ML Model Performance Metrics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/predictions/model-performance
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/predictions/model-performance
 ✅ Passed - Status: 200
    Response: {
   "status": "models_initializing"
@@ -451,12 +451,12 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Total Predictions Made: 0
 
 🔍 Testing ML Treatment Outcome Prediction...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/predictions/treatment-outcome
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/predictions/treatment-outcome
 ❌ Failed - Expected 200, got 500
    Error: Internal Server Error
 
 🔍 Testing DICOM Image Analysis (AI-Powered)...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/imaging/analyze-dicom
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/imaging/analyze-dicom
 ✅ Passed - Status: 200
    Response: {
   "status": "error",
@@ -467,7 +467,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Modality Processed: unknown
 
 🔍 Testing Imaging Analysis History...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/imaging/analysis-history/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/imaging/analysis-history/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "c458d177-712c-4eb9-8fd3-5f5e41fe7b71",
@@ -479,7 +479,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Analyses Returned: 0
 
 🔍 Testing Dashboard Analytics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -501,7 +501,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Recent Activities: 20
 
 🔍 Testing Submit Patient Outcome...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/outcomes
 ✅ Passed - Status: 200
    Response: {
   "outcome_id": "382e052d-397d-49c3-894f-058cd4fe9014",
@@ -516,7 +516,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Satisfaction Score: 9
 
 🔍 Testing Create Comprehensive Patient Record...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "0b236f79-b49f-4a36-a771-4078d4301ab5",
@@ -533,7 +533,7 @@ Including all advanced AI features: Federated Learning, Literature Integration, 
    Patient Name: Dr. Sarah Mitchell
 
 🔍 Testing List Patients...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients
 ✅ Passed - Status: 200
    Response: [
   {

@@ -8,7 +8,7 @@
 📋 SETUP: Creating protocol for testing...
 
 🔍 Testing Setup Protocol for Testing...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
 ✅ Protocol created: 39712955-6417-412d-b663-dbbbda3a372f
 
@@ -16,7 +16,7 @@
 ------------------------------------------------------------
 
 🔍 Testing GAP 1: File Retrieval & Categorization...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files
 ✅ Passed - Status: 200
    Total Files Retrieved: 45
    Categories Present: 4 - labs, genetics, imaging, chart
@@ -29,18 +29,18 @@
    This may take 30-45 seconds for comprehensive file reprocessing...
 
 🔍 Testing GAP 1: File Reprocessing & AI Integration...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files/process-all
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files/process-all
 ❌ Failed - Expected 200, got 500
    Error: {'detail': "File processing failed: RegenerativeMedicineAI.analyze_patient_data() got an unexpected keyword argument 'uploaded_files_data'"}
    Step 1: Triggering comprehensive file analysis...
 
 🔍 Testing Workflow Step 1: File Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
    Step 2: Generating protocol with file integration...
 
 🔍 Testing Workflow Step 2: File-Based Protocol Generation...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
 ✅ Passed - Status: 200
    Protocol Generated: 54f0fa2e-c01e-48fd-8e34-17c5c5e88522
    Files Integrated: 45
@@ -49,7 +49,7 @@
    Testing multi-modal analysis integration...
 
 🔍 Testing Multi-Modal File Integration Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
    Total Files Analyzed: 45
    File Categories: 1
@@ -60,7 +60,7 @@
 ------------------------------------------------------------
 
 🔍 Testing GAP 2: Outcome Recording with Calculations...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
 ✅ Passed - Status: 200
    Outcome ID: outcome_3c617f6bd5f6
    Improvement Score: 0.0%
@@ -69,7 +69,7 @@
    ✅ Outcome recording with calculations working
 
 🔍 Testing GAP 2: Outcome Retrieval & Statistics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
 ✅ Passed - Status: 200
    Patient ID: c458d177-712c-4eb9-8fd3-5f5e41fe7b71
    Outcomes Retrieved: 3
@@ -77,7 +77,7 @@
    Calculated Outcomes: 0 calculations
 
 🔍 Testing GAP 2: Comprehensive Outcome Analytics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/outcomes
 ✅ Passed - Status: 200
    Analytics Summary: 8 metrics
    Total Outcomes Tracked: 3
@@ -86,7 +86,7 @@
    ✅ Comprehensive analytics working
 
 🔍 Testing GAP 2: Dashboard Analytics with Real Data...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ❌ Failed - Expected 200, got 500
    Error: Internal Server Error
    ❌ Dashboard analytics failed
@@ -98,28 +98,28 @@
    Testing Traditional Autologous protocol quality...
 
 🔍 Testing Protocol Quality - Traditional Autologous...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      Steps: 2, Evidence: 2, Quality: 100.0%
      Specific Dosing: True, Monitoring: True
    Testing Biologics & Allogenic protocol quality...
 
 🔍 Testing Protocol Quality - Biologics & Allogenic...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      Steps: 2, Evidence: 2, Quality: 100.0%
      Specific Dosing: True, Monitoring: True
    Testing AI-Optimized protocol quality...
 
 🔍 Testing Protocol Quality - AI-Optimized...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      Steps: 2, Evidence: 2, Quality: 100.0%
      Specific Dosing: True, Monitoring: True
    Testing Experimental protocol quality...
 
 🔍 Testing Protocol Quality - Experimental...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      Steps: 2, Evidence: 1, Quality: 100.0%
      Specific Dosing: True, Monitoring: True
@@ -128,7 +128,7 @@
    Generating protocol for evidence citation analysis...
 
 🔍 Testing Evidence Citations & Detail Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Protocol Steps Generated: 2
    Supporting Evidence Items: 1
@@ -149,7 +149,7 @@
    Generating protocol for clinical sophistication testing...
 
 🔍 Testing Clinical Sophistication Protocol Generation...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Clinical Sophistication Metrics:
      considers_contraindications: ✅
@@ -162,7 +162,7 @@
    Generating protocol for John Hudson standards compliance...
 
 🔍 Testing John Hudson Standards Compliance Check...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    John Hudson Standards Compliance:
      evidence_based_approach: ❌
@@ -185,19 +185,19 @@
    Attempt 1/3...
 
 🔍 Testing Protocol Generation Reliability Test 1...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      ✅ Success - Protocol: 77439dfa-f1ae-40ed-a603-124539cd15c7, Confidence: 0.85, Time: 18.0s
    Attempt 2/3...
 
 🔍 Testing Protocol Generation Reliability Test 2...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      ✅ Success - Protocol: 0f70a507-e77c-4aa6-be1b-1b5a7ade8360, Confidence: 0.85, Time: 23.7s
    Attempt 3/3...
 
 🔍 Testing Protocol Generation Reliability Test 3...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      ✅ Success - Protocol: a12b66fd-5753-4958-b7cc-64285c1e9bc1, Confidence: 0.85, Time: 20.4s
    Protocol Generation Reliability: 100.0% (3/3)
@@ -206,22 +206,22 @@
    Testing backend connectivity across different operations...
 
 🔍 Testing Connectivity: Health Check...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/health
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/health
 ✅ Passed - Status: 200
      ✅ Health Check - 0.10s
 
 🔍 Testing Connectivity: Patient List...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients
 ✅ Passed - Status: 200
      ✅ Patient List - 0.07s
 
 🔍 Testing Connectivity: Therapy Database...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/therapies
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/therapies
 ✅ Passed - Status: 200
      ✅ Therapy Database - 0.06s
 
 🔍 Testing Connectivity: System Status...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/advanced/system-status
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/advanced/system-status
 ✅ Passed - Status: 200
      ✅ System Status - 0.07s
    Backend Connectivity Rate: 100.0% (4/4)
@@ -230,25 +230,25 @@
    Testing error handling and recovery mechanisms...
 
 🔍 Testing Error Handling: Invalid Patient ID...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/invalid-patient-id-12345
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/invalid-patient-id-12345
 ✅ Passed - Status: 404
      ✅ Invalid Patient ID - Handled correctly
        Error message provided: Yes
 
 🔍 Testing Error Handling: Invalid Protocol ID...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/invalid-protocol-id-12345
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/invalid-protocol-id-12345
 ✅ Passed - Status: 404
      ✅ Invalid Protocol ID - Handled correctly
        Error message provided: Yes
 
 🔍 Testing Error Handling: Missing Required Data...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients
 ❌ Failed - Expected 400, got 500
    Error: Internal Server Error
      ❌ Missing Required Data - Not handled correctly
 
 🔍 Testing Error Handling: Empty Query...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/literature/search?query=
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/literature/search?query=
 ✅ Passed - Status: 200
      ✅ Empty Query - Handled correctly
        Error message provided: No
@@ -257,15 +257,15 @@
    Testing data persistence and session management...
 
 🔍 Testing Session Consistency Test 1...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
 
 🔍 Testing Session Consistency Test 2...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
 
 🔍 Testing Session Consistency Test 3...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
      Session Consistency: ✅ (3/3)
    Data Persistence Score: 100.0%
@@ -277,19 +277,19 @@
    Testing complete end-to-end patient workflow...
 
 🔍 Testing Workflow Step 1: Get Patient...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
      ✅ Patient retrieved: Sarah Chen
      Step 2: Generating protocol...
 
 🔍 Testing Workflow Step 2: Generate Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      ✅ Protocol generation: True
      Step 3: Recording outcomes...
 
 🔍 Testing Workflow Step 3: Record Outcomes...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
 ✅ Passed - Status: 200
      ✅ Outcome recording: True
    Complete Workflow Success Rate: 100.0% (3/3)
@@ -298,24 +298,24 @@
      Testing Patient → Analysis data flow...
 
 🔍 Testing Data Flow: Patient → Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
 ✅ Passed - Status: 200
      Testing Analysis → Protocol data flow...
 
 🔍 Testing Data Flow: Analysis → Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
      Testing File System → Analysis integration...
 
 🔍 Testing Data Flow: Files → Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files
 ✅ Passed - Status: 200
    Cross-Platform Data Flow Success Rate: 100.0% (3/3)
    ✅ Cross-platform data flow is working well
    Testing dashboard updates with new activity...
 
 🔍 Testing Dashboard Baseline State...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ❌ Failed - Expected 200, got 500
    Error: Internal Server Error
    ❌ Failed to get baseline dashboard state
@@ -323,33 +323,33 @@
      Testing Patient → Analysis → Protocol → Outcome chain...
 
 🔍 Testing Integration Chain 1.1: Get Patient...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
 
 🔍 Testing Integration Chain 1.2: Analyze Patient...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/analyze
 ✅ Passed - Status: 200
 
 🔍 Testing Integration Chain 1.3: Generate Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
 
 🔍 Testing Integration Chain 1.4: Record Outcome...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/outcomes
 ✅ Passed - Status: 200
        Chain 1 Success Rate: 100.0%
      Testing Files → Analysis → Protocol chain...
 
 🔍 Testing Integration Chain 2.1: Get Files...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/c458d177-712c-4eb9-8fd3-5f5e41fe7b71/files
 ✅ Passed - Status: 200
 
 🔍 Testing Integration Chain 2.2: Comprehensive Analysis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/files/comprehensive-analysis/c458d177-712c-4eb9-8fd3-5f5e41fe7b71
 ✅ Passed - Status: 200
 
 🔍 Testing Integration Chain 2.3: File-Based Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate-from-files?patient_id=c458d177-712c-4eb9-8fd3-5f5e41fe7b71&school_of_thought=ai_optimized
 ✅ Passed - Status: 200
        Chain 2 Success Rate: 100.0%
    Overall Endpoint Integration Rate: 100.0%

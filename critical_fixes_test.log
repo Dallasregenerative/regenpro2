@@ -8,7 +8,7 @@ Testing the two critical fixes for 100% functionality
 --------------------------------------------------
 
 🔍 Testing Create Comprehensive Patient Record...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "6a7493b9-5c4f-4ca8-b2b3-0b65752e04da",
@@ -45,7 +45,7 @@ Testing the two critical fixes for 100% functionality
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - AI-Optimized Best Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "58c625f3-b140-41eb-9c4e-0961fff665c7",
@@ -68,7 +68,7 @@ Testing the two critical fixes for 100% functionality
    Testing the CRITICAL FIX for RegenerativeMedicineAI.analyze_patient_data() parameter mismatch...
 
 🔍 Testing CRITICAL FIX: File Reprocessing API Parameter Issue...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/files/process-all
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/files/process-all
 ✅ Passed - Status: 200
    Response: {
   "status": "files_reprocessed",
@@ -93,7 +93,7 @@ Testing the two critical fixes for 100% functionality
    Testing the CRITICAL FIX for dashboard analytics 500 error...
 
 🔍 Testing CRITICAL FIX: Dashboard Analytics 500 Error...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -135,7 +135,7 @@ Testing the two critical fixes for 100% functionality
    Step 3: AI analysis with file integration...
 
 🔍 Testing AI Analysis with File Integration...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/analyze
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/analyze
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "6a7493b9-5c4f-4ca8-b2b3-0b65752e04da",
@@ -149,7 +149,7 @@ Testing the two critical fixes for 100% functionality
    Step 4: Evidence-based protocol generation...
 
 🔍 Testing Evidence-Based Protocol Generation...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "2fce0539-497f-45d5-ab9a-656e21d2bde0",
@@ -165,7 +165,7 @@ Testing the two critical fixes for 100% functionality
    Testing comprehensive outcome tracking workflow...
 
 🔍 Testing Outcome Recording with Calculations...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/outcomes
 ✅ Passed - Status: 200
    Response: {
   "outcome_id": "7e39ec2a-6eb5-4461-9dfd-b39ed1f501c4",
@@ -181,7 +181,7 @@ Testing the two critical fixes for 100% functionality
    Functional Improvement: 0%
 
 🔍 Testing Outcome Retrieval & Statistics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/outcomes
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "6a7493b9-5c4f-4ca8-b2b3-0b65752e04da",
@@ -198,7 +198,7 @@ Testing the two critical fixes for 100% functionality
    Success Rate: 0%
 
 🔍 Testing Comprehensive Analytics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/outcomes
 ✅ Passed - Status: 200
    Response: {
   "analytics_summary": {
@@ -219,7 +219,7 @@ Testing the two critical fixes for 100% functionality
    Patient Satisfaction: 0/10
 
 🔍 Testing Dashboard Analytics Integration...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -239,7 +239,7 @@ Testing the two critical fixes for 100% functionality
    Step 6: Dashboard real-time updates...
 
 🔍 Testing Dashboard Updates with New Activity...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -263,7 +263,7 @@ Testing the two critical fixes for 100% functionality
    Testing the CRITICAL FIX for RegenerativeMedicineAI.analyze_patient_data() parameter mismatch...
 
 🔍 Testing CRITICAL FIX: File Reprocessing API Parameter Issue...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/files/process-all
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/files/process-all
 ✅ Passed - Status: 200
    Response: {
   "status": "files_reprocessed",
@@ -286,7 +286,7 @@ Testing the two critical fixes for 100% functionality
    Testing comprehensive outcome tracking workflow...
 
 🔍 Testing Outcome Recording with Calculations...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/outcomes
 ✅ Passed - Status: 200
    Response: {
   "outcome_id": "30cac765-5385-4c7f-be9f-aa0740754952",
@@ -302,7 +302,7 @@ Testing the two critical fixes for 100% functionality
    Functional Improvement: 0%
 
 🔍 Testing Outcome Retrieval & Statistics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/outcomes
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "6a7493b9-5c4f-4ca8-b2b3-0b65752e04da",
@@ -319,7 +319,7 @@ Testing the two critical fixes for 100% functionality
    Success Rate: 0%
 
 🔍 Testing Comprehensive Analytics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/outcomes
 ✅ Passed - Status: 200
    Response: {
   "analytics_summary": {
@@ -340,7 +340,7 @@ Testing the two critical fixes for 100% functionality
    Patient Satisfaction: 0/10
 
 🔍 Testing Dashboard Analytics Integration...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -360,7 +360,7 @@ Testing the two critical fixes for 100% functionality
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - AI-Optimized Best Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "0a8ff15f-da6b-4461-82fe-ddad45e8d68a",
@@ -380,7 +380,7 @@ Testing the two critical fixes for 100% functionality
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - Traditional Autologous (US Legal)...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "a4ad922d-99fa-47bf-8d8a-131c1ee7e35d",
@@ -400,7 +400,7 @@ Testing the two critical fixes for 100% functionality
    This may take 30-60 seconds for AI protocol generation...
 
 🔍 Testing Generate Protocol - Biologics & Allogenic...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "b85e38df-b084-41a5-b0ac-17c0dec11f4a",
@@ -421,7 +421,7 @@ Testing the two critical fixes for 100% functionality
    Testing the CRITICAL FIX for dashboard analytics 500 error...
 
 🔍 Testing CRITICAL FIX: Dashboard Analytics 500 Error...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -461,7 +461,7 @@ Testing the two critical fixes for 100% functionality
    Step 3: AI analysis with file integration...
 
 🔍 Testing AI Analysis with File Integration...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/analyze
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/analyze
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "6a7493b9-5c4f-4ca8-b2b3-0b65752e04da",
@@ -475,7 +475,7 @@ Testing the two critical fixes for 100% functionality
    Step 4: Evidence-based protocol generation...
 
 🔍 Testing Evidence-Based Protocol Generation...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "6a9fbb65-9058-4313-adf5-f5b66055e15f",
@@ -491,7 +491,7 @@ Testing the two critical fixes for 100% functionality
    Testing comprehensive outcome tracking workflow...
 
 🔍 Testing Outcome Recording with Calculations...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/outcomes
 ✅ Passed - Status: 200
    Response: {
   "outcome_id": "eadbc676-6cba-4e30-95ca-40165ff98949",
@@ -507,7 +507,7 @@ Testing the two critical fixes for 100% functionality
    Functional Improvement: 0%
 
 🔍 Testing Outcome Retrieval & Statistics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/patients/6a7493b9-5c4f-4ca8-b2b3-0b65752e04da/outcomes
 ✅ Passed - Status: 200
    Response: {
   "patient_id": "6a7493b9-5c4f-4ca8-b2b3-0b65752e04da",
@@ -524,7 +524,7 @@ Testing the two critical fixes for 100% functionality
    Success Rate: 0%
 
 🔍 Testing Comprehensive Analytics...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/outcomes
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/outcomes
 ✅ Passed - Status: 200
    Response: {
   "analytics_summary": {
@@ -545,7 +545,7 @@ Testing the two critical fixes for 100% functionality
    Patient Satisfaction: 0/10
 
 🔍 Testing Dashboard Analytics Integration...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {
@@ -565,7 +565,7 @@ Testing the two critical fixes for 100% functionality
    Step 6: Dashboard real-time updates...
 
 🔍 Testing Dashboard Updates with New Activity...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/analytics/dashboard
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/analytics/dashboard
 ✅ Passed - Status: 200
    Response: {
   "summary_stats": {

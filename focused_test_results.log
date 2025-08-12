@@ -8,7 +8,7 @@ Testing OpenAI API Key Fix with Rate Limiting
    Using rate limiting to avoid 429 errors...
 
 🔍 Testing Maria Rodriguez - Traditional Autologous Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "6497fd2b-749f-4be2-8a73-4acf37ce997a",
@@ -38,7 +38,7 @@ Testing OpenAI API Key Fix with Rate Limiting
    This may take 60-90 seconds for AI protocol generation...
 
 🔍 Testing Maria Rodriguez - AI-Optimized Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ✅ Passed - Status: 200
    Response: {
   "protocol_id": "0561ae7a-0035-4473-aafe-108ce1c70ab7",
@@ -68,7 +68,7 @@ Testing OpenAI API Key Fix with Rate Limiting
    This may take 60-90 seconds for AI protocol generation...
 
 🔍 Testing David Chen - Shoulder Injury Protocol...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/protocols/generate
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/protocols/generate
 ❌ Failed - Expected 200, got 500
    Error: {'detail': 'Protocol generation failed: '}
 
@@ -76,7 +76,7 @@ Testing OpenAI API Key Fix with Rate Limiting
    ⏳ Waiting 15 seconds before Living Evidence Engine test...
 
 🔍 Testing Living Evidence Engine - Living Reviews...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/evidence/living-reviews/osteoarthritis
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/evidence/living-reviews/osteoarthritis
 ✅ Passed - Status: 200
    Response: {
   "status": "living_review_generated",
@@ -99,7 +99,7 @@ Testing OpenAI API Key Fix with Rate Limiting
    ⏳ Waiting 15 seconds before Differential Diagnosis test...
 
 🔍 Testing Advanced Differential Diagnosis...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/diagnosis/comprehensive-differential
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/diagnosis/comprehensive-differential
 ✅ Passed - Status: 200
    Response: {
   "status": "comprehensive_diagnosis_completed",
@@ -114,7 +114,7 @@ Testing OpenAI API Key Fix with Rate Limiting
    ⏳ Waiting 15 seconds before Explainable AI test...
 
 🔍 Testing Enhanced Explainable AI...
-   URL: https://099faa9d-49d6-4fd5-979e-df2b63248fdd.preview.emergentagent.com/api/ai/enhanced-explanation
+   URL: https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com/api/ai/enhanced-explanation
 ✅ Passed - Status: 200
    Response: {
   "status": "enhanced_explanation_generated",
