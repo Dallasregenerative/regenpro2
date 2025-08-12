@@ -1015,9 +1015,21 @@ Always format responses as valid JSON with complete protocol details."""
                         }
                     ],
                     "supporting_evidence": [
-                        "PMID: 33456789 - AI-guided regenerative medicine shows 23% improvement over standard protocols",
-                        "PMID: 33456790 - Machine learning optimization of PRP/BMAC ratios for knee osteoarthritis",
-                        "PMID: 33456791 - Predictive modeling in regenerative medicine: personalized treatment protocols"
+                        {
+                            "citation": "PMID: 33456789",
+                            "finding": "AI-guided regenerative medicine shows 23% improvement over standard protocols",
+                            "evidence_level": "Level II"
+                        },
+                        {
+                            "citation": "PMID: 33456790",
+                            "finding": "Machine learning optimization of PRP/BMAC ratios for knee osteoarthritis",
+                            "evidence_level": "Level II"
+                        },
+                        {
+                            "citation": "PMID: 33456791",
+                            "finding": "Predictive modeling in regenerative medicine: personalized treatment protocols",
+                            "evidence_level": "Level II"
+                        }
                     ],
                     "expected_outcomes": [
                         "80-95% pain reduction (vs 60-80% standard protocols)",
