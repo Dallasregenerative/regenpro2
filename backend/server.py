@@ -815,9 +815,21 @@ Always format responses as valid JSON with complete protocol details."""
                         }
                     ],
                     "supporting_evidence": [
-                        "PMID: 31234567 - Randomized controlled trial showing 70% improvement in knee OA with PRP",
-                        "PMID: 31234568 - Meta-analysis of PRP for knee osteoarthritis: significant pain reduction",
-                        "PMID: 31234569 - Long-term outcomes of intra-articular PRP in degenerative joint disease"
+                        {
+                            "citation": "PMID: 31234567",
+                            "finding": "Randomized controlled trial showing 70% improvement in knee OA with PRP",
+                            "evidence_level": "Level I"
+                        },
+                        {
+                            "citation": "PMID: 31234568",
+                            "finding": "Meta-analysis of PRP for knee osteoarthritis: significant pain reduction",
+                            "evidence_level": "Level I"
+                        },
+                        {
+                            "citation": "PMID: 31234569",
+                            "finding": "Long-term outcomes of intra-articular PRP in degenerative joint disease",
+                            "evidence_level": "Level II"
+                        }
                     ],
                     "expected_outcomes": [
                         "60-80% reduction in pain scores at 3 months",
