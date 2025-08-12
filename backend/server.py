@@ -1053,18 +1053,7 @@ Always format responses as valid JSON with complete protocol details."""
                         "Data privacy and security protocols must be followed",
                         "Algorithm decisions should be reviewed by licensed practitioners"
                     ],
-                    "cost_estimate": {
-                        "total_cost": "$6000-12000",
-                        "breakdown": {
-                            "AI assessment & optimization": "$1500-2500",
-                            "Combined PRP/BMAC therapy": "$3000-5000",
-                            "Smart monitoring system": "$800-1200",
-                            "AI-guided follow-up": "$1200-2000",
-                            "Predictive analytics": "$500-1000"
-                        },
-                        "insurance_coverage": "Not covered - premium AI-enhanced procedure",
-                        "roi_justification": "23% better outcomes justify 15-30% cost premium"
-                    },
+                    "cost_estimate": "$6,000 - $12,000",
                     "confidence_score": 0.92,
                     "ai_reasoning": "AI-optimized protocol leverages machine learning to personalize treatment, predict outcomes, and optimize timing. Represents cutting-edge of regenerative medicine with superior results. Higher success rates and longer-lasting benefits justify premium pricing for cash-pay practices."
                 }
