@@ -32,6 +32,14 @@ except ImportError:
     DICOM_AVAILABLE = False
     logging.warning("pydicom not available - DICOM processing will be simulated")
 
+# Load environment for API keys
+from dotenv import load_dotenv
+
+# Import emergentintegrations for LLM access
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+load_dotenv()
+
 class FileUpload(BaseModel):
     file_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     patient_id: str
