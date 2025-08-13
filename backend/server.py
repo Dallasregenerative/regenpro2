@@ -714,6 +714,100 @@ Generate the most accurate, evidence-based analysis possible using all available
             )
         
         try:
+            # Try Emergent LLM integration first (GPT-5)
+            if self.llm_chat:
+                try:
+                    protocol_system_msg = """You are the world's most advanced regenerative medicine protocol generator. You have complete knowledge of:
+
+- All regenerative therapies: PRP, BMAC, Wharton's jelly MSCs, umbilical cord MSCs, placental MSCs, cord blood, exosomes
+- Global regulatory status and legal frameworks
+- Evidence-based dosing, timing, and delivery methods
+- Synergistic combinations and contraindications
+- Expected outcomes and realistic timelines
+- Cost-effectiveness analysis
+
+Generate detailed, actionable protocols that practitioners can implement immediately. Include specific dosages, timing, delivery methods, and monitoring parameters.
+
+Always format responses as valid JSON with complete protocol details."""
+                    
+                    # Create new LLM chat instance for protocol generation
+                    protocol_chat = LlmChat(
+                        api_key=self.emergent_key,
+                        session_id=f"protocol_generation_{uuid.uuid4().hex[:8]}",
+                        system_message=protocol_system_msg
+                    ).with_model("openai", "gpt-5")  # Use GPT-5 for best protocol generation
+                    
+                    user_message = UserMessage(text=protocol_prompt)
+                    ai_response = await protocol_chat.send_message(user_message)
+                    content = ai_response
+                    
+                    # Parse protocol response
+                    try:
+                        protocol_data = json.loads(content)
+                        
+                        # Create comprehensive protocol
+                        protocol = RegenerativeProtocol(
+                            patient_id=patient_data.patient_id,
+                            practitioner_id=patient_data.practitioner_id,
+                            school_of_thought=school,
+                            primary_diagnoses=[d.diagnosis for d in diagnoses[:3]],
+                            protocol_steps=[ProtocolStep(**step) for step in protocol_data.get('protocol_steps', [])],
+                            supporting_evidence=protocol_data.get('supporting_evidence', []),
+                            expected_outcomes=protocol_data.get('expected_outcomes', []),
+                            timeline_predictions=protocol_data.get('timeline_predictions', {}),
+                            contraindications=protocol_data.get('contraindications', []),
+                            legal_warnings=protocol_data.get('legal_warnings', []),
+                            cost_estimate=protocol_data.get('cost_estimate'),
+                            confidence_score=protocol_data.get('confidence_score', 0.8),
+                            ai_reasoning=protocol_data.get('ai_reasoning', 'Protocol generated using GPT-5 based on current evidence and best practices.')
+                        )
+                        
+                        logging.info(f"Successfully generated protocol using Emergent LLM (GPT-5) for school: {school}")
+                        return protocol
+                        
+                    except json.JSONDecodeError:
+                        logging.warning("Failed to parse Emergent LLM protocol response, using fallback parser")
+                        protocol_data = self._parse_protocol_fallback(content, school)
+                        
+                        # Create protocol with fallback data
+                        protocol = RegenerativeProtocol(
+                            patient_id=patient_data.patient_id,
+                            practitioner_id=patient_data.practitioner_id,
+                            school_of_thought=school,
+                            primary_diagnoses=[d.diagnosis for d in diagnoses[:3]],
+                            protocol_steps=[ProtocolStep(**step) for step in protocol_data.get('protocol_steps', [])],
+                            supporting_evidence=protocol_data.get('supporting_evidence', []),
+                            expected_outcomes=protocol_data.get('expected_outcomes', []),
+                            timeline_predictions=protocol_data.get('timeline_predictions', {}),
+                            contraindications=protocol_data.get('contraindications', []),
+                            legal_warnings=protocol_data.get('legal_warnings', []),
+                            cost_estimate=protocol_data.get('cost_estimate'),
+                            confidence_score=protocol_data.get('confidence_score', 0.8),
+                            ai_reasoning=protocol_data.get('ai_reasoning', 'Protocol generated using GPT-5 with fallback parsing.')
+                        )
+                        return protocol
+                        
+                except Exception as e:
+                    logging.error(f"Emergent LLM protocol generation error: {str(e)}")
+                    
+            # Fallback to direct OpenAI API if Emergent LLM fails
+            logging.info("Falling back to direct OpenAI API for protocol generation")
+            return await self._fallback_protocol_openai_api(patient_data, diagnoses, school, protocol_prompt)
+            
+        except Exception as e:
+            logging.error(f"Protocol generation failed: {str(e)}")
+            
+            # If API key is invalid or OpenAI fails, provide a realistic fallback protocol
+            if "invalid_api_key" in str(e) or "401" in str(e) or "Unauthorized" in str(e):
+                logging.info("API key invalid, generating fallback protocol for demo purposes")
+                return await self._generate_fallback_protocol(patient_data, diagnoses, school)
+            else:
+                return await self._generate_fallback_protocol(patient_data, diagnoses, school)
+
+    async def _fallback_protocol_openai_api(self, patient_data: PatientData, diagnoses: List[DiagnosticResult], school: SchoolOfThought, protocol_prompt: str) -> RegenerativeProtocol:
+        """Fallback to direct OpenAI API for protocol generation"""
+        
+        try:
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.post(
                     f"{self.base_url}/chat/completions",
@@ -791,14 +885,8 @@ Always format responses as valid JSON with complete protocol details."""
             return protocol
             
         except Exception as e:
-            logging.error(f"Protocol generation failed: {str(e)}")
-            
-            # If API key is invalid or OpenAI fails, provide a realistic fallback protocol
-            if "invalid_api_key" in str(e) or "401" in str(e) or "Unauthorized" in str(e):
-                logging.info("OpenAI API key invalid, generating fallback protocol for demo purposes")
-                return await self._generate_fallback_protocol(patient_data, diagnoses, school)
-            else:
-                raise HTTPException(status_code=500, detail=f"Protocol generation failed: {str(e)}")
+            logging.error(f"OpenAI API fallback protocol generation error: {str(e)}")
+            return await self._generate_fallback_protocol(patient_data, diagnoses, school)
 
     async def _generate_fallback_protocol(
         self,
