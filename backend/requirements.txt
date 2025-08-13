@@ -27,6 +27,7 @@ scipy==1.11.4
 psutil==5.9.6
 lxml==4.9.3
 requests==2.31.0
+emergentintegrations
 feedparser==6.0.10
 shap==0.44.1
 lime==0.2.0.1
