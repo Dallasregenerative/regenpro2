@@ -4199,7 +4199,7 @@ async def health_check():
         "version": "2.0.0",
         "services": {
             "database": "connected",
-            "ai_engine": "ready" if OPENAI_API_KEY else "not_configured",
+            "ai_engine": "ready" if (EMERGENT_LLM_KEY or OPENAI_API_KEY) else "not_configured",
             "knowledge_base": "loaded"
         }
     }
