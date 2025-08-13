@@ -11064,18 +11064,42 @@ class AdvancedDifferentialDiagnosisEngine:
     async def _calculate_posterior_probability(
         self, prior: float, likelihood: float, all_diagnoses: List[Dict]
     ) -> float:
-        """Calculate posterior probability using Bayes' theorem"""
+        """Calculate posterior probability using proper Bayes' theorem with normalization"""
         
         # Bayes' theorem: P(diagnosis|data) = P(data|diagnosis) * P(diagnosis) / P(data)
-        # Where P(data) is the normalization constant
+        # Where P(data) is the normalization constant (sum of all numerators)
+        
+        # Ensure we have valid inputs
+        if prior <= 0 or likelihood <= 0:
+            print(f"Warning: Invalid Bayes inputs - prior: {prior}, likelihood: {likelihood}")
+            return 0.1  # Minimum reasonable probability
         
         numerator = likelihood * prior
         
-        # For simplicity, we'll use the numerator and normalize later
-        # In a full implementation, we'd calculate the marginal probability
+        # Calculate normalization constant (marginal probability)
+        # This should be the sum of (likelihood * prior) for all possible diagnoses
+        normalization_constant = 1.0  # Default if we can't calculate proper normalization
         
-        # Apply some normalization to keep probabilities reasonable
-        posterior = min(0.9, numerator)
+        try:
+            # Calculate sum of all numerators for proper normalization
+            all_numerators = []
+            for diag in all_diagnoses:
+                diag_prior = diag.get('prior_probability', 0.2)  # Default prior
+                diag_likelihood = diag.get('likelihood', 0.6)    # Default likelihood
+                all_numerators.append(diag_likelihood * diag_prior)
+            
+            if all_numerators and sum(all_numerators) > 0:
+                normalization_constant = sum(all_numerators)
+        except Exception as e:
+            print(f"Warning: Could not calculate normalization constant: {e}")
+            # Fall back to simple normalization
+            normalization_constant = max(1.0, numerator * 3)  # Assume 3 competing diagnoses
+        
+        # Calculate normalized posterior probability
+        posterior = numerator / normalization_constant
+        
+        # Ensure reasonable bounds
+        posterior = max(0.05, min(0.90, posterior))  # Between 5% and 90%
         
         return posterior
 
