@@ -1076,6 +1076,219 @@ IGF-1,180,109-284,ng/mL,Normal"""
                 print(f"   Evidence Level Indicators: {len(evidence_mentions)}")
         return success
 
+    # ========== CONFIDENCE SCORE BUG INVESTIGATION ==========
+    # DEBUG TEST: 2% Confidence Score Issue Investigation
+    # Testing POST /api/diagnosis/comprehensive-differential with Robert Chen's data
+    # Analyzing diagnostic reasoning and posterior probability calculations
+
+    def test_robert_chen_confidence_score_debug(self):
+        """DEBUG TEST: Investigate 2% confidence score bug with Robert Chen's data"""
+        
+        print("🔍 DEBUGGING 2% CONFIDENCE SCORE ISSUE")
+        print("   Testing POST /api/diagnosis/comprehensive-differential with Robert Chen's data")
+        print("   Investigating posterior probability calculations and diagnostic reasoning")
+        
+        # Create Robert Chen patient data as specified in review request
+        robert_chen_data = {
+            "demographics": {
+                "name": "Robert Chen",
+                "age": "52",
+                "gender": "Male",
+                "occupation": "Construction Manager",
+                "insurance": "Self-pay"
+            },
+            "chief_complaint": "Right shoulder pain with decreased range of motion, 8 months duration, seeking alternatives to shoulder surgery",
+            "history_present_illness": "52-year-old male construction manager with progressive right shoulder pain over 8 months. Pain worse with overhead activities and at night. Decreased range of motion affecting work performance. Failed conservative management including NSAIDs, physical therapy, and corticosteroid injections. Seeking regenerative medicine alternatives to avoid shoulder surgery.",
+            "past_medical_history": ["Rotator cuff tendinopathy", "Hypertension", "Type 2 diabetes"],
+            "medications": ["Metformin 1000mg BID", "Lisinopril 10mg daily", "Ibuprofen PRN"],
+            "allergies": ["NKDA"],
+            "vital_signs": {
+                "temperature": "98.4",
+                "blood_pressure": "138/88",
+                "heart_rate": "78",
+                "respiratory_rate": "16",
+                "oxygen_saturation": "97",
+                "weight": "185",
+                "height": "5'10\""
+            },
+            "symptoms": ["right shoulder pain", "decreased range of motion", "night pain", "overhead activity limitation"],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": "3.2 mg/L",
+                    "ESR": "22 mm/hr"
+                },
+                "metabolic_panel": {
+                    "glucose": "145 mg/dL",
+                    "HbA1c": "7.2%"
+                }
+            },
+            "imaging_data": [
+                {
+                    "type": "X-ray",
+                    "location": "right shoulder",
+                    "findings": "Mild acromioclavicular joint arthritis, no acute fracture",
+                    "date": "2024-01-20"
+                },
+                {
+                    "type": "MRI",
+                    "location": "right shoulder",
+                    "findings": "Partial thickness rotator cuff tear, subacromial impingement, mild glenohumeral arthritis",
+                    "date": "2024-02-15"
+                }
+            ]
+        }
+
+        # Step 1: Create Robert Chen patient
+        print("   Step 1: Creating Robert Chen patient...")
+        create_success, create_response = self.run_test(
+            "DEBUG - Create Robert Chen Patient",
+            "POST",
+            "patients",
+            200,
+            data=robert_chen_data,
+            timeout=30
+        )
+        
+        if not create_success:
+            print("   ❌ Failed to create Robert Chen patient")
+            return False
+            
+        robert_chen_id = create_response.get('patient_id')
+        print(f"   ✅ Robert Chen created with ID: {robert_chen_id}")
+
+        # Step 2: Test comprehensive differential diagnosis
+        print("   Step 2: Running comprehensive differential diagnosis...")
+        print("   🔍 ANALYZING: Posterior probability calculations and confidence scores")
+        
+        analysis_success, analysis_response = self.run_test(
+            "DEBUG - Robert Chen Comprehensive Differential Diagnosis",
+            "POST",
+            f"patients/{robert_chen_id}/analyze",
+            200,
+            data={},
+            timeout=120
+        )
+        
+        if not analysis_success:
+            print("   ❌ Comprehensive differential diagnosis failed")
+            return False
+
+        # Step 3: DETAILED CONFIDENCE SCORE ANALYSIS
+        print("   Step 3: DETAILED CONFIDENCE SCORE ANALYSIS")
+        print("   🔍 Investigating diagnostic clues and likelihood calculations")
+        
+        diagnostic_results = analysis_response.get('diagnostic_results', [])
+        print(f"   Total Diagnoses Generated: {len(diagnostic_results)}")
+        
+        if not diagnostic_results:
+            print("   ❌ No diagnostic results returned - this is the bug!")
+            return False
+        
+        # Analyze each diagnosis for confidence score issues
+        confidence_scores = []
+        for i, diagnosis in enumerate(diagnostic_results, 1):
+            confidence = diagnosis.get('confidence_score', 0)
+            confidence_scores.append(confidence)
+            
+            print(f"   Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
+            print(f"   ├── Confidence Score: {confidence:.3f} ({confidence*100:.1f}%)")
+            print(f"   ├── Reasoning: {diagnosis.get('reasoning', 'No reasoning')[:100]}...")
+            print(f"   ├── Supporting Evidence: {len(diagnosis.get('supporting_evidence', []))} items")
+            print(f"   ├── Mechanisms: {len(diagnosis.get('mechanisms_involved', []))} mechanisms")
+            print(f"   └── Regenerative Targets: {len(diagnosis.get('regenerative_targets', []))} targets")
+        
+        # Step 4: CONFIDENCE SCORE BUG DETECTION
+        print("   Step 4: CONFIDENCE SCORE BUG DETECTION")
+        
+        # Check for the 2% bug
+        two_percent_scores = [score for score in confidence_scores if abs(score - 0.02) < 0.001]
+        uniform_low_scores = [score for score in confidence_scores if score < 0.1]
+        
+        print(f"   🔍 Scores exactly at 2%: {len(two_percent_scores)}/{len(confidence_scores)}")
+        print(f"   🔍 Scores below 10%: {len(uniform_low_scores)}/{len(confidence_scores)}")
+        print(f"   🔍 Score Range: {min(confidence_scores):.3f} - {max(confidence_scores):.3f}")
+        
+        # Expected behavior check
+        expected_primary_range = (0.70, 0.85)  # 70-85% for primary
+        expected_secondary_range = (0.60, 0.75)  # 60-75% for secondary
+        expected_tertiary_range = (0.40, 0.60)  # 40-60% for tertiary
+        
+        if len(confidence_scores) >= 1:
+            primary_score = confidence_scores[0]
+            primary_in_range = expected_primary_range[0] <= primary_score <= expected_primary_range[1]
+            print(f"   🔍 Primary diagnosis confidence in expected range (70-85%): {primary_in_range}")
+            
+        if len(confidence_scores) >= 2:
+            secondary_score = confidence_scores[1]
+            secondary_in_range = expected_secondary_range[0] <= secondary_score <= expected_secondary_range[1]
+            print(f"   🔍 Secondary diagnosis confidence in expected range (60-75%): {secondary_in_range}")
+            
+        if len(confidence_scores) >= 3:
+            tertiary_score = confidence_scores[2]
+            tertiary_in_range = expected_tertiary_range[0] <= tertiary_score <= expected_tertiary_range[1]
+            print(f"   🔍 Tertiary diagnosis confidence in expected range (40-60%): {tertiary_in_range}")
+
+        # Step 5: ROOT CAUSE ANALYSIS
+        print("   Step 5: ROOT CAUSE ANALYSIS")
+        
+        # Check if this is the 2% bug
+        if len(two_percent_scores) > 0:
+            print("   🚨 BUG CONFIRMED: Found diagnoses with exactly 2% confidence scores")
+            print("   🔍 This indicates posterior probability calculation issues")
+            
+        if len(uniform_low_scores) == len(confidence_scores) and len(confidence_scores) > 0:
+            print("   🚨 BUG CONFIRMED: All confidence scores are uniformly low (<10%)")
+            print("   🔍 This suggests:")
+            print("       - Prior probabilities may be too low")
+            print("       - Likelihood calculations defaulting to low values (0.3)")
+            print("       - Bayes' theorem calculation errors")
+            print("       - Diagnostic clues not matching likelihood patterns")
+            
+        # Check for realistic clinical probability distribution
+        has_realistic_distribution = False
+        if len(confidence_scores) >= 3:
+            # Check if we have a proper decreasing confidence pattern
+            decreasing_pattern = all(confidence_scores[i] >= confidence_scores[i+1] for i in range(len(confidence_scores)-1))
+            primary_reasonable = confidence_scores[0] > 0.5  # Primary should be >50%
+            has_realistic_distribution = decreasing_pattern and primary_reasonable
+            
+        print(f"   🔍 Realistic clinical probability distribution: {has_realistic_distribution}")
+        
+        # Step 6: DIAGNOSTIC CLUES ANALYSIS
+        print("   Step 6: DIAGNOSTIC CLUES ANALYSIS")
+        
+        # Check if we can access more detailed analysis data
+        if 'comprehensive_analysis' in analysis_response:
+            comp_analysis = analysis_response['comprehensive_analysis']
+            print(f"   🔍 Comprehensive analysis available: {len(comp_analysis)} components")
+            
+            if 'diagnostic_clues' in comp_analysis:
+                clues = comp_analysis['diagnostic_clues']
+                print(f"   🔍 Diagnostic clues found: {len(clues)}")
+                
+        # Step 7: SUMMARY AND RECOMMENDATIONS
+        print("   Step 7: BUG INVESTIGATION SUMMARY")
+        
+        bug_detected = len(two_percent_scores) > 0 or (len(uniform_low_scores) == len(confidence_scores) and len(confidence_scores) > 0)
+        
+        if bug_detected:
+            print("   🚨 CONFIDENCE SCORE BUG CONFIRMED")
+            print("   📋 FINDINGS:")
+            print(f"       - {len(two_percent_scores)} diagnoses with exactly 2% confidence")
+            print(f"       - {len(uniform_low_scores)} diagnoses with <10% confidence")
+            print(f"       - Expected primary range: 70-85%, Actual: {confidence_scores[0]*100:.1f}%" if confidence_scores else "")
+            print("   🔧 RECOMMENDED FIXES:")
+            print("       1. Check posterior_probability calculation in backend")
+            print("       2. Verify diagnostic clues are generating proper likelihood values")
+            print("       3. Ensure prior probabilities are realistic for clinical conditions")
+            print("       4. Verify Bayes' theorem implementation")
+            print("       5. Check if likelihood calculations are defaulting to 0.3")
+        else:
+            print("   ✅ CONFIDENCE SCORES APPEAR NORMAL")
+            print("   📋 No 2% confidence score bug detected")
+            
+        return analysis_success
+
     # ========== FINAL COMPREHENSIVE VERIFICATION TESTING ==========
     # Complete integrated AI workflow testing after the Select Patient button fix
     # Testing the three Critical Priority systems as requested in review:
