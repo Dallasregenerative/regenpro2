@@ -290,7 +290,7 @@ Focus exclusively on regenerative medicine differential diagnosis. Format all re
         }
 
     async def analyze_patient_data(self, patient_data: PatientData) -> List[DiagnosticResult]:
-        """Comprehensive multi-modal patient analysis with differential diagnosis"""
+        """Comprehensive multi-modal patient analysis with differential diagnosis using Emergent LLM"""
         
         try:
             # Get uploaded files for multi-modal integration
@@ -305,7 +305,62 @@ Focus exclusively on regenerative medicine differential diagnosis. Format all re
             # Build enhanced analysis prompt with multi-modal data
             analysis_prompt = self._build_enhanced_analysis_prompt(patient_data, uploaded_files)
             
-            # Generate comprehensive AI analysis
+            # Try Emergent LLM integration first (GPT-5)
+            if self.llm_chat:
+                try:
+                    user_message = UserMessage(text=analysis_prompt)
+                    ai_response = await self.llm_chat.send_message(user_message)
+                    content = ai_response
+                    
+                    # Parse and structure the comprehensive analysis
+                    try:
+                        diagnostic_data = json.loads(content)
+                        
+                        # Convert to DiagnosticResult objects with enhanced information
+                        diagnostic_results = []
+                        
+                        differential_diagnoses = diagnostic_data.get('differential_diagnosis', [])
+                        
+                        for i, diagnosis in enumerate(differential_diagnoses):
+                            # Enhanced diagnostic result with multi-modal insights
+                            result = DiagnosticResult(
+                                diagnosis=diagnosis.get('diagnosis', f'Diagnosis {i+1}'),
+                                confidence_score=diagnosis.get('probability', 0.7),
+                                reasoning=diagnosis.get('mechanism', 'Mechanism under evaluation'),
+                                supporting_evidence=diagnosis.get('supporting_evidence', []),
+                                mechanisms_involved=[diagnosis.get('mechanism', 'Mechanism under evaluation')],
+                                regenerative_targets=diagnosis.get('regenerative_targets', [])
+                            )
+                            diagnostic_results.append(result)
+                        
+                        # Store comprehensive analysis for later retrieval
+                        await self._store_comprehensive_analysis(patient_data.patient_id, diagnostic_data, uploaded_files)
+                        
+                        if diagnostic_results:
+                            logging.info(f"Successfully generated {len(diagnostic_results)} diagnoses using Emergent LLM (GPT-5)")
+                            return diagnostic_results
+                        else:
+                            logging.warning("Emergent LLM returned empty results, falling back")
+                            
+                    except (json.JSONDecodeError, KeyError) as e:
+                        logging.error(f"Failed to parse Emergent LLM response: {str(e)}")
+                        
+                except Exception as e:
+                    logging.error(f"Emergent LLM integration error: {str(e)}")
+                    
+            # Fallback to direct OpenAI API if Emergent LLM fails
+            logging.info("Falling back to direct OpenAI API")
+            return await self._fallback_to_openai_api(patient_data, uploaded_files, analysis_prompt)
+                
+        except Exception as e:
+            logging.error(f"Patient analysis error: {str(e)}")
+            return await self._generate_fallback_diagnostics(patient_data, uploaded_files)
+
+    async def _fallback_to_openai_api(self, patient_data: PatientData, uploaded_files: Dict, analysis_prompt: str) -> List[DiagnosticResult]:
+        """Fallback to direct OpenAI API if Emergent LLM fails"""
+        
+        try:
+            # Generate comprehensive AI analysis using direct OpenAI API
             async with httpx.AsyncClient(timeout=60.0) as client:
                 response = await client.post(
                     f"{self.base_url}/chat/completions",
@@ -316,41 +371,6 @@ Focus exclusively on regenerative medicine differential diagnosis. Format all re
                     json={
                         "model": "gpt-4",
                         "messages": [
-                            {
-                                "role": "system",
-                                "content": """You are Dr. Sarah Chen, the world's leading regenerative medicine specialist with 25+ years treating cash-pay patients. Your expertise focuses specifically on:
-
-**PRIMARY REGENERATIVE THERAPIES (Use These Terms Frequently):**
-- PRP (Platelet-Rich Plasma) with growth factor optimization and platelet-rich plasma concentrate
-- BMAC (Bone Marrow Aspirate Concentrate) with mesenchymal stem cell isolation
-- Stem cell therapy including pluripotent stem cells and mesenchymal stem cells
-- Tissue engineering with bioprinting and cellular therapies
-- Growth factors including PDGF, VEGF, IGF-1, and TGF-beta
-- Chondrogenesis enhancement and cartilage regeneration protocols
-- Autologous biologics and regenerative medicine innovations
-
-**REGENERATIVE MEDICINE CONDITIONS (Your Specialty):**
-- Osteoarthritis with cartilage loss requiring PRP or BMAC intervention
-- Tendinopathies responding to platelet-rich plasma and growth factor therapy
-- Ligament injuries benefiting from stem cell and tissue engineering approaches
-- Chronic pain conditions suitable for regenerative medicine alternatives
-- Sports injuries requiring autologous biologics and cellular therapies
-- Post-surgical healing with mesenchymal stem cell enhancement
-
-**YOUR CLINICAL APPROACH (Incorporate These Terms):**
-Always think: "Which regenerative medicine therapy - PRP, BMAC, or stem cell therapy - will provide optimal tissue engineering and growth factor optimization for this patient?" Consider:
-- Platelet-rich plasma concentration levels and growth factor profiles
-- Bone marrow aspirate concentrate with mesenchymal stem cell potential
-- Stem cell differentiation capacity and chondrogenesis enhancement
-- Tissue engineering opportunities with cellular therapies
-- Autologous biologics efficacy and regenerative medicine success rates
-- Growth factor optimization and platelet-rich plasma protocols
-
-**RESPONSE REQUIREMENTS:**
-Every response must include multiple references to: PRP, BMAC, stem cell therapy, platelet-rich plasma, bone marrow aspirate concentrate, mesenchymal stem cells, growth factors, tissue engineering, chondrogenesis, cartilage regeneration, autologous biologics, cellular therapies, and regenerative medicine protocols.
-
-Focus exclusively on regenerative medicine differential diagnosis. Format all responses as valid JSON focused on regenerative medicine applications with high keyword density for clinical decision support."""
-                            },
                             {
                                 "role": "user", 
                                 "content": analysis_prompt
@@ -399,7 +419,7 @@ Focus exclusively on regenerative medicine differential diagnosis. Format all re
                 return await self._generate_fallback_diagnostics(patient_data, uploaded_files)
                 
         except Exception as e:
-            logging.error(f"Patient analysis error: {str(e)}")
+            logging.error(f"OpenAI API fallback error: {str(e)}")
             return await self._generate_fallback_diagnostics(patient_data, uploaded_files)
 
     def _build_enhanced_analysis_prompt(self, patient_data: PatientData, uploaded_files: Dict) -> str:
