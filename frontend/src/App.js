@@ -1825,10 +1825,10 @@ function App() {
                     <div className="border-t pt-6">
                       <Button
                         onClick={() => handleGenerateProtocol(selectedPatient.patient_id, selectedSchool)}
-                        disabled={loading}
+                        disabled={protocolGenerationLoading}
                         className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 h-12"
                       >
-                        {loading ? (
+                        {protocolGenerationLoading ? (
                           <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             Generating Evidence-Based Protocol...
