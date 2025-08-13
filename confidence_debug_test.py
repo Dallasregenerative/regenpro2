@@ -188,6 +188,9 @@ class ConfidenceScoreDebugger:
             
             print(f"\n   📋 Diagnosis {i}: {diagnosis.get('diagnosis', 'Unknown')}")
             print(f"   ├── Confidence Score: {confidence:.3f} ({confidence*100:.1f}%)")
+            print(f"   ├── Prior Probability: {diagnosis.get('debug_prior_probability', 'N/A')}")
+            print(f"   ├── Likelihood: {diagnosis.get('debug_likelihood', 'N/A')}")
+            print(f"   ├── Posterior Probability: {diagnosis.get('debug_posterior_probability', 'N/A')}")
             print(f"   ├── Reasoning: {diagnosis.get('reasoning', 'No reasoning')[:100]}...")
             print(f"   ├── Supporting Evidence: {len(diagnosis.get('supporting_evidence', []))} items")
             print(f"   ├── Mechanisms: {len(diagnosis.get('mechanisms_involved', []))} mechanisms")
