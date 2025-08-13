@@ -66,9 +66,26 @@ class ProcessedFileData(BaseModel):
 class MedicalFileProcessor:
     """Comprehensive medical file processing system"""
     
-    def __init__(self, db_client, openai_api_key: str):
+    def __init__(self, db_client, api_key: str):
         self.db = db_client
-        self.openai_api_key = openai_api_key
+        self.api_key = api_key  # Keep original for compatibility
+        
+        # Get Emergent LLM key from environment
+        self.emergent_key = os.environ.get('EMERGENT_LLM_KEY')
+        
+        # Initialize LLM chat with Emergent integrations
+        self.llm_chat = None
+        if self.emergent_key and self.emergent_key != "your-openai-api-key-here":
+            try:
+                self.llm_chat = LlmChat(
+                    api_key=self.emergent_key,
+                    session_id="medical_file_processing",
+                    system_message="You are a medical AI assistant specialized in extracting structured data from clinical documents. Return only valid JSON."
+                ).with_model("openai", "gpt-5")  # Use GPT-5 for best medical data extraction
+            except Exception as e:
+                logging.error(f"Failed to initialize Emergent LLM for file processing: {str(e)}")
+                self.llm_chat = None
+        
         self.supported_formats = {
             'images': ['.jpg', '.jpeg', '.png', '.bmp', '.tiff'],
             'documents': ['.pdf', '.doc', '.docx', '.txt'],
