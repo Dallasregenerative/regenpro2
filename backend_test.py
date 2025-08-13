@@ -12224,44 +12224,41 @@ def main_phase3():
         return 1
 
 def main():
-    """Main test execution function"""
-    print("🚀 RegenMed AI Pro - CRITICAL PRIORITY SYSTEMS TESTING")
+    """Main test execution function - Confidence Score Bug Investigation"""
+    print("🚀 RegenMed AI Pro - CONFIDENCE SCORE BUG INVESTIGATION")
     print("=" * 80)
-    print("COMPREHENSIVE PLATFORM VALIDATION")
-    print("Testing all Critical Priority systems for function and content accuracy")
+    print("DEBUG TEST: 2% Confidence Score Issue Investigation")
+    print("Testing POST /api/diagnosis/comprehensive-differential with Robert Chen's data")
+    print("Analyzing diagnostic reasoning and posterior probability calculations")
     print("=" * 80)
     
     tester = RegenMedAIProTester()
     
-    # Run Critical Priority Systems Tests
-    print("\n🎯 EXECUTING CRITICAL PRIORITY SYSTEMS VALIDATION...")
-    critical_success = tester.run_critical_priority_systems_tests()
+    # Run the confidence score debug test
+    print("\n🎯 EXECUTING CONFIDENCE SCORE BUG INVESTIGATION...")
+    success = tester.test_robert_chen_confidence_score_debug()
     
     # Final Summary
     print(f"\n" + "="*80)
-    print("🏁 FINAL TEST SUMMARY")
+    print("🏁 CONFIDENCE SCORE DEBUG SUMMARY")
     print("="*80)
     print(f"Total Tests Run: {tester.tests_run}")
     print(f"Total Tests Passed: {tester.tests_passed}")
     overall_success_rate = (tester.tests_passed / tester.tests_run) * 100 if tester.tests_run > 0 else 0
     print(f"Overall Success Rate: {overall_success_rate:.1f}%")
     
-    if critical_success:
-        print("\n✅ CRITICAL PRIORITY SYSTEMS: VALIDATION SUCCESSFUL")
-        print("✅ All 12 endpoints functional (100% success rate)")
-        print("✅ Medically accurate content and recommendations")
-        print("✅ Proper data flow between systems")
-        print("✅ No critical errors or regressions")
-        print("✅ Platform ready for clinical deployment")
+    if success:
+        print("\n✅ CONFIDENCE SCORE DEBUG TEST COMPLETED")
+        print("✅ Check the detailed analysis above for bug investigation results")
+        print("✅ Root cause analysis and recommendations provided")
     else:
-        print("\n❌ CRITICAL PRIORITY SYSTEMS: VALIDATION FAILED")
-        print("❌ Some endpoints not functional")
-        print("❌ Platform not ready for clinical deployment")
-        print("❌ Review failed tests and fix issues")
+        print("\n❌ CONFIDENCE SCORE DEBUG TEST FAILED")
+        print("❌ Unable to complete confidence score investigation")
+        print("❌ Check error messages above for issues")
     
     print("="*80)
     
-    return critical_success
+    return success
 
 if __name__ == "__main__":
     success = main()
