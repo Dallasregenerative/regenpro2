@@ -122,16 +122,25 @@ class ConfidenceScoreDebugger:
                 comp_diagnosis = analysis_data.get('comprehensive_diagnosis', {})
                 differential_diagnoses = comp_diagnosis.get('differential_diagnoses', [])
                 
-                # Convert to the expected format
+                # Convert to the expected format - EXTRACT POSTERIOR PROBABILITY
                 diagnostic_results = []
                 for diag in differential_diagnoses:
+                    # Extract the actual posterior probability value
+                    posterior_prob = diag.get('posterior_probability', 0.0)
+                    prior_prob = diag.get('prior_probability', 0.0)
+                    likelihood = diag.get('likelihood', 0.0)
+                    
                     diagnostic_results.append({
                         'diagnosis': diag.get('diagnosis', 'Unknown'),
-                        'confidence_score': diag.get('probability', 0.0),
-                        'reasoning': diag.get('clinical_reasoning', 'No reasoning'),
+                        'confidence_score': posterior_prob,  # Use posterior_probability
+                        'reasoning': diag.get('diagnostic_reasoning', 'No reasoning'),
                         'supporting_evidence': diag.get('supporting_evidence', []),
                         'mechanisms_involved': diag.get('mechanisms_involved', []),
-                        'regenerative_targets': diag.get('regenerative_targets', [])
+                        'regenerative_targets': diag.get('regenerative_targets', []),
+                        # Add debug info
+                        'debug_prior_probability': prior_prob,
+                        'debug_likelihood': likelihood,
+                        'debug_posterior_probability': posterior_prob
                     })
                 
                 analysis_data['diagnostic_results'] = diagnostic_results
