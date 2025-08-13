@@ -3195,7 +3195,7 @@ async def get_comprehensive_patient_analysis_v2(
             
             # Convert to PatientData object and analyze with files
             patient_data = PatientData(**patient)
-            ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
+            ai_engine = RegenerativeMedicineAI(EMERGENT_LLM_KEY if EMERGENT_LLM_KEY else OPENAI_API_KEY)
             
             # Include uploaded files in analysis
             file_insights = {}
