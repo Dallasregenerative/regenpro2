@@ -1510,7 +1510,7 @@ Always format responses as valid JSON with complete protocol details."""
         }
 
 # Initialize AI engine and advanced services
-regen_ai = RegenerativeMedicineAI(OPENAI_API_KEY)
+regen_ai = RegenerativeMedicineAI(EMERGENT_LLM_KEY if EMERGENT_LLM_KEY else OPENAI_API_KEY)
 
 # Advanced services (will be initialized on startup)
 federated_service = None
