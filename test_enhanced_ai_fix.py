@@ -7,7 +7,7 @@ import sys
 def test_enhanced_explainable_ai_objectid_fix():
     """Test Enhanced Explainable AI after ObjectId cleaning fix"""
     
-    base_url = "https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com"
+    base_url = "https://medprotocol-3.preview.emergentagent.com"
     api_url = f"{base_url}/api"
     headers = {
         'Content-Type': 'application/json',

@@ -13,7 +13,7 @@ from datetime import datetime
 import time
 
 class ComprehensiveDiagnosticTester:
-    def __init__(self, base_url="https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com"):
+    def __init__(self, base_url="https://medprotocol-3.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0

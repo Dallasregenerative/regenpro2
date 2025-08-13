@@ -12,7 +12,7 @@ import time
 
 class BackendRealityChecker:
     def __init__(self):
-        self.base_url = "https://9add4fe9-ec95-4c25-945f-328dd5122e17.preview.emergentagent.com"
+        self.base_url = "https://medprotocol-3.preview.emergentagent.com"
         self.api_url = f"{self.base_url}/api"
         self.headers = {
             'Content-Type': 'application/json',
