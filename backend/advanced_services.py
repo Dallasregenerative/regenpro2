@@ -10974,61 +10974,90 @@ class AdvancedDifferentialDiagnosisEngine:
         
         diagnosis_name = diagnosis["diagnosis_name"]
         
-        # Define likelihood of clues given specific diagnosis
+        # Enhanced likelihood calculation with realistic clinical correlations
         clue_likelihoods = {
-            "Osteoarthritis": {
-                "degenerative_conditions": 0.9,
+            "Knee Osteoarthritis with Cartilage Loss": {
+                "degenerative_conditions": 0.90,
                 "mechanical_pattern": 0.85,
-                "age_related_wear": 0.9,
-                "knee_pathology": 0.8,
-                "chronic_degenerative": 0.85
+                "age_related_wear": 0.90,
+                "knee_pathology": 0.95,
+                "chronic_degenerative": 0.85,
+                "joint_pain": 0.90,
+                "activity_limitation": 0.85
             },
-            "Rheumatoid Arthritis": {
-                "autoimmune_predisposition": 0.8,
-                "inflammatory_pattern": 0.9,
-                "elevated_inflammatory_markers": 0.7,
-                "morning": 0.85,
-                "autoimmune_progression": 0.9
-            },
-            "Rotator Cuff Injury": {
-                "post_traumatic_sequelae": 0.7,
-                "overuse_injuries": 0.8,
+            "Rotator Cuff Tendinopathy with Partial Tears": {
+                "post_traumatic_sequelae": 0.75,
+                "overuse_injuries": 0.90,
                 "shoulder_pathology": 0.95,
-                "occupational_exposure": 0.6
+                "occupational_exposure": 0.85,
+                "construction": 0.90,
+                "overhead_activities": 0.95,
+                "night_pain": 0.85
             },
-            "Fibromyalgia": {
-                "nerve_involvement": 0.6,
-                "chronic_degenerative": 0.5,
-                "widespread_pain": 0.9,
-                "female": 0.7
+            "Chronic Achilles Tendinopathy": {
+                "overuse_injuries": 0.90,
+                "mechanical_pattern": 0.85,
+                "activity": 0.90,
+                "sports_related": 0.85,
+                "heel_pain": 0.95
             },
-            "Chronic Tendinopathy": {
-                "overuse_injuries": 0.85,
-                "mechanical_pattern": 0.8,
-                "activity": 0.85,
-                "occupational_exposure": 0.7
+            "Lateral Epicondylitis (Tennis Elbow)": {
+                "overuse_injuries": 0.95,
+                "repetitive_strain": 0.90,
+                "elbow_pain": 0.95,
+                "grip_weakness": 0.85,
+                "tennis": 0.80
+            },
+            "Chronic Plantar Fasciitis": {
+                "mechanical_pattern": 0.85,
+                "morning_stiffness": 0.90,
+                "heel_pain": 0.95,
+                "foot_pain": 0.90
+            },
+            "Chronic Musculoskeletal Pain Syndrome": {
+                "chronic_pain": 0.70,
+                "widespread_pain": 0.80,
+                "fibromyalgia": 0.75,
+                "fatigue": 0.65
+            },
+            "Degenerative Joint Disease": {
+                "degenerative_conditions": 0.85,
+                "age_related": 0.80,
+                "joint_stiffness": 0.85,
+                "chronic_progression": 0.80
             }
         }
         
-        # Calculate likelihood based on present clues
+        # Get diagnosis-specific likelihood patterns
         diagnosis_clue_likelihoods = clue_likelihoods.get(diagnosis_name, {})
         
         if not diagnostic_clues:
-            return 0.5  # Neutral likelihood if no clues
+            # Default to moderate likelihood (60%) instead of neutral 50%
+            return 0.60
         
-        # Calculate combined likelihood
+        # Calculate combined likelihood with improved matching
         matching_clues = []
-        for clue in diagnostic_clues:
-            for pattern, likelihood in diagnosis_clue_likelihoods.items():
-                if pattern in clue.lower():
-                    matching_clues.append(likelihood)
+        
+        # Convert clues to lowercase for better matching
+        lower_clues = [clue.lower() for clue in diagnostic_clues]
+        all_clue_text = " ".join(lower_clues)
+        
+        for pattern, likelihood in diagnosis_clue_likelihoods.items():
+            # More flexible pattern matching
+            if any(pattern.lower() in clue or clue in pattern.lower() for clue in lower_clues):
+                matching_clues.append(likelihood)
+            elif pattern.lower() in all_clue_text:
+                matching_clues.append(likelihood)
         
         if matching_clues:
             # Use geometric mean to avoid over-multiplication
             combined_likelihood = np.exp(np.mean(np.log(matching_clues)))
         else:
-            # If no direct matches, check for general compatibility
-            combined_likelihood = 0.3  # Low but non-zero likelihood
+            # If no direct matches, provide reasonable default based on diagnosis specificity
+            if "syndrome" in diagnosis_name.lower() or "generic" in diagnosis_name.lower():
+                combined_likelihood = 0.45  # Lower for generic diagnoses
+            else:
+                combined_likelihood = 0.65  # Higher for specific diagnoses
         
         return min(0.95, combined_likelihood)
 
