@@ -18,6 +18,9 @@ import hashlib
 from enum import Enum
 import numpy as np
 
+# Import emergentintegrations for LLM access
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+
 # Import advanced services and file processing
 from advanced_services import (
     FederatedLearningService,
