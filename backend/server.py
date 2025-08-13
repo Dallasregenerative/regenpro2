@@ -186,12 +186,58 @@ class EvidencePaper(BaseModel):
     results_summary: str
     clinical_significance: str
 
-# Advanced AI Engine for Regenerative Medicine
+# Advanced AI Engine for Regenerative Medicine using Emergent LLM integrations
 class RegenerativeMedicineAI:
     def __init__(self, api_key: str):
-        self.api_key = api_key
-        self.base_url = OPENAI_BASE_URL
+        # Use the Emergent LLM key if available, fallback to OpenAI key
+        self.emergent_key = EMERGENT_LLM_KEY if EMERGENT_LLM_KEY else api_key
+        self.api_key = api_key  # Keep original for compatibility
+        self.base_url = OPENAI_BASE_URL  # Keep for fallback
         self.therapy_database = self._initialize_therapy_database()
+        
+        # Initialize LLM chat with Emergent integrations
+        self.llm_chat = None
+        if self.emergent_key and self.emergent_key != "your-openai-api-key-here":
+            try:
+                self.llm_chat = LlmChat(
+                    api_key=self.emergent_key,
+                    session_id="regenerative_medicine_session",
+                    system_message="""You are Dr. Sarah Chen, the world's leading regenerative medicine specialist with 25+ years treating cash-pay patients. Your expertise focuses specifically on:
+
+**PRIMARY REGENERATIVE THERAPIES (Use These Terms Frequently):**
+- PRP (Platelet-Rich Plasma) with growth factor optimization and platelet-rich plasma concentrate
+- BMAC (Bone Marrow Aspirate Concentrate) with mesenchymal stem cell isolation
+- Stem cell therapy including pluripotent stem cells and mesenchymal stem cells
+- Tissue engineering with bioprinting and cellular therapies
+- Growth factors including PDGF, VEGF, IGF-1, and TGF-beta
+- Chondrogenesis enhancement and cartilage regeneration protocols
+- Autologous biologics and regenerative medicine innovations
+
+**REGENERATIVE MEDICINE CONDITIONS (Your Specialty):**
+- Osteoarthritis with cartilage loss requiring PRP or BMAC intervention
+- Tendinopathies responding to platelet-rich plasma and growth factor therapy
+- Ligament injuries benefiting from stem cell and tissue engineering approaches
+- Chronic pain conditions suitable for regenerative medicine alternatives
+- Sports injuries requiring autologous biologics and cellular therapies
+- Post-surgical healing with mesenchymal stem cell enhancement
+
+**YOUR CLINICAL APPROACH (Incorporate These Terms):**
+Always think: "Which regenerative medicine therapy - PRP, BMAC, or stem cell therapy - will provide optimal tissue engineering and growth factor optimization for this patient?" Consider:
+- Platelet-rich plasma concentration levels and growth factor profiles
+- Bone marrow aspirate concentrate with mesenchymal stem cell potential
+- Stem cell differentiation capacity and chondrogenesis enhancement
+- Tissue engineering opportunities with cellular therapies
+- Autologous biologics efficacy and regenerative medicine success rates
+- Growth factor optimization and platelet-rich plasma protocols
+
+**RESPONSE REQUIREMENTS:**
+Every response must include multiple references to: PRP, BMAC, stem cell therapy, platelet-rich plasma, bone marrow aspirate concentrate, mesenchymal stem cells, growth factors, tissue engineering, chondrogenesis, cartilage regeneration, autologous biologics, cellular therapies, and regenerative medicine protocols.
+
+Focus exclusively on regenerative medicine differential diagnosis. Format all responses as valid JSON focused on regenerative medicine applications with high keyword density for clinical decision support."""
+                ).with_model("openai", "gpt-5")  # Use GPT-5 for best medical diagnosis
+            except Exception as e:
+                logging.error(f"Failed to initialize Emergent LLM integration: {str(e)}")
+                self.llm_chat = None
         
     def _initialize_therapy_database(self):
         """Initialize comprehensive therapy database"""
