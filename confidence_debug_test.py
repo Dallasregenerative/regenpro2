@@ -100,25 +100,61 @@ class ConfidenceScoreDebugger:
             print(f"❌ Error creating patient: {str(e)}")
             return False
 
-        # Step 2: Run comprehensive differential diagnosis
+        # Step 2: Run comprehensive differential diagnosis using the specific endpoint
         print(f"\n🧠 Step 2: Running comprehensive differential diagnosis...")
+        print("   🔍 TESTING: POST /api/diagnosis/comprehensive-differential")
         print("   🔍 ANALYZING: Posterior probability calculations and confidence scores")
         
+        # First try the specific endpoint mentioned in the review
         try:
             response = requests.post(
-                f"{self.api_url}/patients/{robert_chen_id}/analyze",
-                json={},
+                f"{self.api_url}/diagnosis/comprehensive-differential",
+                json={"patient_id": robert_chen_id},
                 headers=self.headers,
                 timeout=120
             )
             
-            if response.status_code != 200:
-                print(f"❌ Comprehensive differential diagnosis failed: {response.status_code}")
-                print(f"   Error: {response.text}")
-                return False
+            if response.status_code == 200:
+                analysis_data = response.json()
+                print("✅ Comprehensive differential diagnosis completed via /diagnosis/comprehensive-differential")
                 
-            analysis_data = response.json()
-            print("✅ Comprehensive differential diagnosis completed")
+                # Extract diagnostic results from the comprehensive diagnosis response
+                comp_diagnosis = analysis_data.get('comprehensive_diagnosis', {})
+                differential_diagnoses = comp_diagnosis.get('differential_diagnoses', [])
+                
+                # Convert to the expected format
+                diagnostic_results = []
+                for diag in differential_diagnoses:
+                    diagnostic_results.append({
+                        'diagnosis': diag.get('diagnosis', 'Unknown'),
+                        'confidence_score': diag.get('probability', 0.0),
+                        'reasoning': diag.get('clinical_reasoning', 'No reasoning'),
+                        'supporting_evidence': diag.get('supporting_evidence', []),
+                        'mechanisms_involved': diag.get('mechanisms_involved', []),
+                        'regenerative_targets': diag.get('regenerative_targets', [])
+                    })
+                
+                analysis_data['diagnostic_results'] = diagnostic_results
+                
+            else:
+                print(f"⚠️  /diagnosis/comprehensive-differential failed: {response.status_code}")
+                print("   Falling back to /patients/{id}/analyze endpoint...")
+                
+                # Fallback to the regular analyze endpoint
+                response = requests.post(
+                    f"{self.api_url}/patients/{robert_chen_id}/analyze",
+                    json={},
+                    headers=self.headers,
+                    timeout=120
+                )
+                
+                if response.status_code != 200:
+                    print(f"❌ Both endpoints failed: {response.status_code}")
+                    print(f"   Error: {response.text}")
+                    return False
+                    
+                analysis_data = response.json()
+                print("✅ Comprehensive differential diagnosis completed via /patients/{id}/analyze")
             
         except Exception as e:
             print(f"❌ Error in differential diagnosis: {str(e)}")
