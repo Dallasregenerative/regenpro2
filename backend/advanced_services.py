@@ -10760,10 +10760,18 @@ class AdvancedDifferentialDiagnosisEngine:
             # Calculate likelihood (given patient data)
             likelihood = await self._calculate_diagnostic_likelihood(diagnosis, patient_data, diagnostic_clues)
             
+            # Debug logging for confidence score calculation
+            diagnosis_name = diagnosis["diagnosis_name"]
+            print(f"🔍 DEBUG Confidence Calculation for {diagnosis_name[:50]}...")
+            print(f"   Prior Probability: {prior_probability:.3f} ({prior_probability*100:.1f}%)")
+            print(f"   Likelihood: {likelihood:.3f} ({likelihood*100:.1f}%)")
+            
             # Apply Bayes' theorem for posterior probability
             posterior_probability = await self._calculate_posterior_probability(
                 prior_probability, likelihood, potential_diagnoses
             )
+            
+            print(f"   Posterior Probability: {posterior_probability:.3f} ({posterior_probability*100:.1f}%)")
             
             # Get supporting evidence
             supporting_evidence = await self._get_diagnostic_supporting_evidence(diagnosis)
