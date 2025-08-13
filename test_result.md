@@ -746,10 +746,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Comprehensive Platform Validation - Complete End-to-End Testing"
+    - "Protocol Generation User Experience - RESOLVED"
   stuck_tasks: []
-  test_all: true
-  test_priority: "comprehensive_validation"
+  test_all: false
+  test_priority: "validation_complete"
 
   - task: "Living Evidence Engine System"
     implemented: true
