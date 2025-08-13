@@ -216,15 +216,18 @@ backend:
 
   - task: "Differential Diagnosis Generation System"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Differential diagnosis generation system fully functional. POST /api/analyze-patient endpoint operational with comprehensive patient data integration. Generated 2 differential diagnoses with ICD-10 codes (M17.0 Osteoarthritis bilateral knee, M06.9 Rheumatoid arthritis), confidence scores in valid range (0.05-0.95), regenerative targets identified (3 for primary, 2 for secondary), and quality reasoning provided. Multi-modal data integration operational. AI analysis processes complex patient profiles including demographics, medical history, medications, lab results, and imaging data. Confidence score validation confirmed (0.0-1.0 range). System provides mechanism-based reasoning and identifies specific regenerative targets for each diagnosis. Ready for practitioner use."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL CONFIDENCE SCORE BUG CONFIRMED - POST /api/diagnosis/comprehensive-differential endpoint investigation with Robert Chen (52y Construction Manager, right shoulder pain) revealed severe confidence score calculation errors: (1) All 3 diagnoses showing 1.5% confidence instead of expected 70-85% for primary diagnosis, (2) ROOT CAUSE IDENTIFIED: Prior probabilities too low (0.05 = 5% for rotator cuff tendinopathy should be 60-80%), Likelihood calculations defaulting to 0.3 (30%) indicating diagnostic clues not matching patterns, Posterior probability calculation: 0.05 × 0.3 = 0.015 (1.5%), (3) All diagnoses have identical prior/likelihood values showing system not differentiating properly, (4) Bayes' theorem calculation working but inputs are wrong. URGENT FIXES NEEDED: Increase prior probabilities for common conditions, Fix likelihood calculation to use proper diagnostic clue matching, Ensure proper differentiation between diagnoses. This blocks clinical decision-making quality as practitioners cannot trust confidence scores for treatment decisions."
 
   - task: "SHAP/LIME Explainable AI System"
     implemented: true
