@@ -218,7 +218,7 @@ backend:
     implemented: true
     working: false
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -228,6 +228,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "🚨 CRITICAL CONFIDENCE SCORE BUG CONFIRMED - POST /api/diagnosis/comprehensive-differential endpoint investigation with Robert Chen (52y Construction Manager, right shoulder pain) revealed severe confidence score calculation errors: (1) All 3 diagnoses showing 1.5% confidence instead of expected 70-85% for primary diagnosis, (2) ROOT CAUSE IDENTIFIED: Prior probabilities too low (0.05 = 5% for rotator cuff tendinopathy should be 60-80%), Likelihood calculations defaulting to 0.3 (30%) indicating diagnostic clues not matching patterns, Posterior probability calculation: 0.05 × 0.3 = 0.015 (1.5%), (3) All diagnoses have identical prior/likelihood values showing system not differentiating properly, (4) Bayes' theorem calculation working but inputs are wrong. URGENT FIXES NEEDED: Increase prior probabilities for common conditions, Fix likelihood calculation to use proper diagnostic clue matching, Ensure proper differentiation between diagnoses. This blocks clinical decision-making quality as practitioners cannot trust confidence scores for treatment decisions."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CONFIDENCE SCORE BUG WORSENED - Comprehensive testing with Robert Chen case reveals CRITICAL FAILURE: (1) POST /api/diagnosis/comprehensive-differential returns 3 diagnoses but ALL with 0.0% confidence scores (worse than previous 2% bug), (2) Diagnoses generated: 'Rotator Cuff Tendinopathy with Partial Tears', 'Chronic Joint Inflammation with Regenerative Potential', 'Soft Tissue Degeneration Suitable for Cellular Therapy', (3) All confidence scores = 0.000 (0.0%) instead of expected Primary 70-85%, Secondary 60-75%, Tertiary 40-60%, (4) No clinical reasoning provided ('No reasoning'), (5) ROOT CAUSE: Complete failure of Bayes' theorem calculation - posterior probabilities calculating to 0.0, (6) VALIDATION CRITERIA FAILED: 2/5 criteria passed, no diagnoses in expected confidence ranges. URGENT ACTION REQUIRED: The confidence score calculation system is completely broken and needs immediate repair of prior probabilities, likelihood calculations, and Bayes' theorem implementation. System cannot provide clinically actionable diagnostic confidence levels."
 
   - task: "SHAP/LIME Explainable AI System"
     implemented: true
