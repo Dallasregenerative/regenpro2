@@ -173,7 +173,19 @@ class ConfidenceScoreBugTest:
         # Step 3: CONFIDENCE SCORE VALIDATION
         print("   Step 3: CONFIDENCE SCORE VALIDATION")
         
-        diagnostic_results = analysis_response.get('diagnostic_results', [])
+        # Extract diagnostic results from either endpoint
+        diagnostic_results = []
+        
+        # Check if we got comprehensive diagnosis response
+        if 'comprehensive_diagnosis' in analysis_response:
+            comprehensive_diagnosis = analysis_response['comprehensive_diagnosis']
+            diagnostic_results = comprehensive_diagnosis.get('differential_diagnoses', [])
+            print(f"   Using comprehensive differential diagnoses: {len(diagnostic_results)}")
+        else:
+            # Fall back to regular diagnostic results
+            diagnostic_results = analysis_response.get('diagnostic_results', [])
+            print(f"   Using regular diagnostic results: {len(diagnostic_results)}")
+        
         print(f"   Total Diagnoses Generated: {len(diagnostic_results)}")
         
         if not diagnostic_results:
