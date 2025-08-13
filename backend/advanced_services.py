@@ -10941,7 +10941,7 @@ class AdvancedDifferentialDiagnosisEngine:
         
         return potential_diagnoses
 
-    async def _calculate_prior_probability(self, diagnosis: Dict, patient_data: Dict) -> float:
+    async def _calculate_prior_probability(self, diagnosis: Dict, patient_data: Dict = None) -> float:
         """Calculate prior probability for diagnosis based on realistic clinical prevalence"""
         
         diagnosis_name = diagnosis["diagnosis_name"]
@@ -10965,7 +10965,24 @@ class AdvancedDifferentialDiagnosisEngine:
             "Musculoskeletal Condition with BMAC Indication": 0.30  # Generic regenerative category
         }
         
-        return prior_probabilities.get(diagnosis_name, 0.20)  # Default to 20% for unknown conditions
+        base_prior = prior_probabilities.get(diagnosis_name, 0.20)  # Default to 20% for unknown conditions
+        
+        # Adjust based on patient context if available
+        if patient_data:
+            demographics = patient_data.get("demographics", {})
+            age = demographics.get("age", 50)
+            
+            try:
+                age_num = int(age)
+                # Age adjustments for some conditions
+                if "osteoarthritis" in diagnosis_name.lower() and age_num > 55:
+                    base_prior = min(0.90, base_prior * 1.1)  # Increase for older patients
+                elif age_num < 35 and "degenerative" in diagnosis_name.lower():
+                    base_prior = base_prior * 0.8  # Decrease for younger patients
+            except (ValueError, TypeError):
+                pass  # Use base prior if age conversion fails
+        
+        return base_prior
 
     async def _calculate_diagnostic_likelihood(
         self, diagnosis: Dict, patient_data: Dict, diagnostic_clues: List[str]
