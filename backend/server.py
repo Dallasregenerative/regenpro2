@@ -6059,7 +6059,7 @@ async def startup_advanced_services():
         pubmed_service = PubMedIntegrationService(db)
         dicom_service = DICOMProcessingService(db)
         prediction_service = OutcomePredictionService(db)
-        file_processor = MedicalFileProcessor(db, OPENAI_API_KEY)
+        file_processor = MedicalFileProcessor(db, EMERGENT_LLM_KEY if EMERGENT_LLM_KEY else OPENAI_API_KEY)
         
         # Initialize Phase 2: AI Clinical Intelligence services
         from advanced_services import VisualExplainableAI, ComparativeEffectivenessAnalytics, PersonalizedRiskAssessment
