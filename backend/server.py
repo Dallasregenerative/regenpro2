@@ -49,8 +49,9 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# OpenAI configuration
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+# LLM configuration using Emergent integrations
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')  # Keep as fallback
 OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 # Security
