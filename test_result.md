@@ -112,7 +112,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fully integrate the analysis of uploaded patient charts, genetic tests, and imaging data into the AI protocol generation workflow, beyond just the file upload mechanism. Ensure the advanced features (Federated Learning, PubMed, DICOM, Outcome Prediction) are seamlessly functional and provide meaningful insights based on actual uploaded data."
+user_problem_statement: "Test the newly integrated Emergent LLM key system with GPT-5 model for the RegenMed AI Pro platform. Focus on validating: (1) AI Analysis Engine Testing with GPT-5 for differential diagnosis generation, (2) Protocol Generation Testing across all schools with GPT-5 integration, (3) File Processing AI Integration with enhanced extraction, (4) Fallback System Validation from Emergent LLM to OpenAI to rule-based, (5) Enhanced Clinical Outputs with GPT-5's superior medical knowledge for regenerative medicine specificity."
 
   - task: "Google Scholar Integration System"
     implemented: true
