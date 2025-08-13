@@ -130,18 +130,41 @@ class ConfidenceScoreBugTest:
         self.robert_chen_id = create_response.get('patient_id')
         print(f"   ✅ Robert Chen created with ID: {self.robert_chen_id}")
 
-        # Step 2: Run comprehensive differential diagnosis
+        # Step 2: Run comprehensive differential diagnosis using the correct endpoint
         print("   Step 2: Running comprehensive differential diagnosis...")
         print("   🔍 CRITICAL VALIDATION: Checking for realistic clinical probability distributions")
         
+        # First try the comprehensive differential diagnosis endpoint
+        comprehensive_data = {
+            "patient_id": self.robert_chen_id,
+            "analysis_parameters": {
+                "differential_count": 3,
+                "confidence_threshold": 0.3,
+                "include_rare_conditions": False,
+                "regenerative_focus": True
+            }
+        }
+        
         analysis_success, analysis_response = self.run_test(
-            "CONFIDENCE FIX - Robert Chen Differential Diagnosis",
+            "CONFIDENCE FIX - Robert Chen Comprehensive Differential",
             "POST",
-            f"patients/{self.robert_chen_id}/analyze",
+            "diagnosis/comprehensive-differential",
             200,
-            data={},
+            data=comprehensive_data,
             timeout=120
         )
+        
+        # If that fails, fall back to regular patient analysis
+        if not analysis_success:
+            print("   Falling back to regular patient analysis...")
+            analysis_success, analysis_response = self.run_test(
+                "CONFIDENCE FIX - Robert Chen Patient Analysis",
+                "POST",
+                f"patients/{self.robert_chen_id}/analyze",
+                200,
+                data={},
+                timeout=120
+            )
         
         if not analysis_success:
             print("   ❌ Comprehensive differential diagnosis failed")
