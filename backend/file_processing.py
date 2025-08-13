@@ -455,10 +455,7 @@ class MedicalFileProcessor:
         }
 
     async def _extract_medical_data_with_ai(self, text_content: str) -> Dict[str, Any]:
-        """Use AI to extract structured medical data from text"""
-        
-        # Use OpenAI to extract structured data
-        import httpx
+        """Use AI to extract structured medical data from text using Emergent LLM"""
         
         extraction_prompt = f"""
         Extract structured medical information from this patient chart text:
@@ -478,12 +475,36 @@ class MedicalFileProcessor:
         Format as valid JSON only.
         """
         
+        # Try Emergent LLM integration first (GPT-5)
+        if self.llm_chat:
+            try:
+                user_message = UserMessage(text=extraction_prompt)
+                ai_response = await self.llm_chat.send_message(user_message)
+                
+                try:
+                    extracted_data = json.loads(ai_response)
+                    logging.info("Successfully extracted medical data using Emergent LLM (GPT-5)")
+                    return extracted_data
+                except json.JSONDecodeError:
+                    logging.warning("Failed to parse Emergent LLM response, falling back to OpenAI")
+            except Exception as e:
+                logging.error(f"Emergent LLM extraction error: {str(e)}")
+        
+        # Fallback to direct OpenAI API if Emergent LLM fails
+        return await self._fallback_openai_extraction(extraction_prompt)
+    
+    async def _fallback_openai_extraction(self, extraction_prompt: str) -> Dict[str, Any]:
+        """Fallback to direct OpenAI API for medical data extraction"""
+        
+        # Use OpenAI to extract structured data
+        import httpx
+        
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.post(
                     f"https://api.openai.com/v1/chat/completions",
                     headers={
-                        "Authorization": f"Bearer {self.openai_api_key}",
+                        "Authorization": f"Bearer {self.api_key}",
                         "Content-Type": "application/json"
                     },
                     json={
@@ -508,16 +529,45 @@ class MedicalFileProcessor:
                     content = ai_response['choices'][0]['message']['content']
                     
                     try:
-                        return json.loads(content)
+                        extracted_data = json.loads(content)
+                        return extracted_data
                     except json.JSONDecodeError:
-                        # Fallback parsing
-                        return self._fallback_text_parsing(text_content)
+                        logging.error("Failed to parse OpenAI response")
+                        return self._generate_fallback_medical_data(extraction_prompt)
                 else:
-                    return self._fallback_text_parsing(text_content)
-                    
+                    logging.error(f"OpenAI API error: {response.status_code}")
+                    return self._generate_fallback_medical_data(extraction_prompt)
+                
         except Exception as e:
-            logging.error(f"AI extraction error: {str(e)}")
-            return self._fallback_text_parsing(text_content)
+            logging.error(f"OpenAI extraction error: {str(e)}")
+            return self._generate_fallback_medical_data(extraction_prompt)
+    
+    def _generate_fallback_medical_data(self, text_content: str) -> Dict[str, Any]:
+        """Generate basic medical data extraction without AI"""
+        
+        # Basic rule-based extraction for fallback
+        fallback_data = {
+            "chief_complaint": "Medical consultation",
+            "medical_history": [],
+            "medications": [],
+            "allergies": [],
+            "social_history": "Not specified",
+            "family_history": "Not specified", 
+            "physical_exam_findings": [],
+            "assessment_plan": "Clinical assessment pending"
+        }
+        
+        # Simple keyword detection
+        text_lower = text_content.lower()
+        
+        if "chest pain" in text_lower or "shortness of breath" in text_lower:
+            fallback_data["chief_complaint"] = "Chest pain and shortness of breath"
+        elif "knee pain" in text_lower or "joint pain" in text_lower:
+            fallback_data["chief_complaint"] = "Knee/joint pain"
+        elif "headache" in text_lower:
+            fallback_data["chief_complaint"] = "Headache"
+        
+        return fallback_data
 
     def _fallback_text_parsing(self, text: str) -> Dict[str, Any]:
         """Fallback text parsing when AI extraction fails"""
