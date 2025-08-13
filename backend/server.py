@@ -3287,7 +3287,7 @@ async def predict_treatment_outcomes_advanced(
         
         # Generate AI-powered outcome prediction using the existing OpenAI integration
         try:
-            ai_engine = RegenerativeMedicineAI(OPENAI_API_KEY)
+            ai_engine = RegenerativeMedicineAI(EMERGENT_LLM_KEY if EMERGENT_LLM_KEY else OPENAI_API_KEY)
             
             # Use the existing httpx client pattern
             async with httpx.AsyncClient(timeout=60.0) as client:
