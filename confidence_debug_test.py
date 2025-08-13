@@ -249,17 +249,35 @@ class ConfidenceScoreDebugger:
         response_keys = list(analysis_data.keys())
         print(f"   Response Keys: {response_keys}")
         
-        # Check for comprehensive analysis data
-        if 'comprehensive_analysis' in analysis_data:
-            comp_analysis = analysis_data['comprehensive_analysis']
-            print(f"   🔍 Comprehensive analysis available: {type(comp_analysis)}")
-            if isinstance(comp_analysis, dict):
-                comp_keys = list(comp_analysis.keys())
-                print(f"   Comprehensive analysis keys: {comp_keys}")
+        # Check for comprehensive diagnosis data
+        if 'comprehensive_diagnosis' in analysis_data:
+            comp_diagnosis = analysis_data['comprehensive_diagnosis']
+            print(f"   🔍 Comprehensive diagnosis available: {type(comp_diagnosis)}")
+            if isinstance(comp_diagnosis, dict):
+                comp_keys = list(comp_diagnosis.keys())
+                print(f"   Comprehensive diagnosis keys: {comp_keys}")
+                
+                # Look for the original differential diagnoses data
+                if 'differential_diagnoses' in comp_diagnosis:
+                    original_diagnoses = comp_diagnosis['differential_diagnoses']
+                    print(f"   🔍 Original differential diagnoses count: {len(original_diagnoses)}")
+                    
+                    for i, orig_diag in enumerate(original_diagnoses):
+                        print(f"   🔍 Original Diagnosis {i+1}:")
+                        print(f"       - Diagnosis: {orig_diag.get('diagnosis', 'Unknown')}")
+                        print(f"       - Probability: {orig_diag.get('probability', 'Missing')}")
+                        print(f"       - Regenerative Suitability: {orig_diag.get('regenerative_suitability', 'Missing')}")
+                        print(f"       - Clinical Reasoning: {orig_diag.get('clinical_reasoning', 'Missing')[:50]}...")
+                        print(f"       - All keys: {list(orig_diag.keys())}")
                 
         # Check for posterior probability data
         for i, diagnosis in enumerate(diagnostic_results):
             print(f"   🔍 Diagnosis {i+1} full data keys: {list(diagnosis.keys())}")
+            
+        # Print a sample of the raw response for debugging
+        print(f"\n   🔍 RAW RESPONSE SAMPLE (first 500 chars):")
+        raw_response = json.dumps(analysis_data, indent=2)
+        print(f"   {raw_response[:500]}...")
 
         # Step 7: SUMMARY AND RECOMMENDATIONS
         print(f"\n📋 Step 7: BUG INVESTIGATION SUMMARY")
