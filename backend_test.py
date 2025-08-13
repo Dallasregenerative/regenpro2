@@ -13094,16 +13094,19 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     tester = RegenMedAIProTester()
     
-    # Run the specific protocol generation 500 error fix validation
-    print("🎯 RUNNING PROTOCOL GENERATION 500 ERROR FIX VALIDATION")
-    print("This test validates the specific fix requested in the review")
+    # Run the specific confidence score bug investigation
+    print("🎯 RUNNING CONFIDENCE SCORE BUG INVESTIGATION")
+    print("DEBUG TEST: 2% Confidence Score Issue Investigation")
+    print("Testing POST /api/diagnosis/comprehensive-differential with Robert Chen's data")
+    print("Analyzing diagnostic reasoning and posterior probability calculations")
     print()
     
-    success = tester.run_protocol_generation_500_error_fix_validation()
+    success = tester.test_robert_chen_confidence_score_debug()
     
     if success:
-        print("\n🎉 VALIDATION COMPLETE - PROTOCOL GENERATION 500 ERROR FIX SUCCESSFUL!")
+        print("\n🎉 CONFIDENCE SCORE DEBUG TEST COMPLETE!")
+        print("Check the detailed analysis above for bug investigation results")
         sys.exit(0)
     else:
-        print("\n❌ VALIDATION FAILED - PROTOCOL GENERATION 500 ERROR STILL EXISTS")
+        print("\n❌ CONFIDENCE SCORE DEBUG TEST FAILED")
         sys.exit(1)
