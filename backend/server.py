@@ -1472,7 +1472,7 @@ Always format responses as valid JSON with complete protocol details."""
         Past History: {', '.join(patient_data.past_medical_history) if patient_data.past_medical_history else 'None reported'}
         Current Medications: {', '.join(patient_data.medications) if patient_data.medications else 'None reported'}
         Allergies: {', '.join(patient_data.allergies) if patient_data.allergies else 'NKDA'}
-        Physical Exam: {patient_data.physical_exam}
+        Physical Exam: {getattr(patient_data, 'physical_exam', 'Not documented')}
         Vital Signs: {json.dumps(patient_data.vital_signs) if patient_data.vital_signs else 'Normal'}
         
         **AVAILABLE REGENERATIVE THERAPIES:**
