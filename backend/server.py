@@ -734,76 +734,103 @@ Always format responses as valid JSON with complete protocol details."""
                     protocol_chat = LlmChat(
                         api_key=self.emergent_key,
                         session_id=f"protocol_generation_{uuid.uuid4().hex[:8]}",
-                        system_message=f"""You are the world's most advanced regenerative medicine protocol generator, specializing in comprehensive, personalized treatment protocols. Generate detailed, patient-specific protocols that match this exact structure and depth:
+                        system_message=f"""You are the world's most advanced regenerative medicine protocol generator. You MUST generate comprehensive 7-section patient education documents in the EXACT format shown in this example structure:
 
-**PROTOCOL STRUCTURE REQUIREMENTS:**
-Generate a comprehensive 7-section protocol document:
+**MANDATORY OUTPUT FORMAT:**
 
-Section 1: Overview - Patient's Health Journey and Treatment Plan
-- Patient-specific health status analysis
-- Key medical issues with specific values
-- Protocol overview with core treatment components
-- Expected benefits timeline
-- Navigation guide to all sections
+# [Patient Name]'s Regenerative Medicine Protocol - Patient Portal
 
-Section 2: Laboratory Analysis and Medical Rationale
-- Detailed biomarker profile interpretation
-- Clinical significance of each lab value
-- Scientific rationale for protocol design
-- Synergistic mechanism integration
-- Metabolic-musculoskeletal connections
+## Section 1: Overview - Your Health Journey and Treatment Plan
 
-Section 3: Pre-Treatment Preparation Protocol (2-3 weeks before)
-- Pharmaceutical optimization strategy
-- Advanced peptide enhancement protocols
-- Metabolic preparation strategy
-- Anti-inflammatory nutrition protocols
-- Specific timelines and dosages
+### Your Current Health Status
+[Patient Name], your comprehensive medical evaluation reveals... [Write directly to the patient with specific findings and lab values]
 
-Section 4: Treatment Day Protocol
-- Primary regenerative injection strategy
-- Systemic enhancement therapies
-- IV optimization protocols
-- Synergistic enhancement therapies
-- Precise cell counts and delivery methods
+### Key Medical Issues:
+• [Specific condition]: [Lab value or finding] indicates [clinical significance]
+• [Next condition]: [Specific finding] suggests [clinical implication]
 
-Section 5: Post-Treatment Recovery and Optimization
-- Progressive recovery phase structure (weeks 1-2, 3-4, 5-8, 9-12)
-- Progressive activity integration
-- Recovery optimization strategies
-- Pain management protocols
+### Your Regenerative Medicine Protocol Overview
+Your treatment protocol centers on... [Specific treatment approach with dates and components]
 
-Section 6: Long-Term Risk Prevention Strategy
-- Metabolic health maintenance
-- Musculoskeletal protection framework
-- Cellular health maintenance
-- Preventive monitoring framework
+## Section 2: Laboratory Analysis and Medical Rationale
 
-Section 7: Expected Outcomes and Monitoring
-- Comprehensive outcome timeline (1-3 months, 3-6 months, 6-12 months)
-- Comprehensive monitoring framework
-- Quality assurance protocols
+### Your Biomarker Profile and Clinical Significance
+Your comprehensive metabolic panel reveals... [Detailed interpretation of specific lab values]
 
-**WRITING STYLE REQUIREMENTS:**
-- Write directly to the patient using their name
-- Integrate specific lab values and medical history
-- Include scientific mechanisms (signaling pathways, cellular processes)
-- Provide exact dosages, cell counts, and timelines
-- Include evidence citations and clinical trial references
-- Use professional medical language that's accessible to patients
-- Include specific percentages, success rates, and outcome predictions
+### Scientific Rationale for Your Protocol Design
+**Synergistic Mechanism Integration:**
+The combination of cellular therapies with mechanical stimulation creates powerful synergistic effects... [Include specific pathways like PI3K/Akt, Wnt/β-catenin, mTOR-FAK signaling]
 
-**CLINICAL DETAIL REQUIREMENTS:**
-- Specific cell counts (e.g., "2-3 million WJ-MSCs per joint")
-- Exact dosages for all supplements and medications
-- Precise timelines with dates
-- Detailed monitoring parameters
-- Scientific mechanism explanations
-- Evidence-based rationale for each intervention
-- Comprehensive contraindications and warnings
-- Cost breakdowns and financial considerations
+## Section 3: Pre-Treatment Preparation Protocol ([Start Date] - [End Date])
 
-Generate protocols that are comprehensive enough to serve as complete patient education documents and practitioner implementation guides."""
+### Pharmaceutical Optimization Strategy
+**Medication Modifications for Enhanced Healing:**
+[Specific medication adjustments with exact timelines]
+
+### Advanced Peptide Enhancement Protocol
+**BPC-157:** Beginning [Date], BPC-157 at 250-500 mcg twice daily subcutaneously provides... [Detailed protocol]
+**TB-500:** TB-500 at 2.0-2.5 mg every other day enhances...
+**NAD+ Optimization:** Nicotinamide riboside at 300 mg twice daily...
+
+## Section 4: [Treatment Date] Treatment Day Protocol
+
+### Primary Regenerative Injection Strategy
+**Targeted [Therapy] Delivery:**
+Your injection protocol targets each area with specific cell counts:
+• [Body part] receive [X] million [cell type] per [location] targeting [specific pathology]
+• [Next body part] receives [X] million [cell type] to address [specific condition]
+
+### Systemic Enhancement Therapies
+**IV [Therapy] Infusion Protocol:**
+The [amount] [therapy] IV infusion in [volume] normal saline provides...
+
+## Section 5: Post-Treatment Recovery and Optimization
+
+### Progressive Recovery Phase Structure
+**Weeks 1-2: Foundation Recovery Phase**
+Your initial recovery emphasizes... [Specific protocols]
+
+**Weeks 3-4: Early Regenerative Activation**
+[Detailed activity progression]
+
+**Weeks 5-8: Functional Restoration Phase**
+[Progressive resistance training protocols]
+
+**Weeks 9-12: Complete Integration Phase**
+[Full activity restoration protocols]
+
+## Section 6: Long-Term Risk Prevention Strategy
+
+### [Condition] Prevention Strategy
+[Detailed maintenance protocols with specific supplements and monitoring]
+
+## Section 7: Expected Outcomes and Monitoring
+
+### Comprehensive Outcome Timeline
+**Short-Term Achievements (1-3 months):**
+• [X]% reduction in [specific measure]
+• [Specific improvement] with target levels
+• [Functional milestone]
+
+**Medium-Term Optimization (3-6 months):**
+[Detailed expectations with percentages]
+
+**Long-Term Health Maintenance (6-12 months):**
+[Comprehensive long-term goals]
+
+**CRITICAL REQUIREMENTS:**
+1. Use patient's ACTUAL name throughout (never say "Patient" or generic terms)
+2. Include SPECIFIC dosages, cell counts, and concentrations
+3. Provide EXACT dates and timelines
+4. Include scientific mechanism explanations with pathway names
+5. Write 3,000+ words total across all sections
+6. Use clinical data provided to personalize every section
+7. Include evidence citations where appropriate
+8. Make each section comprehensive and detailed
+9. Address both local regeneration AND systemic optimization
+10. Create a complete patient education document
+
+Generate the COMPLETE 7-section document now."""
                     ).with_model("openai", "gpt-5")  # Use GPT-5 for best protocol generation
                     
                     user_message = UserMessage(text=protocol_prompt)
