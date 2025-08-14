@@ -13542,22 +13542,317 @@ if __name__ == "__main__":
     print()
     
 
+    def test_enhanced_7_section_protocol_generation(self):
+        """Test the NEWLY ENHANCED comprehensive protocol generation system with 7-section patient education documents"""
+        print("🔍 ENHANCED 7-SECTION PROTOCOL GENERATION TESTING - GPT-5 Comprehensive Document Validation")
+        print("   Testing the newly enhanced GPT-5 prompts that generate 7-section patient education documents")
+        print("   Focus: John Hudson case with comprehensive clinical data and detailed protocol validation")
+        
+        # Create John Hudson patient with comprehensive data as specified in review request
+        john_hudson_data = {
+            "demographics": {
+                "name": "John Hudson",
+                "age": "52",
+                "gender": "Male",
+                "occupation": "Executive",
+                "insurance": "Self-pay"
+            },
+            "chief_complaint": "Multiple regenerative medicine needs including chronic shoulder injury, metabolic dysfunction, and chronic pain seeking comprehensive regenerative optimization",
+            "history_present_illness": "52-year-old executive with complex medical history including chronic right shoulder injury from tennis (18 months duration), metabolic dysfunction with elevated inflammatory markers, chronic lower back pain affecting work performance, and seeking comprehensive regenerative medicine optimization. Failed multiple conservative treatments including physical therapy, NSAIDs, and corticosteroid injections. Specifically interested in comprehensive cellular therapy approach with PRP, BMAC, and advanced peptide protocols.",
+            "past_medical_history": [
+                "Chronic rotator cuff tendinopathy", 
+                "Metabolic syndrome", 
+                "Chronic lower back pain", 
+                "Hypertension", 
+                "Insulin resistance",
+                "Previous tennis injuries"
+            ],
+            "medications": [
+                "Metformin 1000mg BID", 
+                "Lisinopril 10mg daily", 
+                "Atorvastatin 20mg daily",
+                "Ibuprofen PRN",
+                "Omega-3 supplements"
+            ],
+            "allergies": ["NKDA"],
+            "vital_signs": {
+                "temperature": "98.6",
+                "blood_pressure": "142/88",
+                "heart_rate": "76",
+                "respiratory_rate": "16",
+                "oxygen_saturation": "98",
+                "weight": "195",
+                "height": "6'1\"",
+                "BMI": "25.7"
+            },
+            "symptoms": [
+                "chronic right shoulder pain",
+                "decreased shoulder range of motion", 
+                "chronic lower back pain",
+                "fatigue",
+                "metabolic dysfunction",
+                "inflammatory markers elevation",
+                "decreased exercise tolerance"
+            ],
+            "lab_results": {
+                "inflammatory_markers": {
+                    "CRP": "4.2 mg/L",
+                    "ESR": "28 mm/hr",
+                    "IL-6": "3.8 pg/mL"
+                },
+                "metabolic_panel": {
+                    "glucose": "118 mg/dL",
+                    "HbA1c": "6.1%",
+                    "insulin": "18.5 mU/L",
+                    "HOMA-IR": "5.1"
+                },
+                "complete_blood_count": {
+                    "WBC": "7.2 K/uL",
+                    "RBC": "4.6 M/uL",
+                    "platelets": "320 K/uL",
+                    "hemoglobin": "14.8 g/dL"
+                },
+                "regenerative_markers": {
+                    "PDGF": "52 pg/mL",
+                    "VEGF": "145 pg/mL",
+                    "IGF-1": "165 ng/mL",
+                    "vitamin_D": "28 ng/mL"
+                }
+            },
+            "imaging_data": [
+                {
+                    "type": "MRI",
+                    "location": "right shoulder",
+                    "findings": "Partial thickness rotator cuff tear involving supraspinatus tendon, moderate subacromial impingement, mild glenohumeral arthritis with cartilage thinning",
+                    "date": "2024-01-25"
+                },
+                {
+                    "type": "MRI",
+                    "location": "lumbar spine",
+                    "findings": "L4-L5 disc degeneration with mild central stenosis, facet joint arthropathy, no nerve root compression",
+                    "date": "2024-02-10"
+                },
+                {
+                    "type": "DEXA scan",
+                    "location": "whole body",
+                    "findings": "Normal bone density, T-score -0.8 lumbar spine, -0.6 femoral neck",
+                    "date": "2024-01-15"
+                }
+            ],
+            "genetic_data": {
+                "regenerative_markers": {
+                    "VEGF_polymorphism": "positive",
+                    "collagen_synthesis_genes": "favorable",
+                    "inflammatory_response_genes": "moderate_risk",
+                    "healing_capacity_markers": "above_average"
+                },
+                "pharmacogenomics": {
+                    "CYP2D6": "*1/*2",
+                    "COMT": "Val158Met",
+                    "MTHFR": "C677T heterozygous"
+                }
+            }
+        }
+
+        # Step 1: Create John Hudson patient
+        print("   Step 1: Creating John Hudson patient with comprehensive clinical data...")
+        create_success, create_response = self.run_test(
+            "7-SECTION TEST - Create John Hudson Patient",
+            "POST",
+            "patients",
+            200,
+            data=john_hudson_data,
+            timeout=30
+        )
+        
+        if not create_success:
+            print("   ❌ Failed to create John Hudson patient")
+            return False
+            
+        john_hudson_id = create_response.get('patient_id')
+        print(f"   ✅ John Hudson created with ID: {john_hudson_id}")
+        print(f"   ✅ Patient Name: {create_response.get('demographics', {}).get('name', 'Unknown')}")
+
+        # Step 2: Test Enhanced Protocol Generation for Traditional Autologous school
+        print("   Step 2: Testing Enhanced Protocol Generation - Traditional Autologous School")
+        print("   🔍 VALIDATING: 7-section document format with comprehensive patient education")
+        
+        protocol_data = {
+            "patient_id": john_hudson_id,
+            "school_of_thought": "traditional_autologous"
+        }
+
+        print("   This may take 60-90 seconds for comprehensive GPT-5 protocol generation...")
+        protocol_success, protocol_response = self.run_test(
+            "7-SECTION TEST - Generate Traditional Autologous Protocol",
+            "POST",
+            "protocols/generate",
+            200,
+            data=protocol_data,
+            timeout=120
+        )
+        
+        if not protocol_success:
+            print("   ❌ Protocol generation failed")
+            return False
+
+        # Step 3: COMPREHENSIVE 7-SECTION DOCUMENT VALIDATION
+        print("   Step 3: COMPREHENSIVE 7-SECTION DOCUMENT VALIDATION")
+        
+        ai_reasoning = protocol_response.get('ai_reasoning', '')
+        protocol_steps = protocol_response.get('protocol_steps', [])
+        confidence_score = protocol_response.get('confidence_score', 0)
+        
+        print(f"   Protocol ID: {protocol_response.get('protocol_id', 'Unknown')}")
+        print(f"   Confidence Score: {confidence_score:.2f}")
+        print(f"   Protocol Steps: {len(protocol_steps)}")
+        print(f"   AI Reasoning Length: {len(ai_reasoning)} characters")
+        
+        # VALIDATION CRITERIA from review request
+        validation_results = {}
+        
+        # 1. Check for 7-section format
+        section_keywords = [
+            "Section 1", "Section 2", "Section 3", "Section 4", 
+            "Section 5", "Section 6", "Section 7"
+        ]
+        sections_found = sum(1 for keyword in section_keywords if keyword in ai_reasoning)
+        validation_results['7_section_format'] = sections_found >= 7
+        print(f"   ✅ 7-Section Format: {validation_results['7_section_format']} ({sections_found}/7 sections found)")
+        
+        # 2. Check for patient name personalization (John Hudson)
+        john_hudson_mentions = ai_reasoning.count("John Hudson")
+        validation_results['patient_personalization'] = john_hudson_mentions >= 5
+        print(f"   ✅ Patient Personalization: {validation_results['patient_personalization']} (John Hudson mentioned {john_hudson_mentions} times)")
+        
+        # 3. Check for specific clinical details
+        clinical_details = [
+            "2-3 million", "WJ-MSCs", "BPC-157", "250-500 mcg", 
+            "PI3K/Akt", "Wnt/β-catenin", "mTOR", "specific cell counts"
+        ]
+        clinical_details_found = sum(1 for detail in clinical_details if detail in ai_reasoning)
+        validation_results['clinical_detail_level'] = clinical_details_found >= 3
+        print(f"   ✅ Clinical Detail Level: {validation_results['clinical_detail_level']} ({clinical_details_found}/8 specific details found)")
+        
+        # 4. Check for comprehensive word count (3,000+ words)
+        word_count = len(ai_reasoning.split())
+        validation_results['comprehensive_length'] = word_count >= 3000
+        print(f"   ✅ Comprehensive Length: {validation_results['comprehensive_length']} ({word_count} words, target: 3,000+)")
+        
+        # 5. Check for scientific mechanisms
+        scientific_mechanisms = [
+            "pathway", "mechanism", "cellular", "molecular", "regenerative", 
+            "growth factor", "stem cell", "tissue engineering"
+        ]
+        mechanisms_found = sum(1 for mechanism in scientific_mechanisms if mechanism.lower() in ai_reasoning.lower())
+        validation_results['scientific_mechanisms'] = mechanisms_found >= 5
+        print(f"   ✅ Scientific Mechanisms: {validation_results['scientific_mechanisms']} ({mechanisms_found}/8 mechanisms found)")
+        
+        # 6. Check for specific dosages and timelines
+        dosage_timeline_keywords = [
+            "mg", "mcg", "ml", "week", "day", "month", "twice daily", 
+            "specific dates", "timeline", "protocol"
+        ]
+        dosages_found = sum(1 for keyword in dosage_timeline_keywords if keyword in ai_reasoning)
+        validation_results['dosages_timelines'] = dosages_found >= 4
+        print(f"   ✅ Dosages & Timelines: {validation_results['dosages_timelines']} ({dosages_found}/10 dosage/timeline elements found)")
+        
+        # 7. Check for expected outcomes with percentages
+        outcome_keywords = ["%", "percent", "reduction", "improvement", "expected", "outcome", "monitoring"]
+        outcomes_found = sum(1 for keyword in outcome_keywords if keyword in ai_reasoning)
+        validation_results['expected_outcomes'] = outcomes_found >= 3
+        print(f"   ✅ Expected Outcomes: {validation_results['expected_outcomes']} ({outcomes_found}/7 outcome elements found)")
+        
+        # Step 4: DETAILED CONTENT ANALYSIS
+        print("   Step 4: DETAILED CONTENT ANALYSIS")
+        
+        # Check for specific sections mentioned in review request
+        required_sections = {
+            "Overview": "overview" in ai_reasoning.lower() or "health journey" in ai_reasoning.lower(),
+            "Laboratory Analysis": "laboratory" in ai_reasoning.lower() or "biomarker" in ai_reasoning.lower(),
+            "Pre-treatment Preparation": "pre-treatment" in ai_reasoning.lower() or "preparation" in ai_reasoning.lower(),
+            "Treatment Day Protocol": "treatment day" in ai_reasoning.lower() or "injection" in ai_reasoning.lower(),
+            "Post-treatment Recovery": "post-treatment" in ai_reasoning.lower() or "recovery" in ai_reasoning.lower(),
+            "Long-term Prevention": "long-term" in ai_reasoning.lower() or "prevention" in ai_reasoning.lower(),
+            "Expected Outcomes": "expected outcomes" in ai_reasoning.lower() or "monitoring" in ai_reasoning.lower()
+        }
+        
+        sections_present = sum(1 for present in required_sections.values() if present)
+        validation_results['required_sections'] = sections_present >= 5
+        print(f"   ✅ Required Sections Present: {validation_results['required_sections']} ({sections_present}/7 sections)")
+        
+        for section, present in required_sections.items():
+            status = "✅" if present else "❌"
+            print(f"       {status} {section}: {present}")
+        
+        # Step 5: OVERALL VALIDATION ASSESSMENT
+        print("   Step 5: OVERALL VALIDATION ASSESSMENT")
+        
+        total_criteria = len(validation_results)
+        passed_criteria = sum(1 for passed in validation_results.values() if passed)
+        success_rate = passed_criteria / total_criteria
+        
+        print(f"   📊 VALIDATION RESULTS: {passed_criteria}/{total_criteria} criteria met ({success_rate*100:.1f}%)")
+        
+        for criterion, passed in validation_results.items():
+            status = "✅ PASSED" if passed else "❌ FAILED"
+            print(f"       {status}: {criterion.replace('_', ' ').title()}")
+        
+        # Step 6: COMPARISON TO JOHN HUDSON EXAMPLE
+        print("   Step 6: COMPARISON TO JOHN HUDSON EXAMPLE PROTOCOL")
+        print("   Checking if generated protocol matches the comprehensive detail level requested")
+        
+        # Check for John Hudson-specific elements
+        john_hudson_elements = {
+            "Patient Name Usage": john_hudson_mentions >= 5,
+            "Executive Occupation": "executive" in ai_reasoning.lower(),
+            "Multiple Conditions": "shoulder" in ai_reasoning.lower() and "metabolic" in ai_reasoning.lower(),
+            "Comprehensive Approach": len(ai_reasoning) >= 10000,  # Very comprehensive
+            "Professional Quality": confidence_score >= 0.8
+        }
+        
+        john_hudson_score = sum(1 for present in john_hudson_elements.values() if present)
+        john_hudson_success = john_hudson_score >= 3
+        
+        print(f"   📊 JOHN HUDSON EXAMPLE MATCH: {john_hudson_score}/5 elements ({john_hudson_score/5*100:.1f}%)")
+        
+        for element, present in john_hudson_elements.items():
+            status = "✅" if present else "❌"
+            print(f"       {status} {element}: {present}")
+        
+        # Step 7: FINAL SUCCESS DETERMINATION
+        print("   Step 7: FINAL SUCCESS DETERMINATION")
+        
+        # Success criteria: Must pass at least 6/8 validation criteria AND John Hudson match
+        overall_success = success_rate >= 0.75 and john_hudson_success
+        
+        if overall_success:
+            print("   🎉 ENHANCED 7-SECTION PROTOCOL GENERATION: SUCCESS!")
+            print("   The GPT-5 enhanced prompts are generating comprehensive patient education documents")
+            print("   with the required 7-section format and John Hudson-level detail.")
+        else:
+            print("   🚨 ENHANCED 7-SECTION PROTOCOL GENERATION: NEEDS IMPROVEMENT")
+            print("   The comprehensive document format is not yet fully implemented.")
+            if success_rate < 0.75:
+                print("   Issue: Document format and content validation failed")
+            if not john_hudson_success:
+                print("   Issue: Does not match John Hudson example quality level")
+        
+        return overall_success
+
 if __name__ == "__main__":
     tester = RegenMedAIProTester()
     
-    # Run the specific confidence score bug investigation
-    print("🎯 RUNNING CONFIDENCE SCORE BUG INVESTIGATION")
-    print("DEBUG TEST: 2% Confidence Score Issue Investigation")
-    print("Testing POST /api/diagnosis/comprehensive-differential with Robert Chen's data")
-    print("Analyzing diagnostic reasoning and posterior probability calculations")
-    print()
+    # Run the enhanced 7-section protocol generation test specifically
+    print("🚀 Running Enhanced 7-Section Protocol Generation Test")
+    print("=" * 80)
     
-    success = tester.test_robert_chen_confidence_score_debug()
+    success = tester.test_enhanced_7_section_protocol_generation()
+    
+    print("\n" + "=" * 80)
+    print("🏁 Enhanced 7-Section Protocol Test Complete")
     
     if success:
-        print("\n🎉 CONFIDENCE SCORE DEBUG TEST COMPLETE!")
-        print("Check the detailed analysis above for bug investigation results")
-        sys.exit(0)
+        print("🎉 SUCCESS: Enhanced 7-section protocol generation is working!")
     else:
-        print("\n❌ CONFIDENCE SCORE DEBUG TEST FAILED")
-        sys.exit(1)
+        print("⚠️  NEEDS IMPROVEMENT: Enhanced 7-section format requires further development")
