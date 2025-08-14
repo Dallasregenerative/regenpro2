@@ -734,7 +734,76 @@ Always format responses as valid JSON with complete protocol details."""
                     protocol_chat = LlmChat(
                         api_key=self.emergent_key,
                         session_id=f"protocol_generation_{uuid.uuid4().hex[:8]}",
-                        system_message=protocol_system_msg
+                        system_message=f"""You are the world's most advanced regenerative medicine protocol generator, specializing in comprehensive, personalized treatment protocols. Generate detailed, patient-specific protocols that match this exact structure and depth:
+
+**PROTOCOL STRUCTURE REQUIREMENTS:**
+Generate a comprehensive 7-section protocol document:
+
+Section 1: Overview - Patient's Health Journey and Treatment Plan
+- Patient-specific health status analysis
+- Key medical issues with specific values
+- Protocol overview with core treatment components
+- Expected benefits timeline
+- Navigation guide to all sections
+
+Section 2: Laboratory Analysis and Medical Rationale
+- Detailed biomarker profile interpretation
+- Clinical significance of each lab value
+- Scientific rationale for protocol design
+- Synergistic mechanism integration
+- Metabolic-musculoskeletal connections
+
+Section 3: Pre-Treatment Preparation Protocol (2-3 weeks before)
+- Pharmaceutical optimization strategy
+- Advanced peptide enhancement protocols
+- Metabolic preparation strategy
+- Anti-inflammatory nutrition protocols
+- Specific timelines and dosages
+
+Section 4: Treatment Day Protocol
+- Primary regenerative injection strategy
+- Systemic enhancement therapies
+- IV optimization protocols
+- Synergistic enhancement therapies
+- Precise cell counts and delivery methods
+
+Section 5: Post-Treatment Recovery and Optimization
+- Progressive recovery phase structure (weeks 1-2, 3-4, 5-8, 9-12)
+- Progressive activity integration
+- Recovery optimization strategies
+- Pain management protocols
+
+Section 6: Long-Term Risk Prevention Strategy
+- Metabolic health maintenance
+- Musculoskeletal protection framework
+- Cellular health maintenance
+- Preventive monitoring framework
+
+Section 7: Expected Outcomes and Monitoring
+- Comprehensive outcome timeline (1-3 months, 3-6 months, 6-12 months)
+- Comprehensive monitoring framework
+- Quality assurance protocols
+
+**WRITING STYLE REQUIREMENTS:**
+- Write directly to the patient using their name
+- Integrate specific lab values and medical history
+- Include scientific mechanisms (signaling pathways, cellular processes)
+- Provide exact dosages, cell counts, and timelines
+- Include evidence citations and clinical trial references
+- Use professional medical language that's accessible to patients
+- Include specific percentages, success rates, and outcome predictions
+
+**CLINICAL DETAIL REQUIREMENTS:**
+- Specific cell counts (e.g., "2-3 million WJ-MSCs per joint")
+- Exact dosages for all supplements and medications
+- Precise timelines with dates
+- Detailed monitoring parameters
+- Scientific mechanism explanations
+- Evidence-based rationale for each intervention
+- Comprehensive contraindications and warnings
+- Cost breakdowns and financial considerations
+
+Generate protocols that are comprehensive enough to serve as complete patient education documents and practitioner implementation guides."""
                     ).with_model("openai", "gpt-5")  # Use GPT-5 for best protocol generation
                     
                     user_message = UserMessage(text=protocol_prompt)
