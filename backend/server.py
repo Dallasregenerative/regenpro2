@@ -1549,47 +1549,6 @@ Always format responses as valid JSON with complete protocol details."""
         - Address both local tissue regeneration and systemic optimization
         
         Return the complete protocol document as a detailed text response, not JSON format.
-                    "timeframe": "When to expect results (e.g., 2-4 weeks)"
-                }}
-            ],
-            "supporting_evidence": [
-                {{
-                    "citation": "Study citation with PMID",
-                    "finding": "Key clinical finding supporting this protocol",
-                    "evidence_level": "Study type and quality"
-                }}
-            ],
-            "expected_outcomes": [
-                "Pain reduction 30-50% within 2-4 weeks",
-                "Functional improvement at 6-12 weeks",
-                "Sustained benefit at 6-12 months"
-            ],
-            "timeline_predictions": {{
-                "short_term": "2-4 weeks: Initial improvement",
-                "medium_term": "2-3 months: Significant functional gains", 
-                "long_term": "6-12 months: Maximum benefit achieved"
-            }},
-            "contraindications": ["List specific contraindications"],
-            "legal_warnings": ["Regulatory considerations and off-label warnings"],
-            "cost_estimate": "$X,XXX - $X,XXX",
-            "confidence_score": 0.85,
-            "lifestyle_recommendations": [
-                "Specific activity modifications",
-                "Nutritional recommendations",
-                "Supplement protocols"
-            ],
-            "monitoring_schedule": [
-                {{
-                    "timepoint": "Week 2",
-                    "assessment": "Pain and function evaluation",
-                    "action": "Consider dose adjustment"
-                }}
-            ],
-            "ai_reasoning": "Detailed explanation of why this protocol was selected based on patient factors and evidence"
-        }}
-        
-        Base all recommendations on the provided evidence literature. Reference specific studies from the evidence section above. Ensure realistic timelines and success probabilities based on clinical data.
-        Generate the most evidence-based, personalized protocol possible.
         """
 
     def _parse_fallback_response(self, content: str) -> Dict:
