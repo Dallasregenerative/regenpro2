@@ -1458,46 +1458,97 @@ Always format responses as valid JSON with complete protocol details."""
         literature_evidence = ""
         
         return f"""
-        Generate a comprehensive regenerative medicine protocol for this patient:
+        Generate a comprehensive regenerative medicine protocol document for this patient following the EXACT structure and depth shown in the example. This should be a complete 7-section patient education and practitioner implementation document:
 
-        **PATIENT SUMMARY:**
+        **PATIENT PROFILE:**
+        Name: {patient_data.demographics.get('name', 'Patient')}
         Age: {patient_data.demographics.get('age', 'Unknown')}
         Gender: {patient_data.demographics.get('gender', 'Unknown')}
         Primary Diagnoses: {', '.join([d.diagnosis for d in diagnoses[:3]])}
         School of Thought: {school.value}
         Chief Complaint: {patient_data.chief_complaint}
         
-        **AVAILABLE THERAPIES:**
+        **CLINICAL DATA:**
+        Past History: {', '.join(patient_data.past_medical_history) if patient_data.past_medical_history else 'None reported'}
+        Current Medications: {', '.join(patient_data.medications) if patient_data.medications else 'None reported'}
+        Allergies: {', '.join(patient_data.allergies) if patient_data.allergies else 'NKDA'}
+        Physical Exam: {patient_data.physical_exam}
+        Vital Signs: {json.dumps(patient_data.vital_signs) if patient_data.vital_signs else 'Normal'}
+        
+        **AVAILABLE REGENERATIVE THERAPIES:**
         {chr(10).join(therapy_descriptions)}
         
-        **DIAGNOSTIC DETAILS:**
+        **DIAGNOSTIC ANALYSIS:**
         {json.dumps([{
             'diagnosis': d.diagnosis,
             'confidence': d.confidence_score,
             'mechanisms': d.mechanisms_involved,
-            'supporting_evidence': d.supporting_evidence
+            'supporting_evidence': d.supporting_evidence,
+            'regenerative_targets': d.regenerative_targets
         } for d in diagnoses[:3]], indent=2)}
-        
-        **MEDICAL HISTORY:**
-        Past History: {', '.join(patient_data.past_medical_history) if patient_data.past_medical_history else 'None reported'}
-        Current Medications: {', '.join(patient_data.medications) if patient_data.medications else 'None reported'}
-        Allergies: {', '.join(patient_data.allergies) if patient_data.allergies else 'NKDA'}
         
         {literature_evidence}
         
-        **INSTRUCTIONS:**
-        Generate a detailed, evidence-based regenerative medicine protocol in JSON format with the following structure:
+        **GENERATE THE FOLLOWING COMPREHENSIVE 7-SECTION PROTOCOL:**
         
-        {{
-            "protocol_steps": [
-                {{
-                    "step_number": 1,
-                    "therapy": "Therapy Name",
-                    "dosage": "Specific dosage/concentration",
-                    "timing": "When to perform (e.g., Week 1)",
-                    "delivery_method": "Injection technique and guidance",
-                    "monitoring_parameters": ["Pain scale", "Range of motion", "Imaging findings"],
-                    "expected_outcome": "What to expect and timeline",
+        **Section 1: Overview - Patient's Health Journey and Treatment Plan**
+        - Write directly to the patient using their name
+        - Comprehensive health status analysis with specific findings
+        - Key medical issues with interpretation of any lab values or clinical findings
+        - Regenerative medicine protocol overview with core treatment components
+        - Expected benefits with specific percentages and timelines
+        - Navigation guide to all protocol sections
+        
+        **Section 2: Laboratory Analysis and Medical Rationale**
+        - Detailed interpretation of clinical findings and their significance
+        - Scientific rationale for protocol design with mechanism explanations
+        - Synergistic mechanism integration (include specific pathways like PI3K/Akt, Wnt/β-catenin)
+        - Connection between patient's conditions and regenerative targets
+        
+        **Section 3: Pre-Treatment Preparation Protocol (2-3 weeks before)**
+        - Pharmaceutical optimization strategy (medication modifications)
+        - Advanced peptide enhancement protocols (BPC-157, TB-500, NAD+ optimization)
+        - Metabolic preparation strategy with specific supplements and dosages
+        - Anti-inflammatory nutrition protocols with detailed dietary guidelines
+        - Specific preparation timeline with dates
+        
+        **Section 4: Treatment Day Protocol**
+        - Primary regenerative injection strategy with specific cell counts
+        - Targeted delivery methods (specific injection sites and techniques)
+        - Systemic enhancement therapies (IV protocols with exact formulations)
+        - Synergistic enhancement therapies (ESWT parameters and timing)
+        - Precise treatment parameters and monitoring
+        
+        **Section 5: Post-Treatment Recovery and Optimization**
+        - Progressive recovery phases (Weeks 1-2, 3-4, 5-8, 9-12)
+        - Specific activity restrictions and progressions
+        - Recovery optimization strategies with detailed protocols
+        - Pain management without interference with healing
+        - Nutritional support for tissue synthesis
+        
+        **Section 6: Long-Term Risk Prevention Strategy**
+        - Metabolic health maintenance protocols
+        - Musculoskeletal protection framework
+        - Cellular health maintenance with longevity optimization
+        - Preventive monitoring framework with specific schedules
+        
+        **Section 7: Expected Outcomes and Monitoring**
+        - Comprehensive outcome timeline (1-3 months, 3-6 months, 6-12 months)
+        - Specific improvement percentages and functional milestones
+        - Comprehensive monitoring framework with assessment tools
+        - Quality assurance protocols and adjustment capabilities
+        
+        **CRITICAL REQUIREMENTS:**
+        - Use patient's name throughout (write TO the patient, not ABOUT them)
+        - Include specific dosages, cell counts, and concentrations
+        - Provide scientific mechanism explanations
+        - Include evidence citations and success rates
+        - Use professional medical language accessible to patients
+        - Create 3,000-5,000 word comprehensive protocol document
+        - Include specific timelines, costs, and monitoring parameters
+        - Address both local tissue regeneration and systemic optimization
+        
+        Return the complete protocol document as a detailed text response, not JSON format.
                     "timeframe": "When to expect results (e.g., 2-4 weeks)"
                 }}
             ],
