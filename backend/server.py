@@ -833,7 +833,24 @@ Your initial recovery emphasizes... [Specific protocols]
 Generate the COMPLETE 7-section document now."""
                     ).with_model("openai", "gpt-5")  # Use GPT-5 for best protocol generation
                     
-                    user_message = UserMessage(text=protocol_prompt)
+                    user_message = UserMessage(text=f"""
+                    Generate a comprehensive 7-section regenerative medicine protocol document for this specific patient.
+
+                    PATIENT: {patient_data.demographics.get('name', 'Patient')}
+                    
+                    {protocol_prompt}
+                    
+                    **MANDATORY OUTPUT REQUIREMENTS:**
+                    1. Use the EXACT 7-section format shown in the system message
+                    2. Address the patient by their actual name: {patient_data.demographics.get('name', 'Patient')}
+                    3. Include their specific medical data and lab values in the analysis
+                    4. Create a comprehensive 3,000+ word document
+                    5. Include specific dosages, cell counts, and scientific mechanisms
+                    6. Provide exact treatment dates and timelines
+                    7. Make it a complete patient education and practitioner implementation guide
+                    
+                    Generate the complete 7-section protocol document now using their specific clinical data.
+                    """)
                     ai_response = await protocol_chat.send_message(user_message)
                     content = ai_response
                     
