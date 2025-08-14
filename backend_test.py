@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timedelta
 
 class RegenMedAIProTester:
-    def __init__(self, base_url="https://medprotocol-3.preview.emergentagent.com"):
+    def __init__(self, base_url="https://a5405ec9-bfc7-45f4-af6d-6fb1a12b2148.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.tests_run = 0
